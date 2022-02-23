@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:mobterm="urn:types.mobileterminal.schema.fisheries.ec.europa.eu:v1"
-            xmlns:poll="urn:polltypes.mobileterminal.schema.fisheries.ec.europa.eu:v1"
-            targetNamespace="urn:polltypes.mobileterminal.schema.fisheries.ec.europa.eu:v1"
+            xmlns:mobterm="urn:types.mobileterminal.schema.focus.fish:v1"
+            xmlns:poll="urn:polltypes.mobileterminal.schema.focus.fish:v1"
+            targetNamespace="urn:polltypes.mobileterminal.schema.focus.fish:v1"
             elementFormDefault="qualified"
             attributeFormDefault="unqualified" 
             version="1.0">
             
-    <xsd:import namespace="urn:types.mobileterminal.schema.fisheries.ec.europa.eu:v1" schemaLocation="MobileTerminalElement.xsd"/>
+    <xsd:import namespace="urn:types.mobileterminal.schema.focus.fish:v1" schemaLocation="MobileTerminalElement.xsd"/>
 
     <xsd:simpleType name="PollType">
         <xsd:restriction base="xsd:string">

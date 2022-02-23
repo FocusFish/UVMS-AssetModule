@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns="config.asset.wsdl.fisheries.ec.europa.eu"
-            xmlns:config="config.asset.wsdl.fisheries.ec.europa.eu"
-            xmlns:t="types.asset.wsdl.fisheries.ec.europa.eu"
-            targetNamespace="config.asset.wsdl.fisheries.ec.europa.eu"
+            xmlns="config.asset.wsdl.focus.fish"
+            xmlns:config="config.asset.wsdl.focus.fish"
+            xmlns:t="types.asset.wsdl.focus.fish"
+            targetNamespace="config.asset.wsdl.focus.fish"
             elementFormDefault="qualified"
             attributeFormDefault="unqualified" 
             version="1.0">
     
-    <xsd:import namespace="types.asset.wsdl.fisheries.ec.europa.eu" schemaLocation="AssetElement.xsd"/>
+    <xsd:import namespace="types.asset.wsdl.focus.fish" schemaLocation="AssetElement.xsd"/>
             
     <xsd:element name="configRequest">
         <xsd:complexType>

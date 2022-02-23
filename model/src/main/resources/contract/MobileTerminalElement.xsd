@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns:mobterm="urn:types.mobileterminal.schema.fisheries.ec.europa.eu:v1" 
-            targetNamespace="urn:types.mobileterminal.schema.fisheries.ec.europa.eu:v1"
+            xmlns:mobterm="urn:types.mobileterminal.schema.focus.fish:v1" 
+            targetNamespace="urn:types.mobileterminal.schema.focus.fish:v1"
             elementFormDefault="qualified"
             attributeFormDefault="unqualified" 
             version="1.0">

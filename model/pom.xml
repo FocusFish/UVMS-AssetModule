@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
+		<groupId>fish.focus.uvms.asset</groupId>
 		<artifactId>asset</artifactId>
 		<version>6.8.23-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
@@ -11,11 +11,6 @@
 	<artifactId>asset-model</artifactId>
 	<name>asset-model</name>
 	<packaging>ejb</packaging>
-
-	<scm>
-		<connection>scm:git:https://github.com/UnionVMS/UVMS-AssetModule-MODEL.git</connection>
-		<tag>HEAD</tag>
-	</scm>
 
 	<properties>
 		<wsdl.contract.name>AssetModuleService</wsdl.contract.name>

@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <name>asset</name>
 
-    <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
+    <groupId>fish.focus.uvms.asset</groupId>
     <artifactId>asset</artifactId>
     <version>6.8.23-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -11,7 +11,7 @@
         <groupId>fish.focus.uvms.maven</groupId>
         <artifactId>uvms-pom</artifactId>
         <relativePath />
-        <version>3.8</version>
+        <version>3.16</version>
     </parent>
 
     <properties>
@@ -20,13 +20,13 @@
     	<docker.liquibase.changeLogFile>LIQUIBASE/changelog/db-changelog-master.xml</docker.liquibase.changeLogFile>
         <docker.liquibase.db.user>asset</docker.liquibase.db.user>
         <docker.liquibase.db.passwd>asset</docker.liquibase.db.passwd>
-        <uvms.pom.version>3.8</uvms.pom.version>
-        <usm4uvms.version>4.1.9</usm4uvms.version>
-        <uvms.common.version>4.1.11</uvms.common.version>
-        <uvms.config.version>4.1.5</uvms.config.version>
-        <audit.model.version>4.3.10</audit.model.version>
+        <uvms.pom.version>3.16</uvms.pom.version>
+        <usm4uvms.version>4.1.10</usm4uvms.version>
+        <uvms.common.version>4.1.12</uvms.common.version>
+        <uvms.config.version>4.1.6</uvms.config.version>
+        <audit.model.version>4.3.11</audit.model.version>
         <movementrules.version>2.4.14</movementrules.version>
-        <exchange.model.version>5.3.22-UVMS</exchange.model.version>
+        <exchange.model.version>5.3.23</exchange.model.version>
         <project.scm.id>github</project.scm.id>
         <installAtEnd>false</installAtEnd>
     </properties>
@@ -71,7 +71,7 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+                <groupId>fish.focus.uvms.commons</groupId>
                 <artifactId>uvms-commons-date</artifactId>
                 <version>${uvms.common.version}</version>
             </dependency>
@@ -84,29 +84,8 @@
         </dependencies>
     </dependencyManagement>
 
-    <repositories>
-        <repository>
-            <id>focus-repo</id>
-            <name>Focus nexus repository</name>
-            <url>http://nexus.focus.fish/nexus</url>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <repository>
-            <id>focus-releases</id>
-            <name>UnionVms Repository</name>
-            <url>http://nexus.focus.fish/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>focus-snapshots</id>
-            <name>UnionVms Snapshot Repository</name>
-            <url>http://nexus.focus.fish/nexus/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
-
     <scm>
-        <connection>scm:git:https://github.com/UnionVMS/UVMS-AssetModule-APP.git</connection>
+        <connection>scm:git:https://github.com/FocusFish/UVMS-AssetModule.git</connection>
         <tag>HEAD</tag>
     </scm>
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns="types.asset.wsdl.fisheries.ec.europa.eu"
-            targetNamespace="types.asset.wsdl.fisheries.ec.europa.eu"
+            xmlns="types.asset.wsdl.focus.fish"
+            targetNamespace="types.asset.wsdl.focus.fish"
             version="1.0">
     
     <xsd:complexType name="Asset">

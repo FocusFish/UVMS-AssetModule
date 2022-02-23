@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns="source.asset.wsdl.fisheries.ec.europa.eu"
-            xmlns:t="types.asset.wsdl.fisheries.ec.europa.eu"
-            targetNamespace="source.asset.wsdl.fisheries.ec.europa.eu"
+            xmlns="source.asset.wsdl.focus.fish"
+            xmlns:t="types.asset.wsdl.focus.fish"
+            targetNamespace="source.asset.wsdl.focus.fish"
             version="1.0">
     
-    <xsd:import namespace="types.asset.wsdl.fisheries.ec.europa.eu" schemaLocation="AssetElement.xsd"/>
+    <xsd:import namespace="types.asset.wsdl.focus.fish" schemaLocation="AssetElement.xsd"/>
 
     <xsd:element name="GetAssetRequest">
         <xsd:complexType>

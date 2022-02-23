@@ -1,17 +1,17 @@
 <definitions name="AssetModule"
-             targetNamespace="module.asset.wsdl.fisheries.ec.europa.eu"
-             xmlns:v="module.asset.wsdl.fisheries.ec.europa.eu"
-             xmlns:tv="types.asset.wsdl.fisheries.ec.europa.eu"
-             xmlns:fg="fishinggear.asset.wsdl.fisheries.ec.europa.eu"
+             targetNamespace="module.asset.wsdl.focus.fish"
+             xmlns:v="module.asset.wsdl.focus.fish"
+             xmlns:tv="types.asset.wsdl.focus.fish"
+             xmlns:fg="fishinggear.asset.wsdl.focus.fish"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
     <types>
-        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="module.asset.wsdl.fisheries.ec.europa.eu">
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="module.asset.wsdl.focus.fish">
             
-            <xsd:import namespace="types.asset.wsdl.fisheries.ec.europa.eu" schemaLocation="AssetElement.xsd"/>
-            <xsd:import namespace="fishinggear.asset.wsdl.fisheries.ec.europa.eu" schemaLocation="FishingGear.xsd"/>
+            <xsd:import namespace="types.asset.wsdl.focus.fish" schemaLocation="AssetElement.xsd"/>
+            <xsd:import namespace="fishinggear.asset.wsdl.focus.fish" schemaLocation="FishingGear.xsd"/>
             
             <xsd:simpleType name="AssetModuleMethod">
                 <xsd:restriction base="xsd:string">
