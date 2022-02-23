@@ -1,11 +1,11 @@
 <definitions name="AssetDataSource"
-             targetNamespace="asset.wsdl.fisheries.ec.europa.eu"
-             xmlns:v="asset.wsdl.fisheries.ec.europa.eu"
-             xmlns:s="source.asset.wsdl.fisheries.ec.europa.eu"
-             xmlns:t="types.asset.wsdl.fisheries.ec.europa.eu"
-             xmlns:h="history.asset.wsdl.fisheries.ec.europa.eu"
-             xmlns:config="config.asset.wsdl.fisheries.ec.europa.eu"
-             xmlns:f="fishinggear.asset.wsdl.fisheries.ec.europa.eu"
+             targetNamespace="asset.wsdl.focus.fish"
+             xmlns:v="asset.wsdl.focus.fish"
+             xmlns:s="source.asset.wsdl.focus.fish"
+             xmlns:t="types.asset.wsdl.focus.fish"
+             xmlns:h="history.asset.wsdl.focus.fish"
+             xmlns:config="config.asset.wsdl.focus.fish"
+             xmlns:f="fishinggear.asset.wsdl.focus.fish"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/"
@@ -13,12 +13,12 @@
 
     <types>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                    targetNamespace="asset.wsdl.fisheries.ec.europa.eu">
-            <xsd:import namespace="types.asset.wsdl.fisheries.ec.europa.eu" schemaLocation="AssetElement.xsd"/>
-            <xsd:import namespace="source.asset.wsdl.fisheries.ec.europa.eu" schemaLocation="Asset.xsd"/>
-            <xsd:import namespace="history.asset.wsdl.fisheries.ec.europa.eu" schemaLocation="AssetHistory.xsd"/>
-            <xsd:import namespace="config.asset.wsdl.fisheries.ec.europa.eu" schemaLocation="AssetConfig.xsd"/>
-            <xsd:import namespace="fishinggear.asset.wsdl.fisheries.ec.europa.eu" schemaLocation="FishingGear.xsd"/>
+                    targetNamespace="asset.wsdl.focus.fish">
+            <xsd:import namespace="types.asset.wsdl.focus.fish" schemaLocation="AssetElement.xsd"/>
+            <xsd:import namespace="source.asset.wsdl.focus.fish" schemaLocation="Asset.xsd"/>
+            <xsd:import namespace="history.asset.wsdl.focus.fish" schemaLocation="AssetHistory.xsd"/>
+            <xsd:import namespace="config.asset.wsdl.focus.fish" schemaLocation="AssetConfig.xsd"/>
+            <xsd:import namespace="fishinggear.asset.wsdl.focus.fish" schemaLocation="FishingGear.xsd"/>
         </xsd:schema>
     </types>
     

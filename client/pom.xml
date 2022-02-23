@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
+        <groupId>fish.focus.uvms.asset</groupId>
         <artifactId>asset</artifactId>
-        <version>6.8.23-SNAPSHOT</version>
+        <version>6.8.23</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -19,25 +19,17 @@
 
     <dependencies>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+            <groupId>fish.focus.uvms.commons</groupId>
             <artifactId>uvms-commons-date</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms</groupId>
+            <groupId>fish.focus.uvms.lib</groupId>
             <artifactId>usm4uvms</artifactId>
             <version>${usm4uvms.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.jboss.resteasy</groupId>
-                    <artifactId>resteasy-jaxrs</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>net.sf.ehcache</groupId>
-                    <artifactId>ehcache</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>eu.europa.ec.fisheries.uvms.commons</groupId>
+                    <groupId>fish.focus.uvms.commons</groupId>
                     <artifactId>uvms-commons-message</artifactId>
                 </exclusion>
             </exclusions>
@@ -52,7 +44,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.asset</groupId>
+            <groupId>fish.focus.uvms.asset</groupId>
             <artifactId>asset-module</artifactId>
             <version>${project.parent.version}</version>
             <classifier>classes</classifier>
@@ -65,7 +57,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.exchange</groupId>
+            <groupId>fish.focus.uvms.exchange</groupId>
             <artifactId>exchange-model</artifactId>
             <version>${exchange.model.version}</version>
             <type>jar</type>

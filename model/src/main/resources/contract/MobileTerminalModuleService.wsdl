@@ -1,15 +1,15 @@
 <definitions name="MobileTerminalModule"
-             targetNamespace="urn:module.mobileterminal.schema.fisheries.ec.europa.eu:v1"
-             xmlns:module="urn:module.mobileterminal.schema.fisheries.ec.europa.eu:v1"
-             xmlns:mobterm="urn:types.mobileterminal.schema.fisheries.ec.europa.eu:v1"
+             targetNamespace="urn:module.mobileterminal.schema.focus.fish:v1"
+             xmlns:module="urn:module.mobileterminal.schema.focus.fish:v1"
+             xmlns:mobterm="urn:types.mobileterminal.schema.focus.fish:v1"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
     <types>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-                    targetNamespace="urn:module.mobileterminal.schema.fisheries.ec.europa.eu:v1">
-            <xsd:import namespace="urn:types.mobileterminal.schema.fisheries.ec.europa.eu:v1" schemaLocation="MobileTerminalElement.xsd"/>
+                    targetNamespace="urn:module.mobileterminal.schema.focus.fish:v1">
+            <xsd:import namespace="urn:types.mobileterminal.schema.focus.fish:v1" schemaLocation="MobileTerminalElement.xsd"/>
 
             <xsd:simpleType name="MobileTerminalModuleMethod">
                 <xsd:restriction base="xsd:string">

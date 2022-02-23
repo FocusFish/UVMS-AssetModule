@@ -1,10 +1,10 @@
 <definitions name="MobileTerminalDataSource"
-             targetNamespace="urn:msg.mobileterminal.schema.fisheries.ec.europa.eu:v1"
-             xmlns:msg="urn:msg.mobileterminal.schema.fisheries.ec.europa.eu:v1"
-             xmlns:source="urn:source.mobileterminal.schema.fisheries.ec.europa.eu:v1"
-             xmlns:mobterm="urn:types.mobileterminal.schema.fisheries.ec.europa.eu:v1"
-             xmlns:poll="urn:polltypes.mobileterminal.schema.fisheries.ec.europa.eu:v1"
-             xmlns:config="urn:config.mobileterminal.schema.fisheries.ec.europa.eu:v1"
+             targetNamespace="urn:msg.mobileterminal.schema.focus.fish:v1"
+             xmlns:msg="urn:msg.mobileterminal.schema.focus.fish:v1"
+             xmlns:source="urn:source.mobileterminal.schema.focus.fish:v1"
+             xmlns:mobterm="urn:types.mobileterminal.schema.focus.fish:v1"
+             xmlns:poll="urn:polltypes.mobileterminal.schema.focus.fish:v1"
+             xmlns:config="urn:config.mobileterminal.schema.focus.fish:v1"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
@@ -12,10 +12,10 @@
     <types>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:msg.mobileterminal.schema.fisheries.ec.europa.eu:v1">
             
-            <xsd:import namespace="urn:source.mobileterminal.schema.fisheries.ec.europa.eu:v1" schemaLocation="MobileTerminalDataSource.xsd"/>
-            <xsd:import namespace="urn:types.mobileterminal.schema.fisheries.ec.europa.eu:v1" schemaLocation="MobileTerminalElement.xsd"/>
-            <xsd:import namespace="urn:polltypes.mobileterminal.schema.fisheries.ec.europa.eu:v1" schemaLocation="MobileTerminalPoll.xsd"/>
-            <xsd:import namespace="urn:config.mobileterminal.schema.fisheries.ec.europa.eu:v1" schemaLocation="MobileTerminalConfig.xsd"/>
+            <xsd:import namespace="urn:source.mobileterminal.schema.focus.fish:v1" schemaLocation="MobileTerminalDataSource.xsd"/>
+            <xsd:import namespace="urn:types.mobileterminal.schema.focus.fish:v1" schemaLocation="MobileTerminalElement.xsd"/>
+            <xsd:import namespace="urn:polltypes.mobileterminal.schema.focus.fish:v1" schemaLocation="MobileTerminalPoll.xsd"/>
+            <xsd:import namespace="urn:config.mobileterminal.schema.focus.fish:v1" schemaLocation="MobileTerminalConfig.xsd"/>
                         
         </xsd:schema>
         
