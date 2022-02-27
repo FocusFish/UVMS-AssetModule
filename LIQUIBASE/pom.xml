@@ -9,10 +9,6 @@
     </parent>
 
 	<artifactId>liquibase</artifactId>
-<<<<<<< HEAD
-=======
-	<version>6.8.24-SNAPSHOT</version>
->>>>>>> 20f6f9fa279ace92a42a01405f7bfff5c1d57e65
 	<name>liquibase</name>
 	<packaging>pom</packaging>
 
