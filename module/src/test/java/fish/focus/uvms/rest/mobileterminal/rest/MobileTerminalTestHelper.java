@@ -49,7 +49,7 @@ public class MobileTerminalTestHelper {
         mobileTerminal.getChannels().add(channel);
 
         MobileTerminalPlugin plugin = new MobileTerminalPlugin();
-        plugin.setPluginServiceName("eu.europa.ec.fisheries.uvms.plugins.inmarsat");
+        plugin.setPluginServiceName("fish.focus.uvms.plugins.inmarsat");
         plugin.setName("Thrane&Thrane");
         plugin.setPluginSatelliteType("INMARSAT_C");
         plugin.setPluginInactive(false);
