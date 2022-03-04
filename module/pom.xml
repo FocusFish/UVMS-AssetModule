@@ -87,12 +87,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.movement-rules</groupId>
-            <artifactId>movement-rules-model</artifactId>
-            <version>${movementrules.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>artemis-jms-client</artifactId>
             <version>2.20.0</version>
