@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>fish.focus.uvms.asset</groupId>
 		<artifactId>asset</artifactId>
-		<version>6.8.24</version>
+		<version>6.8.25</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-client</artifactId>
-			<version>5.16.4</version>
+			<version>5.17.0</version>
 			<scope>test</scope>
 		</dependency>
         <dependency>
@@ -62,7 +62,7 @@
 			<plugin>
 				<groupId>org.apache.cxf</groupId>
 				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>3.5.0</version>
+				<version>3.5.1</version>
 				<executions>
 					<execution>
 						<id>generate-asset-module</id>

@@ -56,7 +56,7 @@ public class ExchangeModuleServiceMock {
         try {
             LOG.info("Sending plugin information to event topic");
             ServiceResponseType serviceResponseType = new ServiceResponseType();
-            serviceResponseType.setServiceClassName("eu.europa.ec.fisheries.uvms.plugins.inmarsat");
+            serviceResponseType.setServiceClassName("fish.focus.uvms.plugins.inmarsat");
             serviceResponseType.setName("Thrane&Thrane");
             serviceResponseType.setSatelliteType("INMARSAT_C");
             serviceResponseType.setPluginType(PluginType.SATELLITE_RECEIVER);

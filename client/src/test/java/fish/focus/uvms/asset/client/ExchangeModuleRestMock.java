@@ -41,7 +41,7 @@ public class ExchangeModuleRestMock {
         try {
             List<ServiceResponseType> serviceResponse = new ArrayList<ServiceResponseType>();
             ServiceResponseType serviceResponseType = new ServiceResponseType();
-            serviceResponseType.setServiceClassName("eu.europa.ec.fisheries.uvms.plugins.inmarsat");
+            serviceResponseType.setServiceClassName("fish.focus.uvms.plugins.inmarsat");
             serviceResponseType.setName("Thrane&Thrane");
             serviceResponseType.setSatelliteType("INMARSAT_C");
             serviceResponseType.setActive(true);

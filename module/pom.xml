@@ -8,7 +8,7 @@
     <parent>
 	    <groupId>fish.focus.uvms.asset</groupId>
 	    <artifactId>asset</artifactId>
-	    <version>6.8.24</version>
+	    <version>6.8.25</version>
 	    <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -84,12 +84,6 @@
             <groupId>fish.focus.uvms.maven</groupId>
             <artifactId>uvms-pom-arquillian-deps</artifactId>
             <type>pom</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.fisheries.uvms.movement-rules</groupId>
-            <artifactId>movement-rules-model</artifactId>
-            <version>${movementrules.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
