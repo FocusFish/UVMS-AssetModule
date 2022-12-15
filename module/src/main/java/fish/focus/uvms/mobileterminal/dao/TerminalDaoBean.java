@@ -423,7 +423,7 @@ public class TerminalDaoBean {
                 "FROM asset.channel_aud ca \n" + 
                 "JOIN asset.mobileterminal_aud mt ON ca.mobterm_id = mt.id AND ca.rev = mt.rev \n" + 
                 "JOIN asset.asset_aud aa ON mt.asset_id = aa.id \n" + 
-                "WHERE aa.updatetime = (SELECT MAX(aud.updatetime)\n" + 
+                "WHERE aa.rev = (SELECT MAX(aud.rev)\n" + 
                 "                      FROM asset.asset_aud aud\n" + 
                 "                      WHERE aud.updatetime\\:\\:timestamp <= ca.updattime\\:\\:timestamp\n" + 
                 "                      AND aa.id = aud.id)\n"+
