@@ -4,7 +4,7 @@
 	<parent>
 	    <groupId>fish.focus.uvms.asset</groupId>
 	    <artifactId>asset</artifactId>
-	    <version>6.8.25</version>
+	    <version>6.8.26</version>
 	    <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -29,7 +29,7 @@
 				<db.outputFile>changelog/generatedChangelog.xml</db.outputFile>
 				<driver.groupId>org.postgresql</driver.groupId>
 				<driver.artifactId>postgresql</driver.artifactId>
-				<driver.version>42.3.3</driver.version>
+				<driver.version>42.5.1</driver.version>
 			</properties>
 			<dependencies>
 		        <dependency>
@@ -46,7 +46,7 @@
 					<plugin>
 						<groupId>org.liquibase</groupId>
 						<artifactId>liquibase-maven-plugin</artifactId>
-						<version>4.9.0</version>
+						<version>4.17.2</version>
 						<configuration>
 							<url>${db.docker.url}</url>
 							<migrationSqlOutputFile>${project.build.directory}/full-update.sql</migrationSqlOutputFile>
@@ -107,14 +107,14 @@
 				<plugin>
 					<groupId>org.liquibase</groupId>
 					<artifactId>liquibase-maven-plugin</artifactId>
-					<version>4.9.0</version>
+					<version>4.17.2</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
 				<plugin>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>3.3.0</version>
+					<version>3.4.2</version>
 					<configuration>
 						<descriptors>
 							<descriptor>assembly.xml</descriptor>

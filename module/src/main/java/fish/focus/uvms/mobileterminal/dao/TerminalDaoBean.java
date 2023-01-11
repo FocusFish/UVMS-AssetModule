@@ -416,20 +416,34 @@ public class TerminalDaoBean {
     }
     
     public List<VmsBillingDto> getVmsBillingList() {
+    	
+    	/*
+    	private Integer dnid;
+        private Integer memberNumber;
+        private String name;
+        private String serialNumber;
+        private String satelliteNumber;
+        private Long vesselId;
+        private String startDate;
+        private String endDate;
+        */
         Query q = em.createNativeQuery("SELECT DISTINCT ca.dnid, ca.member_number,\n" +
                 " ca.com_channel_name, mt.serial_no,\n" +
                 " mt.satellite_number, aa.national_id,\n" +
                 " ca.start_date, ca.end_date\n" + 
                 "FROM asset.channel_aud ca \n" + 
                 "JOIN asset.mobileterminal_aud mt ON ca.mobterm_id = mt.id AND ca.rev = mt.rev \n" + 
-                "JOIN asset.asset_aud aa ON mt.asset_id = aa.id \n" + 
-                "WHERE aa.updatetime = (SELECT MAX(aud.updatetime)\n" + 
+                "JOIN asset.asset_aud aa ON mt.asset_id = aa.id AND mt.rev = aa.rev \n" + 
+                "WHERE aa.rev = (SELECT MAX(aud.rev)\n" + 
                 "                      FROM asset.asset_aud aud\n" + 
-                "                      WHERE aud.updatetime\\:\\:timestamp <= ca.updattime\\:\\:timestamp\n" + 
+                "                      WHERE aud.rev <= ca.rev\n" + 
                 "                      AND aa.id = aud.id)\n"+
                 "AND ca.chan_conf = false\n" + 
                 "AND ca.chan_poll = false\n" + 
                 "AND aa.national_id IS NOT NULL\n" +
+                "AND aa.rev > 1\n" +
+                "AND mt.rev > 1\n" +
+                "AND ca.rev > 1\n" +
                 "UNION\n" +
                 "SELECT c.dnid, c.member_number, c.com_channel_name,\n" + 
                 " m.serial_no, m.satellite_number, a.national_id, c.start_date, c.end_date\n" +
