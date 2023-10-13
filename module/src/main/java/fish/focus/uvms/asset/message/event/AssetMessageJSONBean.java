@@ -14,6 +14,7 @@ import fish.focus.uvms.commons.date.JsonBConfigurator;
 import fish.focus.uvms.asset.bean.AssetServiceBean;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.dto.AssetBO;
+import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,15 @@ public class AssetMessageJSONBean {
     
     public void upsertAsset(TextMessage message) throws IOException, JMSException {
         AssetBO assetBo = jsonb.fromJson(message.getText(), AssetBO.class);
-        assetService.upsertAssetBO(assetBo, assetBo.getAsset().getUpdatedBy() == null ? "UVMS (JMS)" : assetBo.getAsset().getUpdatedBy());
+        try {
+            assetService.upsertAssetBO(assetBo, assetBo.getAsset().getUpdatedBy() == null ? "UVMS (JMS)" : assetBo.getAsset().getUpdatedBy());
+        } catch (ConstraintViolationException e) {
+            if (assetBo.getAsset() == null) {
+                LOG.error("cannot update asset");
+            } else {
+                LOG.error("cannot update asset with id={}, ircs={}, mmsi={} and nationalId={}", assetBo.getAsset().getId(), assetBo.getAsset().getIrcs(), assetBo.getAsset().getMmsi(), assetBo.getAsset().getNationalId());
+            }
+        }
     }
 
     public void assetInformation(TextMessage message) throws IOException, JMSException {
