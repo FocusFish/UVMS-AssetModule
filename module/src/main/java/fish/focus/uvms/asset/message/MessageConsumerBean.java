@@ -33,6 +33,9 @@ import javax.inject.Inject;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
 
 @MessageDriven(mappedName = MessageConstants.QUEUE_ASSET_EVENT, activationConfig = {
     @ActivationConfigProperty(propertyName = "destinationType", propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
@@ -92,8 +95,22 @@ public class MessageConsumerBean implements MessageListener {
                     assetErrorEvent.fire(new AssetMessageEvent(textMessage, AssetModuleResponseMapper.createFaultMessage(FaultCode.ASSET_MESSAGE, "Method not implemented")));
             }
         } catch (Exception e) {
-            LOG.error("[ Error when receiving message in AssetModule. ]", e);
+            LOG.error("[ Error when receiving message in AssetModule. ]" + findLineInStackTrace(e,"duplicate key value violates unique constraint"));
             assetErrorEvent.fire(new AssetMessageEvent(textMessage, AssetModuleResponseMapper.createFaultMessage(FaultCode.ASSET_MESSAGE, "Method not implemented")));
         }
+    }
+
+    private String findLineInStackTrace(Exception e, String searchPhrase) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String stackTrace = sw.toString();
+        String[] lines = stackTrace.split("\n");
+        for (String line : lines) {
+            if (line.contains(searchPhrase)) {
+                return line.trim();
+            }
+        }
+        return stackTrace;
     }
 }
