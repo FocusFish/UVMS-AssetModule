@@ -438,8 +438,6 @@ public class TerminalDaoBean {
                 "                      FROM asset.asset_aud aud\n" + 
                 "                      WHERE aud.rev <= ca.rev\n" + 
                 "                      AND aa.id = aud.id)\n"+
-                "AND ca.chan_conf = false\n" + 
-                "AND ca.chan_poll = false\n" + 
                 "AND aa.national_id IS NOT NULL\n" +
                 "AND aa.rev > 1\n" +
                 "AND mt.rev > 1\n" +
@@ -450,8 +448,6 @@ public class TerminalDaoBean {
                 "FROM asset.channel c \n" +
                 "JOIN asset.mobileterminal m ON c.mobterm_id = m.id \n" +
                 "JOIN asset.asset a ON m.asset_id = a.id \n" +
-                "AND c.chan_conf = false\n" +
-                "AND c.chan_poll = false\n" +
                 "AND a.national_id IS NOT NULL");
         
         List<Object[]> vmsBillingObject = q.getResultList();
