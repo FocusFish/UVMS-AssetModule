@@ -3,9 +3,9 @@ package fish.focus.uvms.rest.asset.service;
 import fish.focus.schema.mobileterminal.polltypes.v1.PollMobileTerminal;
 import fish.focus.schema.mobileterminal.polltypes.v1.PollRequestType;
 import fish.focus.schema.mobileterminal.polltypes.v1.PollType;
-import fish.focus.uvms.commons.date.JsonBConfigurator;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.dto.AssetBO;
+import fish.focus.uvms.commons.date.JsonBConfigurator;
 import fish.focus.uvms.mobileterminal.dto.SanePollDto;
 import fish.focus.uvms.mobileterminal.entity.Channel;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
@@ -18,7 +18,6 @@ import fish.focus.uvms.rest.asset.AssetMatcher;
 import fish.focus.uvms.rest.mobileterminal.rest.MobileTerminalTestHelper;
 import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +38,7 @@ import java.util.UUID;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)

@@ -1,15 +1,10 @@
 package fish.focus.uvms.asset.client;
 
-import fish.focus.uvms.commons.date.DateUtils;
-import fish.focus.uvms.mobileterminal.bean.MobileTerminalServiceBean;
-import fish.focus.uvms.mobileterminal.model.dto.MobileTerminalDto;
-import fish.focus.uvms.mobileterminal.model.dto.VmsBillingDto;
-import fish.focus.uvms.rest.mobileterminal.services.MobileTerminalRestResource;
-import fish.focus.uvms.asset.client.AssetClient;
 import fish.focus.uvms.asset.client.model.*;
-import fish.focus.uvms.asset.client.model.mt.*;
+import fish.focus.uvms.asset.client.model.mt.MobileTerminal;
 import fish.focus.uvms.asset.client.model.search.SearchBranch;
 import fish.focus.uvms.asset.client.model.search.SearchFields;
+import fish.focus.uvms.commons.date.DateUtils;
 import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -18,19 +13,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.tocea.easycoverage.annotations.SkipAutomaticTests;
-
-import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import javax.validation.constraints.AssertTrue;
-
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import static junit.framework.TestCase.assertNotNull;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)

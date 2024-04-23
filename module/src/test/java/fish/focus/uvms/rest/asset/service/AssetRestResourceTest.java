@@ -1,19 +1,19 @@
 package fish.focus.uvms.rest.asset.service;
 
-import fish.focus.uvms.commons.date.DateUtils;
-import fish.focus.uvms.commons.date.JsonBConfigurator;
-import fish.focus.wsdl.asset.types.EventCode;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.domain.entity.ContactInfo;
 import fish.focus.uvms.asset.domain.entity.Note;
 import fish.focus.uvms.asset.dto.AssetProjection;
 import fish.focus.uvms.asset.remote.dto.ChangeHistoryRow;
+import fish.focus.uvms.commons.date.DateUtils;
+import fish.focus.uvms.commons.date.JsonBConfigurator;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import fish.focus.uvms.rest.asset.AbstractAssetRestTest;
 import fish.focus.uvms.rest.asset.AssetHelper;
 import fish.focus.uvms.rest.asset.AssetMatcher;
 import fish.focus.uvms.rest.asset.filter.AppError;
 import fish.focus.uvms.rest.mobileterminal.rest.MobileTerminalTestHelper;
+import fish.focus.wsdl.asset.types.EventCode;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.junit.Arquillian;
@@ -34,6 +34,7 @@ import java.util.*;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)

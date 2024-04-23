@@ -1,19 +1,16 @@
 package fish.focus.uvms.rest.mobileterminal.rest.service;
 
-import fish.focus.schema.mobileterminal.polltypes.v1.*;
+import fish.focus.schema.mobileterminal.polltypes.v1.PollRequestType;
+import fish.focus.schema.mobileterminal.polltypes.v1.PollType;
+import fish.focus.schema.mobileterminal.polltypes.v1.PollableQuery;
+import fish.focus.schema.mobileterminal.polltypes.v1.ProgramPollStatus;
 import fish.focus.schema.mobileterminal.types.v1.ListPagination;
-import fish.focus.schema.mobileterminal.types.v1.PluginCapability;
-import fish.focus.schema.mobileterminal.types.v1.PluginCapabilityType;
-import fish.focus.schema.mobileterminal.types.v1.PluginService;
-import fish.focus.uvms.commons.date.DateUtils;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.mobileterminal.dto.PollChannelDto;
 import fish.focus.uvms.mobileterminal.dto.PollChannelListDto;
 import fish.focus.uvms.mobileterminal.dto.PollDto;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
-import fish.focus.uvms.mobileterminal.entity.MobileTerminalPlugin;
 import fish.focus.uvms.mobileterminal.entity.ProgramPoll;
-import fish.focus.uvms.mobileterminal.entity.types.PollTypeEnum;
 import fish.focus.uvms.mobileterminal.model.dto.CreatePollResultDto;
 import fish.focus.uvms.mobileterminal.model.dto.SimpleCreatePoll;
 import fish.focus.uvms.rest.asset.AbstractAssetRestTest;
@@ -28,17 +25,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
