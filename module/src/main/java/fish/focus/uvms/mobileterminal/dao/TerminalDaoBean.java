@@ -430,7 +430,11 @@ public class TerminalDaoBean {
         Query q = em.createNativeQuery("SELECT DISTINCT ca.dnid, ca.member_number,\n" +
                 " ca.com_channel_name, mt.serial_no,\n" +
                 " mt.satellite_number, aa.national_id,\n" +
-                " ca.start_date, ca.end_date\n" + 
+                " ca.start_date,\n" +
+                " CASE\n" +
+                "     WHEN ca.end_date IS NULL OR ca.end_date < ca.updattime THEN ca.updattime\n" +
+                "     ELSE ca.end_date\n" +
+                " END AS end_date\n" +
                 "FROM asset.channel_aud ca \n" + 
                 "JOIN asset.mobileterminal_aud mt ON ca.mobterm_id = mt.id AND ca.rev = mt.rev \n" + 
                 "JOIN asset.asset_aud aa ON mt.asset_id = aa.id AND mt.rev = aa.rev \n" + 
