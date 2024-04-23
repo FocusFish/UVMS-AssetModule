@@ -4,7 +4,7 @@
 	<parent>
 	    <groupId>fish.focus.uvms.asset</groupId>
 	    <artifactId>asset</artifactId>
-	    <version>6.8.30</version>
+	    <version>6.8.31</version>
 	    <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -29,7 +29,7 @@
 				<db.outputFile>changelog/generatedChangelog.xml</db.outputFile>
 				<driver.groupId>org.postgresql</driver.groupId>
 				<driver.artifactId>postgresql</driver.artifactId>
-				<driver.version>42.7.2</driver.version>
+				<driver.version>42.7.3</driver.version>
 			</properties>
 			<dependencies>
 		        <dependency>
@@ -114,7 +114,7 @@
 		<plugins>
 				<plugin>
 					<artifactId>maven-assembly-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>3.7.1</version>
 					<configuration>
 						<descriptors>
 							<descriptor>assembly.xml</descriptor>
