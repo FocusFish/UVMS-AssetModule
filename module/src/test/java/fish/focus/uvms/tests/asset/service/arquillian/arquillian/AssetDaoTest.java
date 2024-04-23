@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)

@@ -11,12 +11,12 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.rest.mobileterminal.rest.service;
 
-import fish.focus.uvms.commons.date.JsonBConfigurator;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.remote.dto.ChangeHistoryRow;
 import fish.focus.uvms.asset.remote.dto.ChangeType;
 import fish.focus.uvms.asset.remote.dto.ChannelChangeHistory;
 import fish.focus.uvms.asset.util.JsonBConfiguratorAsset;
+import fish.focus.uvms.commons.date.JsonBConfigurator;
 import fish.focus.uvms.mobileterminal.entity.Channel;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import fish.focus.uvms.mobileterminal.entity.types.MobileTerminalStatus;
@@ -40,9 +40,11 @@ import javax.ws.rs.core.Response;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
+
 import static javax.ws.rs.core.Response.Status.OK;
 import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)

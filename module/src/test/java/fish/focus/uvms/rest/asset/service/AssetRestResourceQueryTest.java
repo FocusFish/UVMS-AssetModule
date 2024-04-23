@@ -10,12 +10,12 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.rest.asset.service;
 
-import fish.focus.uvms.commons.date.DateUtils;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.dto.AssetListResponse;
 import fish.focus.uvms.asset.remote.dto.search.SearchBranch;
 import fish.focus.uvms.asset.remote.dto.search.SearchFields;
 import fish.focus.uvms.asset.remote.dto.search.SearchLeaf;
+import fish.focus.uvms.commons.date.DateUtils;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import fish.focus.uvms.rest.asset.AbstractAssetRestTest;
 import fish.focus.uvms.rest.asset.AssetHelper;
@@ -33,11 +33,13 @@ import javax.ws.rs.core.MediaType;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)

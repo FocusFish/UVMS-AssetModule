@@ -1,6 +1,5 @@
 package fish.focus.uvms.tests.asset.service.arquillian.arquillian;
 
-import static org.hamcrest.CoreMatchers.is;
 import fish.focus.schema.exchange.plugin.types.v1.PluginType;
 import fish.focus.uvms.asset.bean.AssetFilterServiceBean;
 import fish.focus.uvms.asset.bean.AssetServiceBean;
@@ -35,6 +34,8 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.*;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
