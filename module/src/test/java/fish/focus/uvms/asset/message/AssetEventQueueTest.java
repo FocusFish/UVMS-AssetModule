@@ -10,37 +10,34 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.asset.message;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import javax.inject.Inject;
-import javax.jms.Message;
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.container.test.api.RunAsClient;
-import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import fish.focus.wsdl.asset.module.AssetModuleMethod;
-import fish.focus.wsdl.asset.module.PingRequest;
-import fish.focus.wsdl.asset.types.Asset;
-import fish.focus.wsdl.asset.types.AssetIdType;
-import fish.focus.wsdl.asset.types.AssetListCriteriaPair;
-import fish.focus.wsdl.asset.types.AssetListQuery;
-import fish.focus.wsdl.asset.types.CarrierSource;
-import fish.focus.wsdl.asset.types.ConfigSearchField;
 import fish.focus.uvms.asset.bean.AssetServiceBean;
 import fish.focus.uvms.asset.domain.constant.AssetIdentifier;
 import fish.focus.uvms.asset.message.event.AssetModelMapper;
 import fish.focus.uvms.asset.model.mapper.JAXBMarshaller;
 import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import fish.focus.uvms.tests.asset.service.arquillian.arquillian.AssetTestsHelper;
+import fish.focus.wsdl.asset.module.AssetModuleMethod;
+import fish.focus.wsdl.asset.module.PingRequest;
+import fish.focus.wsdl.asset.types.Asset;
+import fish.focus.wsdl.asset.types.AssetIdType;
+import fish.focus.wsdl.asset.types.CarrierSource;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.inject.Inject;
+import javax.jms.Message;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class AssetEventQueueTest extends BuildAssetServiceDeployment {
