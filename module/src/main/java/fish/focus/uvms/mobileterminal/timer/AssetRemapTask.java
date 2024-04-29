@@ -1,14 +1,15 @@
 package fish.focus.uvms.mobileterminal.timer;
 
-import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 import fish.focus.uvms.asset.bean.AssetServiceBean;
 import fish.focus.uvms.asset.domain.dao.AssetDao;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.domain.entity.AssetRemapMapping;
-import fish.focus.uvms.asset.dto.AssetMergeInfo;
 import fish.focus.uvms.asset.message.event.UpdatedAssetEvent;
+import fish.focus.uvms.asset.remote.dto.AssetMergeInfo;
+
+import javax.ejb.Stateless;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;

@@ -1,11 +1,11 @@
 package fish.focus.uvms.asset.message;
 
+import fish.focus.uvms.asset.domain.entity.Asset;
+import fish.focus.uvms.asset.message.event.UpdatedAssetEvent;
+import fish.focus.uvms.asset.remote.dto.AssetMergeInfo;
 import fish.focus.uvms.commons.date.JsonBConfigurator;
 import fish.focus.uvms.commons.message.api.MessageConstants;
 import fish.focus.uvms.commons.message.context.MappedDiagnosticContext;
-import fish.focus.uvms.asset.domain.entity.Asset;
-import fish.focus.uvms.asset.dto.AssetMergeInfo;
-import fish.focus.uvms.asset.message.event.UpdatedAssetEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
