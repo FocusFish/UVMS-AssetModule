@@ -1,10 +1,10 @@
-package fish.focus.uvms.asset.dto;
+package fish.focus.uvms.asset.remote.dto;
 
 public class AssetMergeInfo {
     String oldAssetId;
     String newAssetId;
 
-    public AssetMergeInfo(){
+    public AssetMergeInfo() {
 
     }
 
