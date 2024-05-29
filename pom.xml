@@ -4,23 +4,23 @@
 
     <groupId>fish.focus.uvms.asset</groupId>
     <artifactId>asset</artifactId>
-    <version>6.8.32</version>
+    <version>6.8.33</version>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>fish.focus.uvms.maven</groupId>
         <artifactId>uvms-pom</artifactId>
         <relativePath />
-        <version>3.19</version>
+        <version>3.21</version>
     </parent>
 
     <properties>
     	<asset.api.check.against.version>5.0.0</asset.api.check.against.version>
-        <docker.dev.version>4.2.33</docker.dev.version>
+        <docker.dev.version>4.2.34</docker.dev.version>
     	<docker.liquibase.changeLogFile>LIQUIBASE/changelog/db-changelog-master.xml</docker.liquibase.changeLogFile>
         <docker.liquibase.db.user>asset</docker.liquibase.db.user>
         <docker.liquibase.db.passwd>asset</docker.liquibase.db.passwd>
-        <uvms.pom.version>3.19</uvms.pom.version>
+        <uvms.pom.version>3.21</uvms.pom.version>
         <usm4uvms.version>4.1.12</usm4uvms.version>
         <uvms.common.version>4.1.15</uvms.common.version>
         <uvms.config.version>4.1.6</uvms.config.version>
