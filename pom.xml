@@ -4,7 +4,7 @@
 
     <groupId>fish.focus.uvms.asset</groupId>
     <artifactId>asset</artifactId>
-    <version>6.8.34</version>
+    <version>6.8.35-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
