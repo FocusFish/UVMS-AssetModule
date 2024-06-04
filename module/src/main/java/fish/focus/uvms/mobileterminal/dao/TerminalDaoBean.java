@@ -431,17 +431,14 @@ public class TerminalDaoBean {
                 " ca.com_channel_name, mt.serial_no,\n" +
                 " mt.satellite_number, aa.national_id,\n" +
                 " ca.start_date,\n" +
-                " CASE\n" +
-                "     WHEN ca.end_date IS NULL OR ca.end_date < ca.updattime THEN ca.updattime\n" +
-                "     ELSE ca.end_date\n" +
-                " END AS end_date\n" +
+                " ca.end_date\n" +
                 "FROM asset.channel_aud ca \n" + 
                 "JOIN asset.mobileterminal_aud mt ON ca.mobterm_id = mt.id AND ca.rev = mt.rev \n" + 
                 "JOIN asset.asset_aud aa ON mt.asset_id = aa.id AND mt.rev = aa.rev \n" + 
                 "WHERE aa.rev = (SELECT MAX(aud.rev)\n" + 
                 "                      FROM asset.asset_aud aud\n" + 
                 "                      WHERE aud.rev <= ca.rev\n" + 
-                "                      AND aa.id = aud.id)\n"+
+                "                      AND aa.id = aud.id)\n" +
                 "AND aa.national_id IS NOT NULL\n" +
                 "AND aa.rev > 1\n" +
                 "AND mt.rev > 1\n" +
@@ -453,7 +450,7 @@ public class TerminalDaoBean {
                 "JOIN asset.mobileterminal m ON c.mobterm_id = m.id \n" +
                 "JOIN asset.asset a ON m.asset_id = a.id \n" +
                 "AND a.national_id IS NOT NULL");
-        
+
         List<Object[]> vmsBillingObject = q.getResultList();
         List<VmsBillingDto> vmsBillingListDao = new ArrayList<>();
         
