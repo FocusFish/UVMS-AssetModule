@@ -4,7 +4,9 @@ import fish.focus.uvms.asset.client.model.*;
 import fish.focus.uvms.asset.client.model.mt.MobileTerminal;
 import fish.focus.uvms.asset.client.model.search.SearchBranch;
 import fish.focus.uvms.asset.client.model.search.SearchFields;
+import fish.focus.uvms.asset.dto.AssetProjection;
 import fish.focus.uvms.commons.date.DateUtils;
+import fish.focus.uvms.commons.date.JsonBConfigurator;
 import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static junit.framework.TestCase.assertNotNull;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
@@ -540,7 +543,11 @@ public class AssetClientTest extends AbstractClientTest {
         }
         String output = assetClient.getAssetList(assetIdList);
 
-        assertEquals(42, output.split("externalMarking").length);
+        var jsonb = new JsonBConfigurator().getContext(null);
+        List<AssetProjection> assets = jsonb.fromJson(output, new ArrayList<AssetProjection>() {
+        }.getClass().getGenericSuperclass());
+
+        assertThat("should return the same number of assets as was created", assets.size(), is(41));
     }
 
     @Test
