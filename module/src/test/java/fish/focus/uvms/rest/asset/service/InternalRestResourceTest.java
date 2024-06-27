@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static junit.framework.TestCase.assertNotNull;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -313,24 +314,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
     @Test
     @OperateOnDeployment("normal")
     public void createPollUsingOnlyAssetTest() {      //just checking that the endpoint exists, there are better tests for the logic in pollRestResources
-        Asset asset = AssetHelper.createBasicAsset();
-        asset = getWebTargetInternal()
-                .path("/asset")
-                .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .post(Entity.json(asset), Asset.class);
-        MobileTerminal mt = MobileTerminalTestHelper.createBasicMobileTerminal();
-        mt.setAsset(asset);
-
-        Jsonb jsonb = new JsonBConfigurator().getContext(null); //for some reason serializing the mt gives a stack overflow error while serializing using the client, so we do it manually b4 instead
-        String json = jsonb.toJson(mt);
-
-        Response mtResponse = getWebTargetInternal()
-                .path("mobileterminal")
-                .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .post(Entity.json(json), Response.class);
-        assertEquals(200, mtResponse.getStatus());
+        Asset asset = createTestAssetWithAttachedMobileTerminal();
 
         SimpleCreatePoll createPoll = new SimpleCreatePoll();
         createPoll.setComment("test comment");
@@ -349,43 +333,88 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void createPollNonexistantAssetTest() {
+    public void createPollWithInactiveAssetTest() {
+        Asset asset = createTestAssetWithAttachedMobileTerminal();
+
+        // deactivate the asset to test that an asset can be e.g. in port for a while without UVMS sending polls
+        asset.setActive(false);
+        var updatedAsset = updateAsset(asset);
+        assertThat("Asset should be inactive", updatedAsset.getActive(), is(false));
+
+        SimpleCreatePoll createPoll = new SimpleCreatePoll();
+        createPoll.setComment("test comment");
+
+        try (var response = getWebTargetInternal()
+                .path("/internal")
+                .path("createPollForAsset")
+                .path(updatedAsset.getId().toString())
+                .queryParam("username", "Test User")
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
+                .post(Entity.json(createPoll), Response.class)) {
+
+            assertThat("http response status code", response.getStatus(), is(500));
+            String responseException = response.readEntity(String.class);
+            assertThat(responseException, containsString("is inactive"));
+        }
+    }
+
+    @Test
+    @OperateOnDeployment("normal")
+    public void createPollWithParkedAssetTest() {
+        Asset asset = createTestAssetWithAttachedMobileTerminal();
+
+        // park the asset and verify that UVMS is not sending polls
+        // parked assets should be inactive but this test checks that a parked active asset still doesn't get polled
+        asset.setParked(true);
+        asset = updateAsset(asset);
+        assertThat("Asset should be parked", asset.getParked(), is(true));
+
+        SimpleCreatePoll createPoll = new SimpleCreatePoll();
+        createPoll.setComment("test comment");
+
+        try (var response = getWebTargetInternal()
+                .path("/internal")
+                .path("createPollForAsset")
+                .path(asset.getId().toString())
+                .queryParam("username", "Test User")
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
+                .post(Entity.json(createPoll), Response.class)) {
+
+            assertThat("http response status code", response.getStatus(), is(500));
+            String responseException = response.readEntity(String.class);
+            assertThat(responseException, containsString("is parked"));
+        }
+    }
+
+    @Test
+    @OperateOnDeployment("normal")
+    public void createPollNonexistentAssetTest() {
         UUID assetId = UUID.randomUUID();
 
         SimpleCreatePoll createPoll = new SimpleCreatePoll();
         createPoll.setComment("Error test comment");
 
-        Response response = getWebTargetInternal()
+        try (Response response = getWebTargetInternal()
                 .path("/internal")
                 .path("createPollForAsset")
                 .path(assetId.toString())
                 .queryParam("username", "Test User")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
-                .post(Entity.json(createPoll), Response.class);
+                .post(Entity.json(createPoll), Response.class)) {
 
-        assertEquals(500, response.getStatus());
-        String s = response.readEntity(String.class);
-        assertTrue(s.contains("Null"));
+            assertThat("http response status code", response.getStatus(), is(500));
+            String responseException = response.readEntity(String.class);
+            assertThat(responseException, containsString("No asset with id: " + assetId));
+        }
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void getAllPollsForAnAsset() {
-        Asset asset = AssetHelper.createBasicAsset();
-        asset = createAsset(asset);
-        MobileTerminal mt = MobileTerminalTestHelper.createBasicMobileTerminal();
-        mt.setAsset(asset);
-
-        Jsonb jsonb = new JsonBConfigurator().getContext(null); //for some reason serializing the mt gives a stack overflow error while serializing using the client, so we do it manually b4 instead
-        String json = jsonb.toJson(mt);
-
-        Response mtResponse = getWebTargetInternal()
-                .path("mobileterminal")
-                .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .post(Entity.json(json), Response.class);
-        assertEquals(200, mtResponse.getStatus());
+        Asset asset = createTestAssetWithAttachedMobileTerminal();
 
         SimpleCreatePoll createPoll = new SimpleCreatePoll();
         createPoll.setComment("Test comment");
@@ -417,20 +446,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
     @Test
     @OperateOnDeployment("normal")
     public void getProgramPollForAnAsset() {
-        Asset asset = AssetHelper.createBasicAsset();
-        asset = createAsset(asset);
-        MobileTerminal mt = MobileTerminalTestHelper.createBasicMobileTerminal();
-        mt.setAsset(asset);
-
-        Jsonb jsonb = new JsonBConfigurator().getContext(null);
-        String json = jsonb.toJson(mt);
-
-        Response mtResponse = getWebTargetInternal()
-                .path("mobileterminal")
-                .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .post(Entity.json(json), Response.class);
-        assertEquals(200, mtResponse.getStatus());
+        Asset asset = createTestAssetWithAttachedMobileTerminal();
 
         Integer frequency = 100;
         Instant startDate = Instant.now().minus(1, ChronoUnit.HOURS).truncatedTo(ChronoUnit.MILLIS);
@@ -474,20 +490,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
     @Test
     @OperateOnDeployment("normal")
     public void getPollInfo() {
-        Asset asset = AssetHelper.createBasicAsset();
-        asset = createAsset(asset);
-        MobileTerminal mt = MobileTerminalTestHelper.createBasicMobileTerminal();
-        mt.setAsset(asset);
-
-        Jsonb jsonb = new JsonBConfigurator().getContext(null); //for some reason serializing the mt gives a stack overflow error while serializing using the client, so we do it manually b4 instead
-        String json = jsonb.toJson(mt);
-
-        Response mtResponse = getWebTargetInternal()
-                .path("mobileterminal")
-                .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .post(Entity.json(json), Response.class);
-        assertEquals(200, mtResponse.getStatus());
+        Asset asset = createTestAssetWithAttachedMobileTerminal();
 
         SimpleCreatePoll createPoll = new SimpleCreatePoll();
         createPoll.setComment("Test comment");
@@ -614,14 +617,11 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
         assertEquals(mt.getAntenna(), historicalTerminal.getAntenna());
     }
 
-
     @Test
     @OperateOnDeployment("normal")
     public void getMobileTerminalAtDateWithMemberNumberAndDnidTest() throws InterruptedException {
-
         Integer memberNr = (int) (10000 + (Math.random() * (100000 - 10000)));
         Integer dnid = (int) (100 + (Math.random() * (1000 - 100)));
-        ;
 
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
         Channel channel = MobileTerminalTestHelper.createBasicChannel();
@@ -671,10 +671,8 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
     @Test
     @OperateOnDeployment("normal")
     public void getMobileTerminalWithMemberNumberAndDnidAtDateTest() throws InterruptedException {
-
         Integer memberNr = (int) (10000 + (Math.random() * (100000 - 10000)));
         Integer dnid = (int) (100 + (Math.random() * (1000 - 100)));
-        ;
 
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
         Channel channel = MobileTerminalTestHelper.createBasicChannel();
@@ -738,11 +736,36 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
         assertEquals(dnid, respChannel.getDnid());
     }
 
+    private Asset createTestAssetWithAttachedMobileTerminal() {
+        var basicAsset = AssetHelper.createBasicAsset();
+        var asset = createAsset(basicAsset);
+
+        var mt = MobileTerminalTestHelper.createBasicMobileTerminal();
+        mt.setAsset(asset);
+
+        try (var mtResponse = getWebTargetInternal()
+                .path("mobileterminal")
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
+                .post(Entity.json(mt), Response.class)) {
+            assertEquals(200, mtResponse.getStatus());
+        }
+        return asset;
+    }
+
     private Asset createAsset(Asset asset) {
         return getWebTargetInternal()
                 .path("/asset")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
                 .post(Entity.json(asset), Asset.class);
+    }
+
+    private Asset updateAsset(Asset asset) {
+        return getWebTargetInternal()
+                .path("/asset")
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
+                .put(Entity.json(asset), Asset.class);
     }
 }
