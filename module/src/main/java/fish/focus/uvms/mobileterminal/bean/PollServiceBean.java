@@ -74,15 +74,22 @@ public class PollServiceBean {
     private AssetServiceBean assetServiceBean;
 
     public CreatePollResultDto createPollForAsset(UUID assetId, SimpleCreatePoll createPoll, String username) {
-        MobileTerminal mt = mobileTerminalServiceBean.getActiveMTForAsset(assetId);
-
-        if (mt == null) {
-            Asset assetById = assetServiceBean.getAssetById(assetId);
-            if (assetById == null) {
-                throw new IllegalArgumentException("No asset with id: " + assetId + " found, unable to poll");
-            }
-            throw new IllegalArgumentException("No active MT for asset: " + assetById.getName() + " (" + assetById.getIrcs() + ") , unable to poll");
+        Asset asset = assetServiceBean.getAssetById(assetId);
+        if (asset == null) {
+            throw new IllegalArgumentException("No asset with id: " + assetId + " found, unable to poll");
         }
+        if (Boolean.FALSE.equals(asset.getActive())) {
+            throw new IllegalArgumentException("Aborting poll creation. Asset (" + assetId + ") is inactive");
+        }
+        if (Boolean.TRUE.equals(asset.getParked())) {
+            throw new IllegalArgumentException("Aborting poll creation. Asset (" + assetId + ") is parked");
+        }
+
+        MobileTerminal mt = mobileTerminalServiceBean.getActiveMTForAsset(asset);
+        if (mt == null) {
+            throw new IllegalArgumentException("No active MT for asset: " + asset.getName() + " (" + asset.getIrcs() + ") , unable to poll");
+        }
+
         Channel channel = mobileTerminalServiceBean.getPollableChannel(mt);
         if (channel == null) {
             throw new IllegalArgumentException("No pollable channel for this active MT: " + mt.getSerialNo() + " , unable to poll");
