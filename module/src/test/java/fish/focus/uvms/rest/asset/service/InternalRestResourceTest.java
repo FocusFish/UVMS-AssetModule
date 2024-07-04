@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static junit.framework.TestCase.assertNotNull;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -52,12 +53,10 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .get();
-        
 
         assertThat(response.getStatus(), is(Status.OK.getStatusCode()));
-
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetByIdGUIDTest() {
@@ -67,16 +66,16 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
                 .post(Entity.json(asset), Asset.class);
-        
+
         Asset fetchedAsset = getWebTargetInternal()
                 .path("/internal/asset/guid/" + createdAsset.getId())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .get(Asset.class);
-        
+
         assertThat(fetchedAsset, is(AssetMatcher.assetEquals(createdAsset)));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetByIdCfrTest() {
@@ -86,16 +85,16 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
                 .post(Entity.json(asset), Asset.class);
-        
+
         Asset fetchedAsset = getWebTargetInternal()
                 .path("/internal/asset/cfr/" + createdAsset.getCfr())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .get(Asset.class);
-        
+
         assertThat(fetchedAsset, is(AssetMatcher.assetEquals(createdAsset)));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetByIdIrcsTest() {
@@ -105,16 +104,16 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
                 .post(Entity.json(asset), Asset.class);
-        
+
         Asset fetchedAsset = getWebTargetInternal()
                 .path("/internal/asset/ircs/" + createdAsset.getIrcs())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .get(Asset.class);
-        
+
         assertThat(fetchedAsset, is(AssetMatcher.assetEquals(createdAsset)));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetByIdImoTest() {
@@ -124,16 +123,16 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
                 .post(Entity.json(asset), Asset.class);
-        
+
         Asset fetchedAsset = getWebTargetInternal()
                 .path("/internal/asset/imo/" + createdAsset.getImo())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .get(Asset.class);
-        
+
         assertThat(fetchedAsset, is(AssetMatcher.assetEquals(createdAsset)));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetByIdMmsiTest() {
@@ -143,16 +142,16 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
                 .post(Entity.json(asset), Asset.class);
-        
+
         Asset fetchedAsset = getWebTargetInternal()
                 .path("/internal/asset/mmsi/" + createdAsset.getMmsi())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .get(Asset.class);
-        
+
         assertThat(fetchedAsset, is(AssetMatcher.assetEquals(createdAsset)));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetByIdIccatTest() {
@@ -162,16 +161,16 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
                 .post(Entity.json(asset), Asset.class);
-        
+
         Asset fetchedAsset = getWebTargetInternal()
                 .path("/internal/asset/iccat/" + createdAsset.getIccat())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .get(Asset.class);
-        
+
         assertThat(fetchedAsset, is(AssetMatcher.assetEquals(createdAsset)));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetByIdUviTest() {
@@ -181,16 +180,16 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
                 .post(Entity.json(asset), Asset.class);
-        
+
         Asset fetchedAsset = getWebTargetInternal()
                 .path("/internal/asset/uvi/" + createdAsset.getUvi())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .get(Asset.class);
-        
+
         assertThat(fetchedAsset, is(AssetMatcher.assetEquals(createdAsset)));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetByIdGfcmTest() {
@@ -200,13 +199,13 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
                 .post(Entity.json(asset), Asset.class);
-        
+
         Asset fetchedAsset = getWebTargetInternal()
                 .path("/internal/asset/gfcm/" + createdAsset.getGfcm())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .get(Asset.class);
-        
+
         assertThat(fetchedAsset, is(AssetMatcher.assetEquals(createdAsset)));
     }
 
@@ -222,7 +221,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .post(Entity.json(assetBo), Asset.class);
-        
+
         assertThat(upsertedAsset, is(CoreMatchers.notNullValue()));
     }
 
@@ -315,24 +314,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
     @Test
     @OperateOnDeployment("normal")
     public void createPollUsingOnlyAssetTest() {      //just checking that the endpoint exists, there are better tests for the logic in pollRestResources
-        Asset asset = AssetHelper.createBasicAsset();
-        asset = getWebTargetInternal()
-                .path("/asset")
-                .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .post(Entity.json(asset), Asset.class);
-        MobileTerminal mt = MobileTerminalTestHelper.createBasicMobileTerminal();
-        mt.setAsset(asset);
-
-        Jsonb jsonb = new JsonBConfigurator().getContext(null); //for some reason serializing the mt gives a stack overflow error while serializing using the client, so we do it manually b4 instead
-        String json = jsonb.toJson(mt);
-
-        Response mtResponse = getWebTargetInternal()
-                .path("mobileterminal")
-                .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .post(Entity.json(json), Response.class);
-        assertEquals(200, mtResponse.getStatus());
+        Asset asset = createTestAssetWithAttachedMobileTerminal();
 
         SimpleCreatePoll createPoll = new SimpleCreatePoll();
         createPoll.setComment("test comment");
@@ -351,43 +333,88 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void createPollNonexistantAssetTest() {
+    public void createPollWithInactiveAssetTest() {
+        Asset asset = createTestAssetWithAttachedMobileTerminal();
+
+        // deactivate the asset to test that an asset can be e.g. in port for a while without UVMS sending polls
+        asset.setActive(false);
+        var updatedAsset = updateAsset(asset);
+        assertThat("Asset should be inactive", updatedAsset.getActive(), is(false));
+
+        SimpleCreatePoll createPoll = new SimpleCreatePoll();
+        createPoll.setComment("test comment");
+
+        try (var response = getWebTargetInternal()
+                .path("/internal")
+                .path("createPollForAsset")
+                .path(updatedAsset.getId().toString())
+                .queryParam("username", "Test User")
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
+                .post(Entity.json(createPoll), Response.class)) {
+
+            assertThat("http response status code", response.getStatus(), is(500));
+            String responseException = response.readEntity(String.class);
+            assertThat(responseException, containsString("is inactive"));
+        }
+    }
+
+    @Test
+    @OperateOnDeployment("normal")
+    public void createPollWithParkedAssetTest() {
+        Asset asset = createTestAssetWithAttachedMobileTerminal();
+
+        // park the asset and verify that UVMS is not sending polls
+        // parked assets should be inactive but this test checks that a parked active asset still doesn't get polled
+        asset.setParked(true);
+        asset = updateAsset(asset);
+        assertThat("Asset should be parked", asset.getParked(), is(true));
+
+        SimpleCreatePoll createPoll = new SimpleCreatePoll();
+        createPoll.setComment("test comment");
+
+        try (var response = getWebTargetInternal()
+                .path("/internal")
+                .path("createPollForAsset")
+                .path(asset.getId().toString())
+                .queryParam("username", "Test User")
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
+                .post(Entity.json(createPoll), Response.class)) {
+
+            assertThat("http response status code", response.getStatus(), is(500));
+            String responseException = response.readEntity(String.class);
+            assertThat(responseException, containsString("is parked"));
+        }
+    }
+
+    @Test
+    @OperateOnDeployment("normal")
+    public void createPollNonexistentAssetTest() {
         UUID assetId = UUID.randomUUID();
 
         SimpleCreatePoll createPoll = new SimpleCreatePoll();
         createPoll.setComment("Error test comment");
 
-        Response response = getWebTargetInternal()
+        try (Response response = getWebTargetInternal()
                 .path("/internal")
                 .path("createPollForAsset")
                 .path(assetId.toString())
                 .queryParam("username", "Test User")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
-                .post(Entity.json(createPoll), Response.class);
+                .post(Entity.json(createPoll), Response.class)) {
 
-        assertEquals(500, response.getStatus());
-        String s = response.readEntity(String.class);
-        assertTrue(s.contains("Null"));
+            assertThat("http response status code", response.getStatus(), is(500));
+            String responseException = response.readEntity(String.class);
+            assertThat(responseException, containsString("No asset with id: " + assetId));
+        }
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void getAllPollsForAnAsset() {
-        Asset asset = AssetHelper.createBasicAsset();
-        asset = createAsset(asset);
-        MobileTerminal mt = MobileTerminalTestHelper.createBasicMobileTerminal();
-        mt.setAsset(asset);
-
-        Jsonb jsonb = new JsonBConfigurator().getContext(null); //for some reason serializing the mt gives a stack overflow error while serializing using the client, so we do it manually b4 instead
-        String json = jsonb.toJson(mt);
-
-        Response mtResponse = getWebTargetInternal()
-                .path("mobileterminal")
-                .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .post(Entity.json(json), Response.class);
-        assertEquals(200, mtResponse.getStatus());
+        Asset asset = createTestAssetWithAttachedMobileTerminal();
 
         SimpleCreatePoll createPoll = new SimpleCreatePoll();
         createPoll.setComment("Test comment");
@@ -403,13 +430,14 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
 
         assertNotNull(response);
 
-        List<SanePollDto> pollList =  getWebTargetInternal()
+        List<SanePollDto> pollList = getWebTargetInternal()
                 .path("/internal")
                 .path("pollListForAsset")
                 .path(asset.getId().toString())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
-                .get( new GenericType<List<SanePollDto>>() {});
+                .get(new GenericType<List<SanePollDto>>() {
+                });
 
         assertEquals(1, pollList.size());
         assertEquals(response.getSentPolls().get(0), pollList.get(0).getId().toString());
@@ -418,20 +446,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
     @Test
     @OperateOnDeployment("normal")
     public void getProgramPollForAnAsset() {
-        Asset asset = AssetHelper.createBasicAsset();
-        asset = createAsset(asset);
-        MobileTerminal mt = MobileTerminalTestHelper.createBasicMobileTerminal();
-        mt.setAsset(asset);
-
-        Jsonb jsonb = new JsonBConfigurator().getContext(null);
-        String json = jsonb.toJson(mt);
-
-        Response mtResponse = getWebTargetInternal()
-                .path("mobileterminal")
-                .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .post(Entity.json(json), Response.class);
-        assertEquals(200, mtResponse.getStatus());
+        Asset asset = createTestAssetWithAttachedMobileTerminal();
 
         Integer frequency = 100;
         Instant startDate = Instant.now().minus(1, ChronoUnit.HOURS).truncatedTo(ChronoUnit.MILLIS);
@@ -455,13 +470,14 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
 
         assertNotNull(response);
 
-        List<SanePollDto> pollList =  getWebTargetInternal()
+        List<SanePollDto> pollList = getWebTargetInternal()
                 .path("/internal")
                 .path("pollListForAsset")
                 .path(asset.getId().toString())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
-                .get( new GenericType<List<SanePollDto>>() {});
+                .get(new GenericType<List<SanePollDto>>() {
+                });
 
         assertEquals(1, pollList.size());
         assertEquals(response.getUnsentPolls().get(0), pollList.get(0).getId().toString());
@@ -474,20 +490,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
     @Test
     @OperateOnDeployment("normal")
     public void getPollInfo() {
-        Asset asset = AssetHelper.createBasicAsset();
-        asset = createAsset(asset);
-        MobileTerminal mt = MobileTerminalTestHelper.createBasicMobileTerminal();
-        mt.setAsset(asset);
-
-        Jsonb jsonb = new JsonBConfigurator().getContext(null); //for some reason serializing the mt gives a stack overflow error while serializing using the client, so we do it manually b4 instead
-        String json = jsonb.toJson(mt);
-
-        Response mtResponse = getWebTargetInternal()
-                .path("mobileterminal")
-                .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .post(Entity.json(json), Response.class);
-        assertEquals(200, mtResponse.getStatus());
+        Asset asset = createTestAssetWithAttachedMobileTerminal();
 
         SimpleCreatePoll createPoll = new SimpleCreatePoll();
         createPoll.setComment("Test comment");
@@ -504,13 +507,13 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
         assertNotNull(response);
         String pollId = response.getSentPolls().get(0);
 
-        SanePollDto poll =  getWebTargetInternal()
+        SanePollDto poll = getWebTargetInternal()
                 .path("/internal")
                 .path("pollInfo")
                 .path(pollId)
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
-                .get( SanePollDto.class);
+                .get(SanePollDto.class);
 
         assertEquals(pollId, poll.getId().toString());
         assertEquals(asset.getId(), poll.getAssetId());
@@ -533,7 +536,8 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .path("mobileterminals")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
-                .get(new GenericType<List<MobileTerminal>>() {});
+                .get(new GenericType<List<MobileTerminal>>() {
+                });
 
         assertTrue(mobileTerminals.stream().anyMatch(m -> m.getId().equals(createdMobileTerminal.getId())));
     }
@@ -563,7 +567,8 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .queryParam("includeHistory", true)
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
-                .get(new GenericType<List<MobileTerminal>>() {});
+                .get(new GenericType<List<MobileTerminal>>() {
+                });
 
         assertTrue(mobileTerminals.stream().anyMatch(m -> m.getHistoryId().equals(createdMobileTerminal.getHistoryId())));
         assertTrue(mobileTerminals.stream().anyMatch(m -> m.getHistoryId().equals(updatedMobileTerminal.getHistoryId())));
@@ -597,7 +602,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .put(Entity.json(json), Response.class);
         assertEquals(200, mtResponse.getStatus());
 
-        Response historicalResponse =  getWebTargetInternal()
+        Response historicalResponse = getWebTargetInternal()
                 .path("/internal")
                 .path("mobileTerminalAtDate")
                 .path(createdTerminal.getId().toString())
@@ -611,14 +616,12 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
         assertEquals(createdTerminal.getId(), historicalTerminal.getId());
         assertEquals(mt.getAntenna(), historicalTerminal.getAntenna());
     }
-    
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getMobileTerminalAtDateWithMemberNumberAndDnidTest() throws InterruptedException {
- 
-        Integer memberNr = (int) (10000 + (Math.random() * (100000 - 10000))) ;
-        Integer dnid = (int) (100 + (Math.random() * (1000 - 100))) ;; 
+        Integer memberNr = (int) (10000 + (Math.random() * (100000 - 10000)));
+        Integer dnid = (int) (100 + (Math.random() * (1000 - 100)));
 
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
         Channel channel = MobileTerminalTestHelper.createBasicChannel();
@@ -629,7 +632,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
         channels.add(channel);
         mobileTerminal.getChannels().clear();
         mobileTerminal.setChannels(channels);
-        
+
         MobileTerminal created = getWebTargetInternal()
                 .path("mobileterminal")
                 .request(MediaType.APPLICATION_JSON)
@@ -639,20 +642,20 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
         Integer newdnid = 54321;
         created.getChannels().iterator().next().setDnid(newdnid);
         Instant createdTimestamp = Instant.now();
-        
+
         MobileTerminal updated = getWebTargetInternal()
                 .path("mobileterminal")
                 .queryParam("comment", "NEW_TEST_COMMENT")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .put(Entity.json(created), MobileTerminal.class);       
+                .put(Entity.json(created), MobileTerminal.class);
 
         Response response = getWebTargetInternal()
                 .path("internal")
                 .path("revision")
-                .queryParam("memberNumber", ""+memberNr)
-                .queryParam("dnid", ""+dnid)
-                .queryParam("date", ""+createdTimestamp.toEpochMilli())
+                .queryParam("memberNumber", "" + memberNr)
+                .queryParam("dnid", "" + dnid)
+                .queryParam("date", "" + createdTimestamp.toEpochMilli())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .get();
@@ -664,13 +667,12 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
         assertEquals(memberNr, respChannel.getMemberNumber());
         assertEquals(dnid, respChannel.getDnid());
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getMobileTerminalWithMemberNumberAndDnidAtDateTest() throws InterruptedException {
- 
-        Integer memberNr = (int) (10000 + (Math.random() * (100000 - 10000))) ;
-        Integer dnid = (int) (100 + (Math.random() * (1000 - 100))) ;; 
+        Integer memberNr = (int) (10000 + (Math.random() * (100000 - 10000)));
+        Integer dnid = (int) (100 + (Math.random() * (1000 - 100)));
 
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
         Channel channel = MobileTerminalTestHelper.createBasicChannel();
@@ -681,64 +683,89 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
         channels.add(channel);
         mobileTerminal.getChannels().clear();
         mobileTerminal.setChannels(channels);
-        
+
         MobileTerminal created = getWebTargetInternal()
                 .path("mobileterminal")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .post(Entity.json(mobileTerminal), MobileTerminal.class);      
+                .post(Entity.json(mobileTerminal), MobileTerminal.class);
 
-        Integer newMemberNumber = 11111 != memberNr? 11111 : 11112;
+        Integer newMemberNumber = 11111 != memberNr ? 11111 : 11112;
         created.getChannels().iterator().next().setMemberNumber(newMemberNumber);
-        
+
         Instant createdTimestamp = Instant.now().minusSeconds(20);
-        
+
         MobileTerminal updated = getWebTargetInternal()
                 .path("mobileterminal")
                 .queryParam("comment", "NEW_TEST_COMMENT")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .put(Entity.json(created), MobileTerminal.class);
-        
+
         Response response = getWebTargetInternal()
                 .path("internal")
                 .path("revision")
-                .queryParam("memberNumber", ""+newMemberNumber)
-                .queryParam("dnid", ""+dnid)
-                .queryParam("date", ""+createdTimestamp.toEpochMilli())
+                .queryParam("memberNumber", "" + newMemberNumber)
+                .queryParam("dnid", "" + dnid)
+                .queryParam("date", "" + createdTimestamp.toEpochMilli())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .get();
 
-      assertEquals(200, response.getStatus());
-      assertNotNull(response);
-      // Should not find Updated mt with new MemberNumber
-      MobileTerminal mt = response.readEntity(MobileTerminal.class);
-      assertNull(mt);
-      
-      response = getWebTargetInternal()
-              .path("internal")
-              .path("revision")
-              .queryParam("memberNumber", ""+newMemberNumber)
-              .queryParam("dnid", ""+dnid)
-              .queryParam("date", ""+Instant.now().toEpochMilli())
-              .request(MediaType.APPLICATION_JSON)
-              .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
-              .get();
-      
-      // Should find Updated mt with new MemberNumber
-      MobileTerminal mt2 = response.readEntity(MobileTerminal.class);
-      assertNotNull(mt2);
-      Channel respChannel = mt2.getChannels().iterator().next();
-      assertEquals(newMemberNumber, respChannel.getMemberNumber());
-      assertEquals(dnid, respChannel.getDnid());
+        assertEquals(200, response.getStatus());
+        assertNotNull(response);
+        // Should not find Updated mt with new MemberNumber
+        MobileTerminal mt = response.readEntity(MobileTerminal.class);
+        assertNull(mt);
+
+        response = getWebTargetInternal()
+                .path("internal")
+                .path("revision")
+                .queryParam("memberNumber", "" + newMemberNumber)
+                .queryParam("dnid", "" + dnid)
+                .queryParam("date", "" + Instant.now().toEpochMilli())
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
+                .get();
+
+        // Should find Updated mt with new MemberNumber
+        MobileTerminal mt2 = response.readEntity(MobileTerminal.class);
+        assertNotNull(mt2);
+        Channel respChannel = mt2.getChannels().iterator().next();
+        assertEquals(newMemberNumber, respChannel.getMemberNumber());
+        assertEquals(dnid, respChannel.getDnid());
     }
 
-    private Asset createAsset(Asset asset){
+    private Asset createTestAssetWithAttachedMobileTerminal() {
+        var basicAsset = AssetHelper.createBasicAsset();
+        var asset = createAsset(basicAsset);
+
+        var mt = MobileTerminalTestHelper.createBasicMobileTerminal();
+        mt.setAsset(asset);
+
+        try (var mtResponse = getWebTargetInternal()
+                .path("mobileterminal")
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
+                .post(Entity.json(mt), Response.class)) {
+            assertEquals(200, mtResponse.getStatus());
+        }
+        return asset;
+    }
+
+    private Asset createAsset(Asset asset) {
         return getWebTargetInternal()
                 .path("/asset")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
                 .post(Entity.json(asset), Asset.class);
+    }
+
+    private Asset updateAsset(Asset asset) {
+        return getWebTargetInternal()
+                .path("/asset")
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
+                .put(Entity.json(asset), Asset.class);
     }
 }

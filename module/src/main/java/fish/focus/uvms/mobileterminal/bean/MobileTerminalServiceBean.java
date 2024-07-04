@@ -295,8 +295,7 @@ public class MobileTerminalServiceBean {
         return revisions;
     }
 
-    public MobileTerminal getActiveMTForAsset(UUID assetId) {
-        Asset asset = assetDao.getAssetById(assetId);
+    public MobileTerminal getActiveMTForAsset(Asset asset) {
         return asset.getMobileTerminals()
                 .stream()
                 .filter(MobileTerminal::getActive)

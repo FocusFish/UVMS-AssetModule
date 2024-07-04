@@ -73,18 +73,25 @@ public class PollServiceBean {
     @Inject
     private AssetServiceBean assetServiceBean;
 
-    public CreatePollResultDto createPollForAsset(UUID assetId, SimpleCreatePoll createPoll, String username){
-        MobileTerminal mt = mobileTerminalServiceBean.getActiveMTForAsset(assetId);
-
-        if(mt == null) {
-            Asset assetById = assetServiceBean.getAssetById(assetId);
-            if(assetById == null) {
-                throw new IllegalArgumentException("No asset with id: " + assetId + " found, unable to poll");
-            }
-            throw new IllegalArgumentException("No active MT for asset: " + assetById.getName() + " (" + assetById.getIrcs() + ") , unable to poll");
+    public CreatePollResultDto createPollForAsset(UUID assetId, SimpleCreatePoll createPoll, String username) {
+        Asset asset = assetServiceBean.getAssetById(assetId);
+        if (asset == null) {
+            throw new IllegalArgumentException("No asset with id: " + assetId + " found, unable to poll");
         }
+        if (Boolean.FALSE.equals(asset.getActive())) {
+            throw new IllegalArgumentException("Aborting poll creation. Asset (" + assetId + ") is inactive");
+        }
+        if (Boolean.TRUE.equals(asset.getParked())) {
+            throw new IllegalArgumentException("Aborting poll creation. Asset (" + assetId + ") is parked");
+        }
+
+        MobileTerminal mt = mobileTerminalServiceBean.getActiveMTForAsset(asset);
+        if (mt == null) {
+            throw new IllegalArgumentException("No active MT for asset: " + asset.getName() + " (" + asset.getIrcs() + ") , unable to poll");
+        }
+
         Channel channel = mobileTerminalServiceBean.getPollableChannel(mt);
-        if(channel == null) {
+        if (channel == null) {
             throw new IllegalArgumentException("No pollable channel for this active MT: " + mt.getSerialNo() + " , unable to poll");
         }
 
@@ -109,8 +116,8 @@ public class PollServiceBean {
         return prt;
     }
 
-    private void setPollRequestAttributes(PollRequestType pollRequest, SimpleCreatePoll createPoll){
-        switch (createPoll.getPollType()){
+    private void setPollRequestAttributes(PollRequestType pollRequest, SimpleCreatePoll createPoll) {
+        switch (createPoll.getPollType()) {
             case PROGRAM_POLL:
                 pollRequest.getAttributes().add(createPollAttribute(PollAttributeType.FREQUENCY, "" + createPoll.getFrequency()));
                 pollRequest.getAttributes().add(createPollAttribute(PollAttributeType.START_DATE, "" + createPoll.getStartDate().toEpochMilli()));
@@ -120,7 +127,7 @@ public class PollServiceBean {
         }
     }
 
-    private PollAttribute createPollAttribute(PollAttributeType key, String value){
+    private PollAttribute createPollAttribute(PollAttributeType key, String value) {
         PollAttribute attribute = new PollAttribute();
         attribute.setKey(key);
         attribute.setValue(value);
@@ -183,7 +190,7 @@ public class PollServiceBean {
         return startedPoll;
     }
 
-    public ProgramPoll stopProgramPoll(String pollId, String username){
+    public ProgramPoll stopProgramPoll(String pollId, String username) {
 
         PollId pollIdType = new PollId();
         pollIdType.setGuid(pollId);
@@ -197,7 +204,7 @@ public class PollServiceBean {
         return stoppedPoll;
     }
 
-    public ProgramPoll inactivateProgramPoll(String pollId, String username){
+    public ProgramPoll inactivateProgramPoll(String pollId, String username) {
 
         PollId pollIdType = new PollId();
         pollIdType.setGuid(pollId);
@@ -291,7 +298,7 @@ public class PollServiceBean {
         if (mobileTerminalEntity == null) {
             throw new IllegalArgumentException("No mobile terminal connected to this poll request or the mobile terminal can not be found, for mobile terminal id: " + pollTerminal.getMobileTerminalId());
         }
-        if(mobileTerminalEntity.getAsset() == null){
+        if (mobileTerminalEntity.getAsset() == null) {
             throw new IllegalArgumentException("This mobile terminal is not connected to any asset");
         }
         return mobileTerminalEntity;
@@ -317,10 +324,10 @@ public class PollServiceBean {
 
         for (PollMobileTerminal pollTerminal : pollRequest.getMobileTerminals()) {
             MobileTerminal mobileTerminalEntity = terminalDao.getMobileTerminalById(UUID.fromString(pollTerminal.getMobileTerminalId()));
-            if(mobileTerminalEntity == null){
+            if (mobileTerminalEntity == null) {
                 throw new IllegalArgumentException("No mobile terminal connected to this poll request or the mobile terminal can not be found, for mobile terminal id: " + pollTerminal.getMobileTerminalId());
             }
-            if(mobileTerminalEntity.getAsset() == null){
+            if (mobileTerminalEntity.getAsset() == null) {
                 throw new IllegalArgumentException("This mobile terminal is not connected to any asset");
             }
             checkPollable(mobileTerminalEntity);
@@ -330,7 +337,7 @@ public class PollServiceBean {
         return map;
     }
 
-    private void checkPollable(MobileTerminal terminal){
+    private void checkPollable(MobileTerminal terminal) {
         if (terminal.getArchived()) {
             throw new IllegalStateException("Terminal is archived");
         }
@@ -342,7 +349,7 @@ public class PollServiceBean {
         }
     }
 
-    private void validateMobileTerminalPluginCapability (Set<MobileTerminalPluginCapability> capabilities, PollType pollType, String pluginServiceName) {
+    private void validateMobileTerminalPluginCapability(Set<MobileTerminalPluginCapability> capabilities, PollType pollType, String pluginServiceName) {
         PluginCapabilityType pluginCapabilityType;
         switch (pollType) {
             case CONFIGURATION_POLL:
@@ -359,7 +366,7 @@ public class PollServiceBean {
         }
     }
 
-    private boolean validatePluginHasCapabilityConfigurable (Set<MobileTerminalPluginCapability> capabilities, PluginCapabilityType pluginCapability) {
+    private boolean validatePluginHasCapabilityConfigurable(Set<MobileTerminalPluginCapability> capabilities, PluginCapabilityType pluginCapability) {
         for (MobileTerminalPluginCapability pluginCap : capabilities) {
             if (pluginCapability.name().equalsIgnoreCase(pluginCap.getName())) {
                 return true;
@@ -553,7 +560,7 @@ public class PollServiceBean {
         return response;
     }
 
-    private List<PollResponseType> getResponseList(List<ProgramPoll> pollPrograms)  {
+    private List<PollResponseType> getResponseList(List<ProgramPoll> pollPrograms) {
         List<PollResponseType> responseList = new ArrayList<>();
         for (ProgramPoll pollProgram : pollPrograms) {
             responseList.add(PollEntityToModelMapper.mapToPollResponseType(pollProgram));
@@ -561,7 +568,7 @@ public class PollServiceBean {
         return responseList;
     }
 
-    public List<PollBase> getAllPollsForAssetForTheLastDay(UUID assetId){
+    public List<PollBase> getAllPollsForAssetForTheLastDay(UUID assetId) {
         return pollDao.findByAssetInTimespan(assetId, Instant.now().minus(1, ChronoUnit.DAYS), Instant.now());
 
     }
