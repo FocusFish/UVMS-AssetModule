@@ -29,8 +29,8 @@ public class CustomCodesPK {
     public CustomCodesPK(String constant, String code) {
         this.constant = constant;
         this.code = code;
-        this.validFromDate = OffsetDateTime.of(1970,01,01,1,1,1,1, ZoneOffset.UTC).toInstant();
-        this.validToDate = OffsetDateTime.of(3070,01,01,01,1,1,1, ZoneOffset.UTC).toInstant();
+        this.validFromDate = OffsetDateTime.of(1970, 01, 01, 1, 1, 1, 1, ZoneOffset.UTC).toInstant();
+        this.validToDate = OffsetDateTime.of(3070, 01, 01, 01, 1, 1, 1, ZoneOffset.UTC).toInstant();
     }
 
     public String getConstant() {

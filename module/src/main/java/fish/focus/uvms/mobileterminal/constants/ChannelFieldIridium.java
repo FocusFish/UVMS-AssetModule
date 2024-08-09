@@ -24,9 +24,9 @@ public enum ChannelFieldIridium {
     INSTALLED_ON,
     INSTALLED_BY;
 
-    public static ChannelFieldIridium getAttribute(String type){
-        for(ChannelFieldIridium attr : ChannelFieldIridium.values()) {
-            if(attr.name().equalsIgnoreCase(type)) {
+    public static ChannelFieldIridium getAttribute(String type) {
+        for (ChannelFieldIridium attr : ChannelFieldIridium.values()) {
+            if (attr.name().equalsIgnoreCase(type)) {
                 return attr;
             }
         }

@@ -20,6 +20,7 @@ import fish.focus.wsdl.asset.types.AssetId;
 import fish.focus.wsdl.asset.types.CarrierSource;
 
 /**
+ *
  **/
 public class MockData {
 

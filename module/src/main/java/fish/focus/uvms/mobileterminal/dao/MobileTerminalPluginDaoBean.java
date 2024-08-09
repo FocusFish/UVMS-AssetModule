@@ -16,37 +16,39 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+
 import fish.focus.uvms.mobileterminal.entity.MobileTerminalPlugin;
+
 import java.util.List;
 
 @Stateless
-public class MobileTerminalPluginDaoBean  {
+public class MobileTerminalPluginDaoBean {
 
-	@PersistenceContext
-	private EntityManager em;
+    @PersistenceContext
+    private EntityManager em;
 
-	public List<MobileTerminalPlugin> getPluginList()  {
-            TypedQuery<MobileTerminalPlugin> query = em.createNamedQuery(MobileTerminalPlugin.FIND_ALL, MobileTerminalPlugin.class);
-            return query.getResultList();
-	}
+    public List<MobileTerminalPlugin> getPluginList() {
+        TypedQuery<MobileTerminalPlugin> query = em.createNamedQuery(MobileTerminalPlugin.FIND_ALL, MobileTerminalPlugin.class);
+        return query.getResultList();
+    }
 
-	public MobileTerminalPlugin createMobileTerminalPlugin(MobileTerminalPlugin plugin)  {
-			em.persist(plugin);
-			return plugin;
-	}
+    public MobileTerminalPlugin createMobileTerminalPlugin(MobileTerminalPlugin plugin) {
+        em.persist(plugin);
+        return plugin;
+    }
 
-	public MobileTerminalPlugin getPluginByServiceName(String serviceName)  {
-		try {
+    public MobileTerminalPlugin getPluginByServiceName(String serviceName) {
+        try {
             TypedQuery<MobileTerminalPlugin> query = em.createNamedQuery(MobileTerminalPlugin.FIND_BY_SERVICE_NAME, MobileTerminalPlugin.class);
             query.setParameter("serviceName", serviceName);
-			MobileTerminalPlugin result = query.getSingleResult();
-			return result;
-		} catch (NoResultException e) {
-			return null;
+            MobileTerminalPlugin result = query.getSingleResult();
+            return result;
+        } catch (NoResultException e) {
+            return null;
         }
-	}
+    }
 
-	public MobileTerminalPlugin updateMobileTerminalPlugin(MobileTerminalPlugin entity)  {
-			return  em.merge(entity);
-	}
+    public MobileTerminalPlugin updateMobileTerminalPlugin(MobileTerminalPlugin entity) {
+        return em.merge(entity);
+    }
 }

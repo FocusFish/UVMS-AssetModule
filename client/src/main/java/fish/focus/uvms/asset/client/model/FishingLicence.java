@@ -26,64 +26,83 @@ public class FishingLicence {
     private Instant decisionDate;
     private String constraints;
     private Instant createdDate;
-    
+
     public UUID getId() {
         return id;
     }
+
     public void setId(UUID id) {
         this.id = id;
     }
+
     public UUID getAssetId() {
         return assetId;
     }
+
     public void setAssetId(UUID assetId) {
         this.assetId = assetId;
     }
+
     public Long getLicenceNumber() {
         return licenceNumber;
     }
+
     public void setLicenceNumber(Long licenceNumber) {
         this.licenceNumber = licenceNumber;
     }
+
     public String getCivicNumber() {
         return civicNumber;
     }
+
     public void setCivicNumber(String civicNumber) {
         this.civicNumber = civicNumber;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public Instant getFromDate() {
         return fromDate;
     }
+
     public void setFromDate(Instant fromDate) {
         this.fromDate = fromDate;
     }
+
     public Instant getToDate() {
         return toDate;
     }
+
     public void setToDate(Instant toDate) {
         this.toDate = toDate;
     }
+
     public Instant getDecisionDate() {
         return decisionDate;
     }
+
     public void setDecisionDate(Instant decisionDate) {
         this.decisionDate = decisionDate;
     }
+
     public String getConstraints() {
         return constraints;
     }
+
     public void setConstraints(String constraints) {
         this.constraints = constraints;
     }
+
     public Instant getCreatedDate() {
         return createdDate;
     }
+
     public void setCreatedDate(Instant createdDate) {
         this.createdDate = createdDate;
     }

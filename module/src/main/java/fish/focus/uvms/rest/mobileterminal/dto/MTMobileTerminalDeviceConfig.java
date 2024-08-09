@@ -15,43 +15,43 @@ import java.util.List;
 
 public class MTMobileTerminalDeviceConfig {
 
-	private String terminalSystemType;
-	private List<String> terminalFieldList;
-	private List<String> channelFieldList;
-	private List<MTCapabilityDto> capabilityList;
-	
-	public MTMobileTerminalDeviceConfig() {
-	}
+    private String terminalSystemType;
+    private List<String> terminalFieldList;
+    private List<String> channelFieldList;
+    private List<MTCapabilityDto> capabilityList;
 
-	public String getTerminalSystemType() {
-		return terminalSystemType;
-	}
+    public MTMobileTerminalDeviceConfig() {
+    }
 
-	public void setTerminalSystemType(String terminalSystemType) {
-		this.terminalSystemType = terminalSystemType;
-	}
+    public String getTerminalSystemType() {
+        return terminalSystemType;
+    }
 
-	public List<String> getTerminalFieldList() {
-		return terminalFieldList;
-	}
+    public void setTerminalSystemType(String terminalSystemType) {
+        this.terminalSystemType = terminalSystemType;
+    }
 
-	public void setTerminalFieldList(List<String> terminalFieldList) {
-		this.terminalFieldList = terminalFieldList;
-	}
+    public List<String> getTerminalFieldList() {
+        return terminalFieldList;
+    }
 
-	public List<String> getChannelFieldList() {
-		return channelFieldList;
-	}
+    public void setTerminalFieldList(List<String> terminalFieldList) {
+        this.terminalFieldList = terminalFieldList;
+    }
 
-	public void setChannelFieldList(List<String> channelFieldList) {
-		this.channelFieldList = channelFieldList;
-	}
+    public List<String> getChannelFieldList() {
+        return channelFieldList;
+    }
 
-	public List<MTCapabilityDto> getCapabilityList() {
-		return capabilityList;
-	}
-	
-	public void setCapabilityList(List<MTCapabilityDto> capabilityList) {
-		this.capabilityList = capabilityList;
-	}
+    public void setChannelFieldList(List<String> channelFieldList) {
+        this.channelFieldList = channelFieldList;
+    }
+
+    public List<MTCapabilityDto> getCapabilityList() {
+        return capabilityList;
+    }
+
+    public void setCapabilityList(List<MTCapabilityDto> capabilityList) {
+        this.capabilityList = capabilityList;
+    }
 }

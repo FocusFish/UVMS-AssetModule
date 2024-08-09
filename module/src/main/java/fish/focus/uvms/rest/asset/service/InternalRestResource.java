@@ -65,35 +65,27 @@ import java.util.stream.Collectors;
 public class InternalRestResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(InternalRestResource.class);
-
-    @Inject
-    private AssetServiceBean assetService;
-
-    @Inject
-    private CustomCodesServiceBean customCodesService;
-
-    @Inject
-    private PollServiceBean pollServiceBean;
-    
-    @Inject
-    private MobileTerminalServiceBean mobileTerminalService;
-
     @Inject
     AssetDao assetDao;
-
     @Inject
     PollDaoBean pollDaoBean;
-
     @Inject
     TerminalDaoBean terminalDaoBean;
-
+    @Inject
+    private AssetServiceBean assetService;
+    @Inject
+    private CustomCodesServiceBean customCodesService;
+    @Inject
+    private PollServiceBean pollServiceBean;
+    @Inject
+    private MobileTerminalServiceBean mobileTerminalService;
     private Jsonb jsonb;
     private Jsonb customJsonb;
 
     //needed since eager fetch is not supported by AuditQuery et al, so workaround is to serialize while we still have a DB session active
     @PostConstruct
     public void init() {
-        jsonb =  new JsonBConfiguratorAsset().getContext(null);
+        jsonb = new JsonBConfiguratorAsset().getContext(null);
         customJsonb = JsonbBuilder.create(new JsonbConfig().withAdapters(new CustomAssetAdapter()));
     }
 
@@ -123,12 +115,12 @@ public class InternalRestResource {
             AssetListResponse assetList = assetService.getAssetList(query, page, size, includeInactivated);
             String returnString = jsonb.toJson(assetList);
             return Response.ok(returnString).build();
-        }catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("getAssetList", e);
             return Response.status(500).entity(ExceptionUtils.getRootCauseMessage(e)).header("MDC", MDC.get("requestId")).build();
         }
     }
-    
+
     @POST
     @Path("assetList")
     @RequiresFeature(UnionVMSFeature.manageInternalRest)
@@ -146,15 +138,15 @@ public class InternalRestResource {
     @Path("queryIdOnly")
     @RequiresFeature(UnionVMSFeature.manageInternalRest)
     public Response getAssetListIdOnly(@DefaultValue("1") @QueryParam("page") int page,
-                                 @DefaultValue("10000000") @QueryParam("size") int size,
-                                 @DefaultValue("false") @QueryParam("includeInactivated") boolean includeInactivated,
-                                 SearchBranch query) {
+                                       @DefaultValue("10000000") @QueryParam("size") int size,
+                                       @DefaultValue("false") @QueryParam("includeInactivated") boolean includeInactivated,
+                                       SearchBranch query) {
         try {
             List<Asset> assetList = assetDao.getAssetListSearchPaginated(page, size, query, includeInactivated);
             List<UUID> assetIdList = assetList.stream().map(Asset::getId).collect(Collectors.toList());
             String returnString = jsonb.toJson(assetIdList);
             return Response.ok(returnString).build();
-        }catch (Exception e) {
+        } catch (Exception e) {
             LOG.error("getAssetListIdOnly", e);
             return Response.status(500).entity(ExceptionUtils.getRootCauseMessage(e)).header("MDC", MDC.get("requestId")).build();
         }
@@ -342,7 +334,7 @@ public class InternalRestResource {
         try {
             AssetMTEnrichmentResponse assetMTEnrichmentResponse = assetService.collectAssetMT(request);
             return Response.ok(assetMTEnrichmentResponse).header("MDC", MDC.get("requestId")).build();
-        }catch (Exception e){
+        } catch (Exception e) {
             LOG.error("enrich failed", e);
             return Response.status(500).entity(ExceptionUtils.getRootCauseMessage(e)).header("MDC", MDC.get("requestId")).build();
         }
@@ -384,7 +376,7 @@ public class InternalRestResource {
             List<SanePollDto> sanePollDtos = PollEntityToModelMapper.toSanePollDto(byAssetInTimespan);
             return Response.ok(sanePollDtos).header("MDC", MDC.get("requestId")).build();
         } catch (Exception ex) {
-            LOG.error("[ Error when getting all polls for asset {}] {}",assetId, ex.getStackTrace());
+            LOG.error("[ Error when getting all polls for asset {}] {}", assetId, ex.getStackTrace());
             return Response.status(500).entity(ExceptionUtils.getRootCauseMessage(ex)).header("MDC", MDC.get("requestId")).build();
         }
     }
@@ -431,7 +423,7 @@ public class InternalRestResource {
         try {
             Instant instant = (date == null ? Instant.now() : DateUtils.stringToDate(date));
             MobileTerminal mtAtDate = terminalDaoBean.getMtAtDate(mtId, instant);
-            if(mtAtDate != null) {
+            if (mtAtDate != null) {
                 mtAtDate.getChannels().size();  //to force load
                 mtAtDate.setPlugin(null);       //since the plugin for some reason does not want to be serialized
             }
@@ -442,39 +434,39 @@ public class InternalRestResource {
             return Response.status(500).entity(ExceptionUtils.getRootCauseMessage(ex)).header("MDC", MDC.get("requestId")).build();
         }
     }
-    
+
     @GET
     @Path("revision")
     @RequiresFeature(UnionVMSFeature.manageInternalRest)
-    public Response getMobileTerminalAtDateWithMemberNumberAndDnid(@QueryParam("memberNumber") Integer memberNumber, @QueryParam("dnid") Integer dnid, @QueryParam("date") String date){
+    public Response getMobileTerminalAtDateWithMemberNumberAndDnid(@QueryParam("memberNumber") Integer memberNumber, @QueryParam("dnid") Integer dnid, @QueryParam("date") String date) {
         try {
             Instant instant = DateUtils.stringToDate(date);
             MobileTerminal mt = terminalDaoBean.getMobileTerminalAtDateWithMemberNumberAndDnid(memberNumber, dnid, instant);
-            MobileTerminalDto mtDto =  MobileTerminalDtoMapper.mapToMobileTerminalDto(mt);
-            
+            MobileTerminalDto mtDto = MobileTerminalDtoMapper.mapToMobileTerminalDto(mt);
+
             String returnString = jsonb.toJson(mtDto);
-            
+
             return Response.ok(returnString).header("MDC", MDC.get("requestId")).build();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             LOG.error("[ Error when getting MT from memberNumber {} and dnid {} at date {}] {}", memberNumber, dnid, date, ex);
             return Response.status(500).entity(ExceptionUtils.getRootCauseMessage(ex)).header("MDC", MDC.get("requestId")).build();
         }
     }
-    
+
     @GET
     @Path("vmsBilling")
- //   @RequiresFeature(UnionVMSFeature.manageInternalRest)
-    public Response getVmsBilling(){
+    //   @RequiresFeature(UnionVMSFeature.manageInternalRest)
+    public Response getVmsBilling() {
         try {
             List<VmsBillingDto> VmsBilling = terminalDaoBean.getVmsBillingList();
-            
+
             String returnString = jsonb.toJson(VmsBilling);
-            
+
             return Response.ok(returnString).header("MDC", MDC.get("requestId")).build();
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             LOG.error(" Error when getting vmsBilling  ");
             return Response.status(500).entity(ExceptionUtils.getRootCauseMessage(ex)).header("MDC", MDC.get("requestId")).build();
         }
     }
-    
+
 }

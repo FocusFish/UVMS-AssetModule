@@ -13,12 +13,13 @@ package fish.focus.uvms.asset.domain.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import fish.focus.uvms.asset.remote.dto.search.SearchFields;
 
 public class SearchKeyValue {
-	
-	private SearchFields searchField;
-	private List<String> searchValues = new ArrayList<>();
+
+    private SearchFields searchField;
+    private List<String> searchValues = new ArrayList<>();
 
     public SearchKeyValue() {
         super();
@@ -28,31 +29,31 @@ public class SearchKeyValue {
         this.searchField = searchField;
         this.searchValues = searchValues;
     }
-    
+
     public SearchFields getSearchField() {
-		return searchField;
-	}
-    
-	public void setSearchField(SearchFields searchField) {
-		this.searchField = searchField;
-	}
+        return searchField;
+    }
 
-	public List<String> getSearchValues() {
-		if(searchValues == null) searchValues = new ArrayList<>();
-		return searchValues;
-	}
+    public void setSearchField(SearchFields searchField) {
+        this.searchField = searchField;
+    }
 
-	public List<String> getSearchValuesAsLowerCase() {
-		if(searchValues == null) searchValues = new ArrayList<>();
-		List<String> returnList = new ArrayList<>();
-		for (String s : searchValues) {
-			returnList.add(s.toLowerCase());
-		}
-		//searchValues.replaceAll(String::toLowerCase);   //this stopped working for some reason
-		return returnList;
-	}
+    public List<String> getSearchValues() {
+        if (searchValues == null) searchValues = new ArrayList<>();
+        return searchValues;
+    }
 
-	public void setSearchValues(List<String> searchValues) {
-		this.searchValues = searchValues;
-	}
+    public void setSearchValues(List<String> searchValues) {
+        this.searchValues = searchValues;
+    }
+
+    public List<String> getSearchValuesAsLowerCase() {
+        if (searchValues == null) searchValues = new ArrayList<>();
+        List<String> returnList = new ArrayList<>();
+        for (String s : searchValues) {
+            returnList.add(s.toLowerCase());
+        }
+        //searchValues.replaceAll(String::toLowerCase);   //this stopped working for some reason
+        return returnList;
+    }
 }

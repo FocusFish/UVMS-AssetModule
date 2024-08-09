@@ -20,6 +20,7 @@ import fish.focus.uvms.asset.domain.entity.Note;
 import fish.focus.uvms.asset.dto.AssetBO;
 import fish.focus.uvms.asset.dto.AssetListResponse;
 import fish.focus.uvms.asset.model.constants.UnitTonnage;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.math.BigDecimal;
@@ -32,14 +33,14 @@ public class AssetModelMapper {
 
     @Inject
     private AssetServiceBean assetService;
-    
+
     public Asset toAssetEntity(fish.focus.wsdl.asset.types.Asset assetModel) {
         Asset asset = new Asset();
-        
+
         if (assetModel.getAssetId() != null && assetModel.getAssetId().getGuid() != null) {
             asset.setId(UUID.fromString(assetModel.getAssetId().getGuid()));
         }
-        
+
         asset.setActive(assetModel.isActive());
         if (assetModel.getSource() != null) {
             asset.setSource(assetModel.getSource().toString());
@@ -78,7 +79,7 @@ public class AssetModelMapper {
         }
         if (assetModel.getSafetyGrossTonnage() != null) {
             asset.setSafteyGrossTonnage(assetModel.getSafetyGrossTonnage().doubleValue());
-        } 
+        }
         if (assetModel.getPowerMain() != null) {
             asset.setPowerOfMainEngine(assetModel.getPowerMain().doubleValue());
         }
@@ -92,10 +93,10 @@ public class AssetModelMapper {
         asset.setIccat(assetModel.getIccat());
         asset.setUvi(assetModel.getUvi());
         asset.setGfcm(assetModel.getGfcm());
-        
+
         return asset;
     }
-    
+
     public AssetBO toAssetBO(fish.focus.wsdl.asset.types.Asset assetModel) {
         AssetBO assetBo = new AssetBO();
         assetBo.setAsset(toAssetEntity(assetModel));
@@ -103,22 +104,22 @@ public class AssetModelMapper {
         assetBo.setNotes(toAssetNotes(assetModel.getNotes()));
         return assetBo;
     }
-    
+
     public fish.focus.wsdl.asset.types.Asset toAssetModel(Asset assetEntity) {
         if (assetEntity == null) {
             return null;
         }
 
         fish.focus.wsdl.asset.types.Asset assetModel = new fish.focus.wsdl.asset.types.Asset();
-        
+
         AssetId assetId = new AssetId();
         assetId.setGuid(assetEntity.getId().toString());
         assetId.setValue(assetEntity.getId().toString());
         assetId.setType(AssetIdType.GUID);
-        
+
         assetModel.setAssetId(assetId);
         assetModel.setActive(assetEntity.getActive());
-        if (assetEntity.getSource() !=  null && !assetEntity.getSource().isEmpty()) {
+        if (assetEntity.getSource() != null && !assetEntity.getSource().isEmpty()) {
             assetModel.setSource(CarrierSource.fromValue(assetEntity.getSource()));
         }
         AssetHistoryId assetHistory = new AssetHistoryId();
@@ -172,7 +173,7 @@ public class AssetModelMapper {
         prodOrg.setCode(assetEntity.getProdOrgCode());
         prodOrg.setName(assetEntity.getProdOrgName());
         assetModel.setProducer(prodOrg);
-        
+
         Collection<Note> notes = assetService.getNotesForAsset(assetEntity.getId()).values();
         for (Note note : notes) {
             AssetNotes assetNote = new AssetNotes();
@@ -190,7 +191,7 @@ public class AssetModelMapper {
             contact.setName(contactInfo.getName());
             contact.setNumber(contactInfo.getPhoneNumber());
             contact.setEmail(contactInfo.getEmail());
-            if (contactInfo.getOwner() != null) { 
+            if (contactInfo.getOwner() != null) {
                 contact.setOwner(contactInfo.getOwner());
             }
             if (contactInfo.getSource() != null) {
@@ -198,11 +199,11 @@ public class AssetModelMapper {
             }
             assetModel.getContact().add(contact);
         }
-        
+
         assetModel.setIccat(assetEntity.getIccat());
         assetModel.setUvi(assetEntity.getUvi());
         assetModel.setGfcm(assetEntity.getGfcm());
-        
+
         return assetModel;
     }
 
@@ -213,7 +214,7 @@ public class AssetModelMapper {
             return EventCode.UNK;
         }
     }
-    
+
 
     public AssetIdentifier mapToAssetIdentity(AssetIdType assetIdType) {
         switch (assetIdType) {
@@ -237,22 +238,22 @@ public class AssetModelMapper {
                 throw new IllegalArgumentException("Asset identifier is not valid/supported!");
         }
     }
-    
+
     public ListAssetResponse toListAssetResponse(AssetListResponse assetListResponse) {
         ListAssetResponse listAssetResponse = new ListAssetResponse();
         listAssetResponse.setCurrentPage(assetListResponse.getCurrentPage());
         listAssetResponse.setTotalNumberOfPages(assetListResponse.getTotalNumberOfPages());
         listAssetResponse.getAsset().addAll(assetListResponse.getAssetList().stream()
-                                                        .map(this::toAssetModel)
-                                                        .collect(Collectors.toList()));
+                .map(this::toAssetModel)
+                .collect(Collectors.toList()));
         return listAssetResponse;
     }
-    
+
     public List<Note> toAssetNotes(List<AssetNotes> assetNotes) {
         List<Note> notes = new ArrayList<>();
         for (AssetNotes assetNote : assetNotes) {
             Note note = new Note();
-            if(assetNote.getId() != null) {
+            if (assetNote.getId() != null) {
                 note.setId(UUID.fromString(assetNote.getId()));
             }
             if (assetNote.getDate() != null) {
@@ -263,7 +264,7 @@ public class AssetModelMapper {
         }
         return notes;
     }
-    
+
     public List<ContactInfo> toAssetContacts(List<AssetContact> contacts) {
         List<ContactInfo> contactInfos = new ArrayList<>();
         for (AssetContact assetContact : contacts) {

@@ -19,11 +19,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import fish.focus.uvms.constants.AuthConstants;
 import fish.focus.uvms.rest.security.UserRoleRequestWrapper;
 
 public class AuthenticationFilterMock implements Filter {
-    
+
     public AuthenticationFilterMock() {
         super();
     }
@@ -32,12 +33,12 @@ public class AuthenticationFilterMock implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         httpResponse.addHeader(AuthConstants.HTTP_HEADER_AUTHORIZATION, "MOCK_TOKEN");
-        
+
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         UserRoleRequestWrapper arequest = new UserRoleRequestWrapper(httpRequest, "MOCK_USER");
         chain.doFilter(arequest, httpResponse);
     }
-    
+
     @Override
     public void init(FilterConfig fc) throws ServletException {
     }

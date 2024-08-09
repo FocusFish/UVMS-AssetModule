@@ -34,19 +34,15 @@ import javax.jms.TextMessage;
 public class AssetMessageEventBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(AssetMessageEventBean.class);
-
-    @Inject
-    private AssetServiceBean assetService;
-
-    @Inject
-    private AssetProducer assetMessageProducer;
-    
-    @Inject
-    private AssetModelMapper assetMapper;
-
     @Inject
     @AssetMessageErrorEvent
     Event<AssetMessageEvent> assetErrorEvent;
+    @Inject
+    private AssetServiceBean assetService;
+    @Inject
+    private AssetProducer assetMessageProducer;
+    @Inject
+    private AssetModelMapper assetMapper;
 
     public void getAsset(TextMessage textMessage, AssetId assetId) {
 
@@ -73,7 +69,7 @@ public class AssetMessageEventBean {
             }
         }
     }
-    
+
     public void ping(AssetMessageEvent message) {
         try {
             PingResponse pingResponse = new PingResponse();
@@ -83,8 +79,8 @@ public class AssetMessageEventBean {
             LOG.error("[ Error when marshalling ping response ]");
         }
     }
-    
-    public void upsertAsset(AssetMessageEvent message){
+
+    public void upsertAsset(AssetMessageEvent message) {
         try {
             fish.focus.wsdl.asset.types.Asset assetModel = message.getAsset();
             AssetBO assetBo = assetMapper.toAssetBO(assetModel);

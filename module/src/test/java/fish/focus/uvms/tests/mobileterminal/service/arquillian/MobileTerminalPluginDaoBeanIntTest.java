@@ -28,11 +28,10 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class MobileTerminalPluginDaoBeanIntTest extends TransactionalTests {
 
-    @EJB
-    private MobileTerminalPluginDaoBean mobileTerminalPluginDao;
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+    @EJB
+    private MobileTerminalPluginDaoBean mobileTerminalPluginDao;
 
     @Test
     @OperateOnDeployment("normal")
@@ -52,7 +51,7 @@ public class MobileTerminalPluginDaoBeanIntTest extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void testCreateMobileTerminalPlugin()  {
+    public void testCreateMobileTerminalPlugin() {
         MobileTerminalPlugin mobileTerminalPlugin = createMobileTerminalPluginHelper();
 
         MobileTerminalPlugin mobileTerminalPluginAfterCreation = mobileTerminalPluginDao.createMobileTerminalPlugin(mobileTerminalPlugin);
@@ -77,7 +76,7 @@ public class MobileTerminalPluginDaoBeanIntTest extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void testCreateMobileTerminalPlugin_nameConstraintViolation()  {
+    public void testCreateMobileTerminalPlugin_nameConstraintViolation() {
         thrown.expect(ConstraintViolationException.class);
 
         MobileTerminalPlugin mobileTerminalPlugin = createMobileTerminalPluginHelper();
@@ -165,8 +164,7 @@ public class MobileTerminalPluginDaoBeanIntTest extends TransactionalTests {
         try {
             mobileTerminalPluginDao.getPluginByServiceName("thisServiceNameDoesNotExist");
             Assert.fail();
-        }
-        catch(Throwable t){
+        } catch (Throwable t) {
             Assert.assertTrue(true);
         }
     }

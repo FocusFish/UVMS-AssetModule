@@ -45,16 +45,14 @@ import java.util.Map;
 public class AssetConfigRestResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(AssetConfigRestResource.class);
-
+    @Inject
+    ConfigServiceBeanMT configServiceMT;
     @Inject
     private ConfigServiceBean configService;
 
-    @Inject
-    ConfigServiceBeanMT configServiceMT;
-
     @GET
     @Path("/searchfields")
-    public Response getConfigSearchFields() throws Exception  {
+    public Response getConfigSearchFields() throws Exception {
         try {
             return Response.ok(ConfigSearchField.values()).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
@@ -62,13 +60,13 @@ public class AssetConfigRestResource {
             throw e;
         }
     }
-    
+
     @GET
     @Path(value = "/parameters")
-    public Response getParameters()  throws Exception {
+    public Response getParameters() throws Exception {
         try {
-        	Map<String, String> parameters = configService.getParameters();
-        	return Response.ok(parameters).header("MDC", MDC.get("requestId")).build();
+            Map<String, String> parameters = configService.getParameters();
+            return Response.ok(parameters).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
             LOG.error("Error when getting config search fields.");
             throw e;
@@ -78,7 +76,7 @@ public class AssetConfigRestResource {
     //Stuff copied from MT
     @GET
     @Path("/MT/transponders")
-    public Response getConfigTransponders()  throws Exception  {
+    public Response getConfigTransponders() throws Exception {
         try {
             LOG.info("Get config transponders invoked in rest layer.");
             List<TerminalSystemType> list = configServiceMT.getTerminalSystems();
@@ -88,10 +86,10 @@ public class AssetConfigRestResource {
             throw ex;
         }
     }
-    
+
     @GET
     @Path("/MT/searchfields")
-    public Response getMTConfigSearchFields()  throws Exception  {
+    public Response getMTConfigSearchFields() throws Exception {
         LOG.info("Get config search fields invoked in rest layer.");
         try {
             return Response.ok(SearchKey.values()).header("MDC", MDC.get("requestId")).build();
@@ -103,7 +101,7 @@ public class AssetConfigRestResource {
 
     @GET
     @Path("/MT/")
-    public Response getMTConfiguration()  throws Exception  {
+    public Response getMTConfiguration() throws Exception {
         try {
             List<ConfigList> config = configServiceMT.getConfigValues();
             return Response.ok(MTMobileTerminalConfig.mapConfigList(config)).header("MDC", MDC.get("requestId")).build();

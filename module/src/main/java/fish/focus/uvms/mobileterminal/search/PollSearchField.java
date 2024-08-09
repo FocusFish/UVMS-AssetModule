@@ -13,42 +13,43 @@ package fish.focus.uvms.mobileterminal.search;
 
 import fish.focus.uvms.mobileterminal.entity.types.PollTypeEnum;
 import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
+
 import java.util.UUID;
 
 public enum PollSearchField {
-	CONNECT_ID(SearchTable.ASSET, "id", "connectionValue", UUID.class),
-	TERMINAL_TYPE(SearchTable.TERMINAL, "mobileTerminalType", "mobileTerminalType", MobileTerminalTypeEnum.class),
-	POLL_ID(SearchTable.POLL_BASE, "id", "id", UUID.class),
-	CONFIGURATION_POLL_ID(SearchTable.CONFIGURATION_POLL, "id", "id", UUID.class),
-	SAMPLING_POLL_ID(SearchTable.SAMPLING_POLL, "id", "id", UUID.class),
-	PROGRAM_POLL_ID(SearchTable.PROGRAM_POLL, "id", "id", UUID.class),
-	POLL_TYPE(SearchTable.POLL_BASE, "pollTypeEnum", "pollTypeEnum", PollTypeEnum.class),
-	USER(SearchTable.POLL_BASE, "creator", "creator");
+    CONNECT_ID(SearchTable.ASSET, "id", "connectionValue", UUID.class),
+    TERMINAL_TYPE(SearchTable.TERMINAL, "mobileTerminalType", "mobileTerminalType", MobileTerminalTypeEnum.class),
+    POLL_ID(SearchTable.POLL_BASE, "id", "id", UUID.class),
+    CONFIGURATION_POLL_ID(SearchTable.CONFIGURATION_POLL, "id", "id", UUID.class),
+    SAMPLING_POLL_ID(SearchTable.SAMPLING_POLL, "id", "id", UUID.class),
+    PROGRAM_POLL_ID(SearchTable.PROGRAM_POLL, "id", "id", UUID.class),
+    POLL_TYPE(SearchTable.POLL_BASE, "pollTypeEnum", "pollTypeEnum", PollTypeEnum.class),
+    USER(SearchTable.POLL_BASE, "creator", "creator");
 
-	
-	private final SearchTable table;
+
+    private final SearchTable table;
     private final String sqlColumnName;
     private final String sqlReplaceToken;
     private final Class clazz;
-    
+
     PollSearchField(SearchTable table, String sqlColumnName, String sqlReplaceToken) {
-    	this.table = table;
+        this.table = table;
         this.sqlColumnName = sqlColumnName;
         this.sqlReplaceToken = sqlReplaceToken;
         this.clazz = String.class;
     }
-    
+
     PollSearchField(SearchTable table, String sqlColumnName, String sqlReplaceToken, Class clazz) {
-    	this.table = table;
+        this.table = table;
         this.sqlColumnName = sqlColumnName;
         this.sqlReplaceToken = sqlReplaceToken;
         this.clazz = clazz;
     }
 
     public SearchTable getTable() {
-    	return table;
+        return table;
     }
-    
+
     public String getSqlColumnName() {
         return sqlColumnName;
     }
@@ -56,8 +57,8 @@ public enum PollSearchField {
     public String getSqlReplaceToken() {
         return sqlReplaceToken;
     }
-    
+
     public Class getClazz() {
-    	return clazz;
+        return clazz;
     }
 }

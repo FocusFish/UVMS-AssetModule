@@ -16,7 +16,7 @@ import fish.focus.wsdl.asset.types.Asset;
 import java.io.Serializable;
 import java.util.List;
 
-public class GetAssetListResponseDto implements Serializable{
+public class GetAssetListResponseDto implements Serializable {
 
     List<Asset> assetList;
     Integer totalNumberOfPages;

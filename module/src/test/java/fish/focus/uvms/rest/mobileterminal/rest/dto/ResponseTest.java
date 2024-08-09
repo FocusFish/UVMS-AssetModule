@@ -30,21 +30,17 @@ import static org.junit.Assert.assertEquals;
 
 public class ResponseTest {
 
-    @Mock
-    private MobileTerminalServiceBean mobileTerminalServiceBean;
-
-    @InjectMocks
-    private MobileTerminalRestResource mobileTerminalRestResource;
-
     private static final Integer MOBILE_TERMINAL_ID_INT = 1;
     private static final String MOBILE_TERMINAL_ID = "NKJSDGHKJy9239";
-
     private final MTResponseDto SUCCESS_RESULT_LIST_RESPONSE;
     private final MTResponseDto SUCCESS_RESULT_UPDATE;
     private final MTResponseDto SUCCESS_RESULT_GET_BY_ID;
-
     private final MobileTerminalType MOBILE_TERMINAL_DTO = MockData.createMobileTerminalDto(MOBILE_TERMINAL_ID_INT);
     private final MTListResponse MOBILE_TERMINAL_LIST_RESPONSE = PollTestHelper.createMTListResponse();
+    @Mock
+    private MobileTerminalServiceBean mobileTerminalServiceBean;
+    @InjectMocks
+    private MobileTerminalRestResource mobileTerminalRestResource;
 
     public ResponseTest() {
         SUCCESS_RESULT_UPDATE = new MTResponseDto<>(MOBILE_TERMINAL_DTO, MTResponseCode.OK);

@@ -12,14 +12,14 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.mobileterminal.model.constants;
 
 public enum MobileTerminalTypeEnum {
-	INMARSAT_C, IRIDIUM;
-	
-	public static MobileTerminalTypeEnum getType(String name) {
-		for(MobileTerminalTypeEnum type : MobileTerminalTypeEnum.values()) {
-			if(type.name().equalsIgnoreCase(name)) {
-				return type;
-			}
-		}
-		return null;
-	}
+    INMARSAT_C, IRIDIUM;
+
+    public static MobileTerminalTypeEnum getType(String name) {
+        for (MobileTerminalTypeEnum type : MobileTerminalTypeEnum.values()) {
+            if (type.name().equalsIgnoreCase(name)) {
+                return type;
+            }
+        }
+        return null;
+    }
 }

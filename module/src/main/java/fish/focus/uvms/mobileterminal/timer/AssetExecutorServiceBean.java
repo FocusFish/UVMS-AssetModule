@@ -19,6 +19,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fish.focus.uvms.mobileterminal.bean.ConfigServiceBeanMT;
@@ -29,7 +30,7 @@ import fish.focus.uvms.mobileterminal.bean.PollServiceBean;
 public class AssetExecutorServiceBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(AssetExecutorServiceBean.class);
-    
+
     @EJB
     private PollServiceBean pollService;
 
@@ -59,7 +60,7 @@ public class AssetExecutorServiceBean {
     @Schedule(minute = "*/5", hour = "*", persistent = false)
     public void initPollTimer() {
         try {
-            if(pollTimerTask == null) {
+            if (pollTimerTask == null) {
                 pollTimerTask = new PollTimerTask(pollService);
             }
             LOG.info("PollTimerTask initialized.");

@@ -9,12 +9,12 @@ public enum PollType {
     AUTOMATIC_POLL,
     BASE_POLL;
 
-    public String value() {
-        return name();
-    }
-
     public static PollType fromValue(String v) {
         return valueOf(v);
+    }
+
+    public String value() {
+        return name();
     }
 
 }

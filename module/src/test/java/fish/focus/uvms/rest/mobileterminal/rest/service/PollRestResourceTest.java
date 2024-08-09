@@ -109,7 +109,7 @@ public class PollRestResourceTest extends AbstractAssetRestTest {
 
         assertNotNull(response);
         assertEquals(200, response.getStatus());
-        Integer code  = response.readEntity(AppError.class).code;
+        Integer code = response.readEntity(AppError.class).code;
         assertThat(code, is(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
     }
 
@@ -196,7 +196,7 @@ public class PollRestResourceTest extends AbstractAssetRestTest {
 
         //Stopping since autostart
         String pollGuid;
-        if(createdPoll.isUnsentPoll()){
+        if (createdPoll.isUnsentPoll()) {
             pollGuid = createdPoll.getUnsentPolls().get(0);
         } else {
             pollGuid = createdPoll.getSentPolls().get(0);
@@ -234,7 +234,7 @@ public class PollRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void archiveProgramPollTest() throws Exception{
+    public void archiveProgramPollTest() throws Exception {
         Asset asset = createAndRestBasicAsset();
         MobileTerminal createdMT = createAndRestMobileTerminal(asset);
 
@@ -247,7 +247,7 @@ public class PollRestResourceTest extends AbstractAssetRestTest {
 
         //Archiving
         String pollGuid;
-        if(createdPoll.isUnsentPoll()){
+        if (createdPoll.isUnsentPoll()) {
             pollGuid = createdPoll.getUnsentPolls().get(0);
         } else {
             pollGuid = createdPoll.getSentPolls().get(0);
@@ -304,8 +304,8 @@ public class PollRestResourceTest extends AbstractAssetRestTest {
         assertNotNull(pollChannelListDto);
 
         boolean contains = false;
-        for (PollChannelDto pollChannelDto: pollChannelListDto.getPollableChannels()) {
-            if(pollChannelDto.getMobileTerminalId().equals(createdMT.getId().toString())){
+        for (PollChannelDto pollChannelDto : pollChannelListDto.getPollableChannels()) {
+            if (pollChannelDto.getMobileTerminalId().equals(createdMT.getId().toString())) {
                 contains = true;
                 break;
             }
@@ -327,7 +327,7 @@ public class PollRestResourceTest extends AbstractAssetRestTest {
         return response;
     }
 
-    private Asset createAndRestBasicAsset(){
+    private Asset createAndRestBasicAsset() {
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = getWebTargetExternal()
                 .path("asset")

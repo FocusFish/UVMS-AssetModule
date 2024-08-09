@@ -20,6 +20,7 @@ import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import fish.focus.uvms.mobileterminal.entity.PollBase;
 import fish.focus.uvms.mobileterminal.entity.ProgramPoll;
 import fish.focus.uvms.mobileterminal.entity.types.PollTypeEnum;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,13 +52,13 @@ public class PollEntityToModelMapper {
         if (pollType == PollType.CONFIGURATION_POLL) {
             List<PollAttribute> pollAttributes = response.getAttributes();
 
-            if(((ConfigurationPoll) poll).getGracePeriod() != null) {
+            if (((ConfigurationPoll) poll).getGracePeriod() != null) {
                 pollAttributes.add(createPollAttribute(PollAttributeType.GRACE_PERIOD, ((ConfigurationPoll) poll).getGracePeriod()));
             }
-            if(((ConfigurationPoll) poll).getInPortGrace() != null){
+            if (((ConfigurationPoll) poll).getInPortGrace() != null) {
                 pollAttributes.add(createPollAttribute(PollAttributeType.IN_PORT_GRACE, ((ConfigurationPoll) poll).getInPortGrace()));
             }
-            if(((ConfigurationPoll) poll).getReportingFrequency() != null){
+            if (((ConfigurationPoll) poll).getReportingFrequency() != null) {
                 pollAttributes.add(createPollAttribute(PollAttributeType.REPORT_FREQUENCY, ((ConfigurationPoll) poll).getReportingFrequency()));
             }
         }
@@ -65,10 +66,10 @@ public class PollEntityToModelMapper {
         if (pollType == PollType.SAMPLING_POLL) {
             List<PollAttribute> pollAttributes = response.getAttributes();
 
-            if(((ConfigurationPoll) poll).getGracePeriod() != null) {
+            if (((ConfigurationPoll) poll).getGracePeriod() != null) {
                 pollAttributes.add(createPollAttribute(PollAttributeType.START_DATE, ((ConfigurationPoll) poll).getGracePeriod()));
             }
-            if(((ConfigurationPoll) poll).getInPortGrace() != null){
+            if (((ConfigurationPoll) poll).getInPortGrace() != null) {
                 pollAttributes.add(createPollAttribute(PollAttributeType.END_DATE, ((ConfigurationPoll) poll).getInPortGrace()));
             }
         }
@@ -85,7 +86,7 @@ public class PollEntityToModelMapper {
         return response;
     }
 
-    private static PollAttribute createPollAttribute(PollAttributeType key, Integer value){
+    private static PollAttribute createPollAttribute(PollAttributeType key, Integer value) {
         PollAttribute pollAttribute = new PollAttribute();
         pollAttribute.setKey(key);
         pollAttribute.setValue(String.valueOf(value));
@@ -117,12 +118,12 @@ public class PollEntityToModelMapper {
         return attr;
     }
 
-    public static  List<SanePollDto> toSanePollDto(List<PollBase> polls){
+    public static List<SanePollDto> toSanePollDto(List<PollBase> polls) {
         return polls.stream().map(poll -> toSanePollDto(poll)).collect(Collectors.toList());
     }
 
-    public static SanePollDto toSanePollDto(PollBase poll){
-        if(poll == null){
+    public static SanePollDto toSanePollDto(PollBase poll) {
+        if (poll == null) {
             return null;
         }
         SanePollDto dto = new SanePollDto();

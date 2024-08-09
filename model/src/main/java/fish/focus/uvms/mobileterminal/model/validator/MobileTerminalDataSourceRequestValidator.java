@@ -25,50 +25,49 @@ public class MobileTerminalDataSourceRequestValidator {
     private static String IRIDIUM = "IRIDIUM";
 
     public static void validateCreateMobileTerminalType(MobileTerminalType mobTermType) {
-        if(mobTermType.isInactive()){
+        if (mobTermType.isInactive()) {
             throw new RuntimeException("Cannot create a Mobile Terminal with status set to inactive");
         }
         validateMobileTerminalAttributes(mobTermType.getAttributes());
-        if(!IRIDIUM.equalsIgnoreCase(mobTermType.getType())) {
+        if (!IRIDIUM.equalsIgnoreCase(mobTermType.getType())) {
             validateComChannels(mobTermType);
         }
     }
-	
+
     public static void validateMobileTerminalType(MobileTerminalType mobTermType) {
         validateMobileTerminalId(mobTermType.getMobileTerminalId());
         validateMobileTerminalAttributes(mobTermType.getAttributes());
-        if(!IRIDIUM.equalsIgnoreCase(mobTermType.getType())) {
+        if (!IRIDIUM.equalsIgnoreCase(mobTermType.getType())) {
             validateComChannels(mobTermType);
         }
     }
 
     public static void validateMobileTerminalId(MobileTerminalId id) {
-    	if(id == null || id.getGuid() == null || id.getGuid().isEmpty()) {
-    		throw new NullPointerException("Non valid mobile terminal id");
-    	}
+        if (id == null || id.getGuid() == null || id.getGuid().isEmpty()) {
+            throw new NullPointerException("Non valid mobile terminal id");
+        }
     }
 
     public static void validateMobileTerminalAttributes(List<MobileTerminalAttribute> attributes) {
         Set<String> uniqueFields = new HashSet<>();
         for (MobileTerminalAttribute attr : attributes) {
-        	if(!"MULTIPLE_OCEAN".equalsIgnoreCase(attr.getType())) {
-        		if (!uniqueFields.add(attr.getType())) {
+            if (!"MULTIPLE_OCEAN".equalsIgnoreCase(attr.getType())) {
+                if (!uniqueFields.add(attr.getType())) {
                     throw new IllegalArgumentException("Non unique attribute field " + attr.getType());
                 }
-        	}
+            }
         }
     }
 
     public static void validateComChannels(MobileTerminalType type) {
-    	//TODO terminaltype -> comchannelvaluetype instead of channeltype when validate
+        //TODO terminaltype -> comchannelvaluetype instead of channeltype when validate
         for (ComChannelType channel : type.getChannels()) {
-        	if("VMS".equalsIgnoreCase(channel.getName())) {
-        		validateVMS(channel);
-        	}
-        	else {
-        	    LOG.debug("Channel name is not VMS. Will not validate further, and will probably fail validation in the future.");
-        	}
-        	//	throw new MobileTerminalModelValidationException("ComChannel with SystemType " + type.getType() + " validation not implemented");
+            if ("VMS".equalsIgnoreCase(channel.getName())) {
+                validateVMS(channel);
+            } else {
+                LOG.debug("Channel name is not VMS. Will not validate further, and will probably fail validation in the future.");
+            }
+            //	throw new MobileTerminalModelValidationException("ComChannel with SystemType " + type.getType() + " validation not implemented");
         }
     }
 

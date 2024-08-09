@@ -16,6 +16,7 @@ import fish.focus.uvms.mobileterminal.entity.PollBase;
 import fish.focus.uvms.mobileterminal.entity.types.PollTypeEnum;
 import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
 import fish.focus.uvms.mobileterminal.search.PollSearchKeyValue;
+
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -28,77 +29,78 @@ import java.util.List;
 import java.util.UUID;
 
 @Stateless
-public class PollDaoBean  {
+public class PollDaoBean {
 
-	@PersistenceContext
-	private EntityManager em;
+    @PersistenceContext
+    private EntityManager em;
 
-	public void removePollAfterTests(String id){
-		PollBase poll = getPollById(UUID.fromString(id));
-		em.remove(em.contains(poll) ? poll : em.merge(poll));
-	}
-    public <T extends PollBase> void createPoll(T poll)  {
-		em.persist(poll);
+    public void removePollAfterTests(String id) {
+        PollBase poll = getPollById(UUID.fromString(id));
+        em.remove(em.contains(poll) ? poll : em.merge(poll));
     }
 
-	public PollBase getPollById(UUID id) {
-		return em.find(PollBase.class, id);
-	}
+    public <T extends PollBase> void createPoll(T poll) {
+        em.persist(poll);
+    }
 
-	public Long getPollListSearchCount(String sql, List<PollSearchKeyValue> searchKeyValues) {
-		TypedQuery<Long> query = em.createQuery(sql, Long.class);
-		queryBuilder(searchKeyValues, query);
-		return query.getSingleResult();
-	}
+    public PollBase getPollById(UUID id) {
+        return em.find(PollBase.class, id);
+    }
 
-	public List<PollBase> getPollListSearchPaginated(Integer pageNumber, Integer pageSize, String sql, List<PollSearchKeyValue> searchKeyValues) {
-		TypedQuery<PollBase> query = em.createQuery(sql, PollBase.class);
+    public Long getPollListSearchCount(String sql, List<PollSearchKeyValue> searchKeyValues) {
+        TypedQuery<Long> query = em.createQuery(sql, Long.class);
+        queryBuilder(searchKeyValues, query);
+        return query.getSingleResult();
+    }
 
-		queryBuilder(searchKeyValues, query);
+    public List<PollBase> getPollListSearchPaginated(Integer pageNumber, Integer pageSize, String sql, List<PollSearchKeyValue> searchKeyValues) {
+        TypedQuery<PollBase> query = em.createQuery(sql, PollBase.class);
 
-		if(pageSize * (pageNumber - 1) < 0) {
-			throw new EJBTransactionRolledbackException("Error building query with values: Page number: " + pageNumber + " and Page size: " + pageSize);
-		}
-		query.setFirstResult(pageSize * (pageNumber -1));
-		query.setMaxResults(pageSize);
-		return query.getResultList();
-	}
+        queryBuilder(searchKeyValues, query);
 
-	private <T> void queryBuilder(List<PollSearchKeyValue> searchKeyValues, TypedQuery<T> query) {
-		for(PollSearchKeyValue keyValue : searchKeyValues) {
-			String sqlReplaceToken = keyValue.getSearchField().getSqlReplaceToken();
-			if(keyValue.getSearchField().getClazz().isAssignableFrom(MobileTerminalTypeEnum.class)){
-				List<MobileTerminalTypeEnum> types = new ArrayList<>();
-				for (String value : keyValue.getValues()) {
-					MobileTerminalTypeEnum type = MobileTerminalTypeEnum.valueOf(value);
-					types.add(type);
-				}
-				query.setParameter(sqlReplaceToken, types);
-			} else if(keyValue.getSearchField().getClazz().isAssignableFrom(PollTypeEnum.class)){
-			List<PollTypeEnum> types = new ArrayList<>();
-			for (String value : keyValue.getValues()) {
-				PollTypeEnum type = PollTypeEnum.valueOf(value);
-				types.add(type);
-			}
-			query.setParameter(sqlReplaceToken, types);
-		} else if(keyValue.getSearchField().getClazz().isAssignableFrom(UUID.class)){
-			List<UUID> types = new ArrayList<>();
-			for (String value : keyValue.getValues()) {
-				UUID type = UUID.fromString(value);
-				types.add(type);
-			}
-			query.setParameter(sqlReplaceToken, types);
-		} else {
-				query.setParameter(sqlReplaceToken, keyValue.getValues());
-			}
-		}
-	}
+        if (pageSize * (pageNumber - 1) < 0) {
+            throw new EJBTransactionRolledbackException("Error building query with values: Page number: " + pageNumber + " and Page size: " + pageSize);
+        }
+        query.setFirstResult(pageSize * (pageNumber - 1));
+        query.setMaxResults(pageSize);
+        return query.getResultList();
+    }
 
-	public List<PollBase> findByAssetInTimespan(UUID assetId, Instant start, Instant stop){
-		TypedQuery<PollBase> query = em.createNamedQuery(PollBase.FIND_BY_ASSET_IN_TIMESPAN, PollBase.class);
-		query.setParameter("assetId", assetId);
-		query.setParameter("start", start);
-		query.setParameter("stop", stop);
-		return query.getResultList();
-	}
+    private <T> void queryBuilder(List<PollSearchKeyValue> searchKeyValues, TypedQuery<T> query) {
+        for (PollSearchKeyValue keyValue : searchKeyValues) {
+            String sqlReplaceToken = keyValue.getSearchField().getSqlReplaceToken();
+            if (keyValue.getSearchField().getClazz().isAssignableFrom(MobileTerminalTypeEnum.class)) {
+                List<MobileTerminalTypeEnum> types = new ArrayList<>();
+                for (String value : keyValue.getValues()) {
+                    MobileTerminalTypeEnum type = MobileTerminalTypeEnum.valueOf(value);
+                    types.add(type);
+                }
+                query.setParameter(sqlReplaceToken, types);
+            } else if (keyValue.getSearchField().getClazz().isAssignableFrom(PollTypeEnum.class)) {
+                List<PollTypeEnum> types = new ArrayList<>();
+                for (String value : keyValue.getValues()) {
+                    PollTypeEnum type = PollTypeEnum.valueOf(value);
+                    types.add(type);
+                }
+                query.setParameter(sqlReplaceToken, types);
+            } else if (keyValue.getSearchField().getClazz().isAssignableFrom(UUID.class)) {
+                List<UUID> types = new ArrayList<>();
+                for (String value : keyValue.getValues()) {
+                    UUID type = UUID.fromString(value);
+                    types.add(type);
+                }
+                query.setParameter(sqlReplaceToken, types);
+            } else {
+                query.setParameter(sqlReplaceToken, keyValue.getValues());
+            }
+        }
+    }
+
+    public List<PollBase> findByAssetInTimespan(UUID assetId, Instant start, Instant stop) {
+        TypedQuery<PollBase> query = em.createNamedQuery(PollBase.FIND_BY_ASSET_IN_TIMESPAN, PollBase.class);
+        query.setParameter("assetId", assetId);
+        query.setParameter("start", start);
+        query.setParameter("stop", stop);
+        return query.getResultList();
+    }
 }

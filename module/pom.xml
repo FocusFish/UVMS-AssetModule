@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>asset-module</artifactId>
@@ -6,10 +7,10 @@
     <packaging>war</packaging>
 
     <parent>
-	    <groupId>fish.focus.uvms.asset</groupId>
-	    <artifactId>asset</artifactId>
-	    <version>6.8.36-SNAPSHOT</version>
-	    <relativePath>../pom.xml</relativePath>
+        <groupId>fish.focus.uvms.asset</groupId>
+        <artifactId>asset</artifactId>
+        <version>6.8.36-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <properties>
@@ -17,7 +18,7 @@
         <docker.liquibase.phase>test-compile</docker.liquibase.phase>
         <docker.dev.prestop.phase>validate</docker.dev.prestop.phase>
         <docker.liquibase.changeLogFile>../LIQUIBASE/changelog/db-changelog-master.xml</docker.liquibase.changeLogFile>
-    
+
         <wildfly.maven.plugin.version>2.0.2.Final</wildfly.maven.plugin.version>
     </properties>
 

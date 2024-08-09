@@ -2,15 +2,17 @@ package fish.focus.uvms.asset.domain.dao;
 
 import javax.ejb.Stateless;
 import javax.persistence.*;
+
 import fish.focus.uvms.asset.domain.entity.AssetFilter;
 import fish.focus.uvms.asset.domain.entity.AssetFilterQuery;
 import fish.focus.uvms.asset.domain.entity.AssetFilterValue;
+
 import java.util.List;
 import java.util.UUID;
 
 @Stateless
 public class AssetFilterDao {
-	@PersistenceContext
+    @PersistenceContext
     private EntityManager em;
 
 
@@ -22,7 +24,7 @@ public class AssetFilterDao {
     public AssetFilter getAssetFilterByGuid(UUID filterId) {
         return em.find(AssetFilter.class, filterId);
     }
-    
+
     public AssetFilter updateAssetFilter(AssetFilter filter) {
         em.merge(filter);
         return filter;
@@ -55,16 +57,16 @@ public class AssetFilterDao {
         query.setParameter("assetId", assetId);
         return query.getResultList();
     }
-    
+
     public AssetFilterQuery create(AssetFilterQuery query) {
         em.persist(query);
         return query;
     }
-    
+
     public AssetFilterQuery getAssetFilterQuery(UUID id) {
         try {
             TypedQuery<AssetFilterQuery> query = em.createNamedQuery(AssetFilterQuery.ASSETFILTER_QUERY_GETBYID,
-            		AssetFilterQuery.class);
+                    AssetFilterQuery.class);
             query.setParameter("id", id);
             return query.getSingleResult();
         } catch (NoResultException e) {
@@ -83,33 +85,33 @@ public class AssetFilterDao {
 
     public List<AssetFilterQuery> retrieveFilterQuerysForAssetFilter(AssetFilter assetFilter) {
         TypedQuery<AssetFilterQuery> query = em.createNamedQuery(AssetFilterQuery.ASSETFILTER_RETRIEVE_QUERYS_FOR_FILTER,
-        		AssetFilterQuery.class);
+                AssetFilterQuery.class);
         query.setParameter("assetFilter", assetFilter);
         return query.getResultList();
     }
-    
-	public void removeValuesFromFilterQuery(AssetFilterQuery assetFilterQuery) {
-		Query qry = em.createNamedQuery(AssetFilterValue.ASSETFILTER_VALUE_CLEAR);
+
+    public void removeValuesFromFilterQuery(AssetFilterQuery assetFilterQuery) {
+        Query qry = em.createNamedQuery(AssetFilterValue.ASSETFILTER_VALUE_CLEAR);
         qry.setParameter("assetFilterQuery", assetFilterQuery);
         qry.executeUpdate();
-	}
+    }
 
-	public void removeQuerysFromFilter(AssetFilter assetFilter) {
-		Query qry = em.createNamedQuery(AssetFilterQuery.ASSETFILTER_QUERY_CLEAR);
+    public void removeQuerysFromFilter(AssetFilter assetFilter) {
+        Query qry = em.createNamedQuery(AssetFilterQuery.ASSETFILTER_QUERY_CLEAR);
         qry.setParameter("assetFilter", assetFilter);
         qry.executeUpdate();
-	}
-	
-	public AssetFilterValue getAssetFilterValueByGuid(UUID assetFilterValueId) {
-		 try {
-	            TypedQuery<AssetFilterValue> query = em.createNamedQuery(AssetFilterValue.ASSETFILTER_VALUE_GETBYID, AssetFilterValue.class);
-	            query.setParameter("id", assetFilterValueId);
-	            return query.getSingleResult();
-	        } catch (NoResultException e) {
-	            return null;
-	        }
-	}
-    
+    }
+
+    public AssetFilterValue getAssetFilterValueByGuid(UUID assetFilterValueId) {
+        try {
+            TypedQuery<AssetFilterValue> query = em.createNamedQuery(AssetFilterValue.ASSETFILTER_VALUE_GETBYID, AssetFilterValue.class);
+            query.setParameter("id", assetFilterValueId);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
     public AssetFilterValue create(AssetFilterValue value) {
         em.persist(value);
         return value;
@@ -118,7 +120,7 @@ public class AssetFilterDao {
     public AssetFilterValue get(UUID id) {
         try {
             TypedQuery<AssetFilterValue> query = em.createNamedQuery(AssetFilterValue.ASSETFILTER_VALUE_GETBYID,
-            		AssetFilterValue.class);
+                    AssetFilterValue.class);
             query.setParameter("id", id);
             return query.getSingleResult();
         } catch (NoResultException e) {
@@ -137,7 +139,7 @@ public class AssetFilterDao {
 
     public List<AssetFilterValue> retrieveValuesForFilterQuery(AssetFilterQuery assetFilterquery) {
         TypedQuery<AssetFilterValue> query = em.createNamedQuery(AssetFilterValue.ASSETFILTER_RETRIEVE_VALUES_FOR_QUERY,
-        		AssetFilterValue.class);
+                AssetFilterValue.class);
         query.setParameter("assetFilterQuery", assetFilterquery);
         return query.getResultList();
     }

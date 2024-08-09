@@ -13,6 +13,7 @@ package fish.focus.uvms.asset.remote.dto;
 
 import java.time.Instant;
 import java.util.UUID;
+
 import fish.focus.uvms.asset.model.constants.UnitTonnage;
 
 public class AssetDto {

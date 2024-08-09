@@ -15,7 +15,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import fish.focus.uvms.rest.mobileterminal.dto.MTResponseDto;
 
 public class MTErrorHandler {
-    
+
     public static MTResponseDto getFault(Exception ex) {
         return new MTResponseDto<>(ExceptionUtils.getRootCause(ex), MTResponseCode.UNDEFINED_ERROR);
     }

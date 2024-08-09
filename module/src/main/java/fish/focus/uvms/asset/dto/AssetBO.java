@@ -11,6 +11,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.asset.dto;
 
 import java.util.List;
+
 import fish.focus.uvms.asset.domain.constant.AssetIdentifier;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.domain.entity.ContactInfo;
@@ -24,34 +25,43 @@ public class AssetBO {
     private List<Note> notes;
     private FishingLicence fishingLicence;
     private AssetIdentifier defaultIdentifier = AssetIdentifier.CFR;
-    
+
     public Asset getAsset() {
         return asset;
     }
+
     public void setAsset(Asset asset) {
         this.asset = asset;
     }
+
     public List<ContactInfo> getContacts() {
         return contacts;
     }
+
     public void setContacts(List<ContactInfo> contacts) {
         this.contacts = contacts;
     }
+
     public List<Note> getNotes() {
         return notes;
     }
+
     public void setNotes(List<Note> notes) {
         this.notes = notes;
     }
+
     public FishingLicence getFishingLicence() {
         return fishingLicence;
     }
+
     public void setFishingLicence(FishingLicence fishingLicence) {
         this.fishingLicence = fishingLicence;
     }
+
     public AssetIdentifier getDefaultIdentifier() {
         return defaultIdentifier;
     }
+
     public void setDefaultIdentifier(AssetIdentifier defaultIdentifier) {
         this.defaultIdentifier = defaultIdentifier;
     }

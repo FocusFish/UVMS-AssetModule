@@ -33,12 +33,12 @@ public class AssetModuleRequestMapper {
     }
 
     private static AssetId createAssetId(String value, AssetIdType type) throws AssetException {
-    	if(value == null) {
-    		throw new NullPointerException("Id value is null");
-    	}
-    	if(type == null) {
+        if (value == null) {
+            throw new NullPointerException("Id value is null");
+        }
+        if (type == null) {
             throw new NullPointerException("AssetIdType is null");
-    	}
+        }
         AssetId vesseId = new AssetId();
         vesseId.setType(type);
         vesseId.setValue(value);
@@ -53,7 +53,6 @@ public class AssetModuleRequestMapper {
     }
 
     /**
-     *
      * @param userName
      * @return
      * @throws AssetException

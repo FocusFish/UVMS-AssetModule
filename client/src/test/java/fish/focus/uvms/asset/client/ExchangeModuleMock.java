@@ -17,17 +17,18 @@ import javax.ejb.MessageDriven;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+
 import fish.focus.uvms.asset.message.AssetProducer;
 
 @MessageDriven(mappedName = "jms/queue/UVMSExchangeEvent", activationConfig = {
-        @ActivationConfigProperty(propertyName = "messagingType", propertyValue = "javax.jms.MessageListener"), 
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"), 
+        @ActivationConfigProperty(propertyName = "messagingType", propertyValue = "javax.jms.MessageListener"),
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
         @ActivationConfigProperty(propertyName = "destination", propertyValue = "UVMSExchangeEvent")})
 public class ExchangeModuleMock implements MessageListener {
-    
+
     @EJB
     AssetProducer producer;
-    
+
     @Override
     public void onMessage(Message message) {
         try {

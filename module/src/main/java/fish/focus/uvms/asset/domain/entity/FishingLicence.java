@@ -30,13 +30,13 @@ public class FishingLicence {
     @GeneratedValue
     @Column(name = "id")
     private UUID id;
-    
+
     @Column(name = "asset_id")
     private UUID assetId;
-    
+
     @Column(name = "licence_number")
     private Long licenceNumber;
-    
+
     @Column(name = "name")
     private String name;
 
@@ -54,7 +54,7 @@ public class FishingLicence {
 
     @Column(name = "constraints")
     private String constraints;
-    
+
     @Column(name = "created_date")
     private Instant createdDate;
 
@@ -62,7 +62,7 @@ public class FishingLicence {
     public void prePersist() {
         createdDate = Instant.now();
     }
-    
+
     public UUID getId() {
         return id;
     }

@@ -39,8 +39,8 @@ public class SamplingPoll extends PollBase {
         if (o == null || getClass() != o.getClass()) return false;
         SamplingPoll that = (SamplingPoll) o;
         return Objects.equals(getId(), that.getId()) &&
-               Objects.equals(startDate, that.startDate) &&
-               Objects.equals(stopDate, that.stopDate);
+                Objects.equals(startDate, that.startDate) &&
+                Objects.equals(stopDate, that.stopDate);
     }
 
     @Override

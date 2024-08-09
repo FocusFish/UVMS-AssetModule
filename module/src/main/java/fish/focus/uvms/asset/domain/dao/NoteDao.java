@@ -14,7 +14,9 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+
 import fish.focus.uvms.asset.domain.entity.Note;
+
 import java.util.List;
 import java.util.UUID;
 

@@ -16,8 +16,8 @@ import java.util.List;
 
 public class MTSearchKeyValue {
 
-	private MTSearchFields searchField;
-	private List<String> searchValues = new ArrayList<>();
+    private MTSearchFields searchField;
+    private List<String> searchValues = new ArrayList<>();
 
     public MTSearchKeyValue() {
         super();
@@ -27,30 +27,30 @@ public class MTSearchKeyValue {
         this.searchField = searchField;
         this.searchValues = searchValues;
     }
-    
+
     public MTSearchFields getSearchField() {
-		return searchField;
-	}
-    
-	public void setSearchField(MTSearchFields searchField) {
-		this.searchField = searchField;
-	}
+        return searchField;
+    }
 
-	public List<String> getSearchValues() {
-		if(searchValues == null) searchValues = new ArrayList<>();
-		return searchValues;
-	}
+    public void setSearchField(MTSearchFields searchField) {
+        this.searchField = searchField;
+    }
 
-	public List<String> getSearchValuesAsLowerCase() {
-		if(searchValues == null) searchValues = new ArrayList<>();
-		List<String> returnList = new ArrayList<>();
-		for (String s : searchValues) {
-			returnList.add(s.toLowerCase());
-		}
-		return returnList;
-	}
+    public List<String> getSearchValues() {
+        if (searchValues == null) searchValues = new ArrayList<>();
+        return searchValues;
+    }
 
-	public void setSearchValues(List<String> searchValues) {
-		this.searchValues = searchValues;
-	}
+    public void setSearchValues(List<String> searchValues) {
+        this.searchValues = searchValues;
+    }
+
+    public List<String> getSearchValuesAsLowerCase() {
+        if (searchValues == null) searchValues = new ArrayList<>();
+        List<String> returnList = new ArrayList<>();
+        for (String s : searchValues) {
+            returnList.add(s.toLowerCase());
+        }
+        return returnList;
+    }
 }

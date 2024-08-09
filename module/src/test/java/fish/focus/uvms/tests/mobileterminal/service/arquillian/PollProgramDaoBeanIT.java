@@ -34,24 +34,18 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class PollProgramDaoBeanIT extends TransactionalTests {
 
-    private Calendar cal = Calendar.getInstance();
-
-    private int startYear = 1999;
-    private int latestRunYear = 2017;
-
-    private Random rnd = new Random();
-
-    @EJB
-    private PollProgramDaoBean pollProgramDao;
-
-    @EJB
-    private TerminalDaoBean terminalDaoBean;
-
-    @EJB
-    private MobileTerminalPluginDaoBean testDaoBean;
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+    private Calendar cal = Calendar.getInstance();
+    private int startYear = 1999;
+    private int latestRunYear = 2017;
+    private Random rnd = new Random();
+    @EJB
+    private PollProgramDaoBean pollProgramDao;
+    @EJB
+    private TerminalDaoBean terminalDaoBean;
+    @EJB
+    private MobileTerminalPluginDaoBean testDaoBean;
 
     @Test
     @OperateOnDeployment("normal")
@@ -110,7 +104,7 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
         try {
             pollProgramDao.createProgramPoll(null);
             Assert.fail();
-        }catch(RuntimeException e){
+        } catch (RuntimeException e) {
             Assert.assertTrue(true);
         }
     }
@@ -141,7 +135,7 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void updatePollProgram_WithNonePersistedEntityWillFail()  {
+    public void updatePollProgram_WithNonePersistedEntityWillFail() {
 
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();

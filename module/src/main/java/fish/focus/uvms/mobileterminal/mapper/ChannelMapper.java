@@ -19,6 +19,7 @@ import fish.focus.uvms.commons.date.DateUtils;
 import fish.focus.uvms.mobileterminal.constants.MobileTerminalConstants;
 import fish.focus.uvms.mobileterminal.entity.Channel;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class ChannelMapper {
         for (Channel channel : channels) {
 
             if (channel.getArchived() != null && channel.getArchived()) continue;
-            if(!channel.isPollChannel()) continue;
+            if (!channel.isPollChannel()) continue;
 
             ComChannelType comChannel = new ComChannelType();
             comChannel.setName(channel.getName());

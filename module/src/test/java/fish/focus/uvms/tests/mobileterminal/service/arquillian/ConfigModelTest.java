@@ -38,189 +38,189 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
-@PowerMockIgnore({"javax.management.*","com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*", "com.sun.org.apache.xalan.*"})		//magic line to fix powermock java 11 issues
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*", "com.sun.org.apache.xalan.*"})
+//magic line to fix powermock java 11 issues
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({PluginMapper.class, ConfigServiceBean.class})
 public class ConfigModelTest {
 
-	@Mock
-	private MobileTerminalPluginDaoBean mobileTerminalPluginDao;
+    @Mock
+    private MobileTerminalPluginDaoBean mobileTerminalPluginDao;
 
-	@Mock
-	private PluginService pluginType;
+    @Mock
+    private PluginService pluginType;
 
-	@Mock
+    @Mock
     private MobileTerminalPlugin siriusone;
 
-	@Mock
+    @Mock
     private MobileTerminalPlugin twostage;
 
-	@Mock
-	private ChannelDaoBean channelDao;
+    @Mock
+    private ChannelDaoBean channelDao;
 
-	@InjectMocks
+    @InjectMocks
     private ConfigServiceBeanMT testModelBean;
 
-	@Before
-	public void setUp() {
-		MockitoAnnotations.initMocks(this);
+    @Before
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
         when(siriusone.getPluginSatelliteType()).thenReturn("IRIDIUM");
         when(twostage.getPluginSatelliteType()).thenReturn("INMARSAT_C");
-	}
+    }
 
-	@Test
-	public void testGetAllTerminalSystemsEmpty()  {
-		List<MobileTerminalPlugin> pluginList = new ArrayList<>();
-		when(mobileTerminalPluginDao.getPluginList()).thenReturn(pluginList);
+    @Test
+    public void testGetAllTerminalSystemsEmpty() {
+        List<MobileTerminalPlugin> pluginList = new ArrayList<>();
+        when(mobileTerminalPluginDao.getPluginList()).thenReturn(pluginList);
 
-		List<TerminalSystemType> terminalSystems = testModelBean.getAllTerminalSystems();
+        List<TerminalSystemType> terminalSystems = testModelBean.getAllTerminalSystems();
 
-		assertEquals(0, terminalSystems.size());
-	}
+        assertEquals(0, terminalSystems.size());
+    }
 
-	@Test
-	public void testGetAllTerminalSystems()  {
-		List<MobileTerminalPlugin> pluginList = new ArrayList<>();
-		pluginList.add(siriusone);
-		pluginList.add(twostage);
-		when(mobileTerminalPluginDao.getPluginList()).thenReturn(pluginList);
+    @Test
+    public void testGetAllTerminalSystems() {
+        List<MobileTerminalPlugin> pluginList = new ArrayList<>();
+        pluginList.add(siriusone);
+        pluginList.add(twostage);
+        when(mobileTerminalPluginDao.getPluginList()).thenReturn(pluginList);
 
-		List<TerminalSystemType> terminalSystems = testModelBean.getAllTerminalSystems();
-		assertEquals(2, terminalSystems.size());
+        List<TerminalSystemType> terminalSystems = testModelBean.getAllTerminalSystems();
+        assertEquals(2, terminalSystems.size());
 
-		for(TerminalSystemType system : terminalSystems) {
-			assertNotNull(system.getType());
-		}
-	}
+        for (TerminalSystemType system : terminalSystems) {
+            assertNotNull(system.getType());
+        }
+    }
 
-	@Test
-	public void testGetAllTerminalSystemsException()  {
-		List<MobileTerminalPlugin> list = mobileTerminalPluginDao.getPluginList();
-		Assert.assertNotNull(list);
-		List<TerminalSystemType> list2 = testModelBean.getAllTerminalSystems();
-		Assert.assertNotNull(list2);
-	}
+    @Test
+    public void testGetAllTerminalSystemsException() {
+        List<MobileTerminalPlugin> list = mobileTerminalPluginDao.getPluginList();
+        Assert.assertNotNull(list);
+        List<TerminalSystemType> list2 = testModelBean.getAllTerminalSystems();
+        Assert.assertNotNull(list2);
+    }
 
-	@Test
-	public void testGetConfigValues() {
-		List<ConfigList> configValues = testModelBean.getConfigValues();
-		assertNotNull(configValues);
-		assertEquals(3, configValues.size());
+    @Test
+    public void testGetConfigValues() {
+        List<ConfigList> configValues = testModelBean.getConfigValues();
+        assertNotNull(configValues);
+        assertEquals(3, configValues.size());
 
-		for(ConfigList config : configValues) {
-			assertNotNull(config.getName());
-		}
-	}
+        for (ConfigList config : configValues) {
+            assertNotNull(config.getName());
+        }
+    }
 
-	@Test
-	public void testUpdatePluginEquals()  {
-		String serviceName = "serviceName";
-		when(pluginType.getServiceName()).thenReturn(serviceName);
-		when(mobileTerminalPluginDao.getPluginByServiceName(serviceName)).thenReturn(siriusone);
-		mockStatic(PluginMapper.class);
-		when(PluginMapper.equals(siriusone, pluginType)).thenReturn(true);
+    @Test
+    public void testUpdatePluginEquals() {
+        String serviceName = "serviceName";
+        when(pluginType.getServiceName()).thenReturn(serviceName);
+        when(mobileTerminalPluginDao.getPluginByServiceName(serviceName)).thenReturn(siriusone);
+        mockStatic(PluginMapper.class);
+        when(PluginMapper.equals(siriusone, pluginType)).thenReturn(true);
 
-		MobileTerminalPlugin resEntity = testModelBean.updatePlugin(pluginType);
+        MobileTerminalPlugin resEntity = testModelBean.updatePlugin(pluginType);
 
-		assertNotNull(resEntity);
-	}
+        assertNotNull(resEntity);
+    }
 
-	@Test
-	public void testUpdatePluginUpdate()  {
-		String serviceName = "serviceName";
-		when(pluginType.getServiceName()).thenReturn(serviceName);
-		when(mobileTerminalPluginDao.getPluginByServiceName(serviceName)).thenReturn(siriusone);
-		mockStatic(PluginMapper.class);
-		when(PluginMapper.equals(siriusone, pluginType)).thenReturn(false);
-		mockStatic(PluginMapper.class);
-		when(PluginMapper.mapModelToEntity(siriusone, pluginType)).thenReturn(siriusone);
+    @Test
+    public void testUpdatePluginUpdate() {
+        String serviceName = "serviceName";
+        when(pluginType.getServiceName()).thenReturn(serviceName);
+        when(mobileTerminalPluginDao.getPluginByServiceName(serviceName)).thenReturn(siriusone);
+        mockStatic(PluginMapper.class);
+        when(PluginMapper.equals(siriusone, pluginType)).thenReturn(false);
+        mockStatic(PluginMapper.class);
+        when(PluginMapper.mapModelToEntity(siriusone, pluginType)).thenReturn(siriusone);
 
-		when(mobileTerminalPluginDao.updateMobileTerminalPlugin(any(MobileTerminalPlugin.class))).thenReturn(siriusone);
+        when(mobileTerminalPluginDao.updateMobileTerminalPlugin(any(MobileTerminalPlugin.class))).thenReturn(siriusone);
 
-		MobileTerminalPlugin resEntity = testModelBean.updatePlugin(pluginType);
-		assertNotNull(resEntity);
-	}
+        MobileTerminalPlugin resEntity = testModelBean.updatePlugin(pluginType);
+        assertNotNull(resEntity);
+    }
 
-	@Test
-	public void testUpdateNoPluginFound()  {
-		String serviceName = "serviceName";
-		when(pluginType.getServiceName()).thenReturn(serviceName);
+    @Test
+    public void testUpdateNoPluginFound() {
+        String serviceName = "serviceName";
+        when(pluginType.getServiceName()).thenReturn(serviceName);
 
-		try{
-			MobileTerminalPlugin fetched  = mobileTerminalPluginDao.getPluginByServiceName(serviceName);
-			MobileTerminalPlugin resEntity = testModelBean.updatePlugin(pluginType);
-			assertNull(resEntity);
-		}
-		catch (Throwable t) {
-			Assert.fail();
-		}
-	}
+        try {
+            MobileTerminalPlugin fetched = mobileTerminalPluginDao.getPluginByServiceName(serviceName);
+            MobileTerminalPlugin resEntity = testModelBean.updatePlugin(pluginType);
+            assertNull(resEntity);
+        } catch (Throwable t) {
+            Assert.fail();
+        }
+    }
 
-	@Test
-	public void testInactivatePluginsException()  {
-		List<MobileTerminalPlugin> list = mobileTerminalPluginDao.getPluginList();
-		Assert.assertNotNull(list);
+    @Test
+    public void testInactivatePluginsException() {
+        List<MobileTerminalPlugin> list = mobileTerminalPluginDao.getPluginList();
+        Assert.assertNotNull(list);
 
-		Map<String, PluginService> map = new HashMap<>();
-		testModelBean.inactivatePlugins(map);
-	}
+        Map<String, PluginService> map = new HashMap<>();
+        testModelBean.inactivatePlugins(map);
+    }
 
-	@Test
-	public void testInactivatePluginsNoPlugin()  {
-		Map<String, PluginService> map = new HashMap<>();
-		List<MobileTerminalPlugin> resEntityList = testModelBean.inactivatePlugins(map);
+    @Test
+    public void testInactivatePluginsNoPlugin() {
+        Map<String, PluginService> map = new HashMap<>();
+        List<MobileTerminalPlugin> resEntityList = testModelBean.inactivatePlugins(map);
 
-		assertNotNull(resEntityList);
-		assertEquals(0, resEntityList.size());
-	}
+        assertNotNull(resEntityList);
+        assertEquals(0, resEntityList.size());
+    }
 
-	@Test
-	public void testInactivatePluginsInactive()  {
-		String serviceName = "serviceName";
-		Map<String, PluginService> map = new HashMap<>();
-		List<MobileTerminalPlugin> entityList = new ArrayList<>();
-		when(siriusone.getPluginServiceName()).thenReturn(serviceName);
-		when(siriusone.getPluginInactive()).thenReturn(false);
-		entityList.add(siriusone);
-		when(mobileTerminalPluginDao.getPluginList()).thenReturn(entityList);
+    @Test
+    public void testInactivatePluginsInactive() {
+        String serviceName = "serviceName";
+        Map<String, PluginService> map = new HashMap<>();
+        List<MobileTerminalPlugin> entityList = new ArrayList<>();
+        when(siriusone.getPluginServiceName()).thenReturn(serviceName);
+        when(siriusone.getPluginInactive()).thenReturn(false);
+        entityList.add(siriusone);
+        when(mobileTerminalPluginDao.getPluginList()).thenReturn(entityList);
 
-		List<MobileTerminalPlugin> resEntityList = testModelBean.inactivatePlugins(map);
-		assertNotNull(resEntityList);
-		assertEquals(1, resEntityList.size());
-		for(MobileTerminalPlugin p : resEntityList) {
-			assertFalse(p.getPluginInactive());
-		}
-	}
+        List<MobileTerminalPlugin> resEntityList = testModelBean.inactivatePlugins(map);
+        assertNotNull(resEntityList);
+        assertEquals(1, resEntityList.size());
+        for (MobileTerminalPlugin p : resEntityList) {
+            assertFalse(p.getPluginInactive());
+        }
+    }
 
-	@Test
-	public void testInactivePluginsExsist()  {
-		String serviceName = "serviceName";
-		Map<String, PluginService> map = new HashMap<>();
-		List<MobileTerminalPlugin> entityList = new ArrayList<>();
-		when(siriusone.getPluginServiceName()).thenReturn(serviceName);
-		when(siriusone.getPluginInactive()).thenReturn(false);
-		entityList.add(siriusone);
-		when(mobileTerminalPluginDao.getPluginList()).thenReturn(entityList);
-		map.put(serviceName, pluginType);
+    @Test
+    public void testInactivePluginsExsist() {
+        String serviceName = "serviceName";
+        Map<String, PluginService> map = new HashMap<>();
+        List<MobileTerminalPlugin> entityList = new ArrayList<>();
+        when(siriusone.getPluginServiceName()).thenReturn(serviceName);
+        when(siriusone.getPluginInactive()).thenReturn(false);
+        entityList.add(siriusone);
+        when(mobileTerminalPluginDao.getPluginList()).thenReturn(entityList);
+        map.put(serviceName, pluginType);
 
-		List<MobileTerminalPlugin> resEntityList = testModelBean.inactivatePlugins(map);
-		assertNotNull(resEntityList);
-		assertEquals(0, resEntityList.size());
-	}
+        List<MobileTerminalPlugin> resEntityList = testModelBean.inactivatePlugins(map);
+        assertNotNull(resEntityList);
+        assertEquals(0, resEntityList.size());
+    }
 
-	@Test
-	public void testInactivePluginsAlreadyInactive()  {
-		String serviceName = "serviceName";
-		Map<String, PluginService> map = new HashMap<>();
-		List<MobileTerminalPlugin> entityList = new ArrayList<>();
-		when(siriusone.getPluginServiceName()).thenReturn(serviceName);
-		when(siriusone.getPluginInactive()).thenReturn(true);
-		entityList.add(siriusone);
-		when(mobileTerminalPluginDao.getPluginList()).thenReturn(entityList);
+    @Test
+    public void testInactivePluginsAlreadyInactive() {
+        String serviceName = "serviceName";
+        Map<String, PluginService> map = new HashMap<>();
+        List<MobileTerminalPlugin> entityList = new ArrayList<>();
+        when(siriusone.getPluginServiceName()).thenReturn(serviceName);
+        when(siriusone.getPluginInactive()).thenReturn(true);
+        entityList.add(siriusone);
+        when(mobileTerminalPluginDao.getPluginList()).thenReturn(entityList);
 
-		List<MobileTerminalPlugin> resEntityList = testModelBean.inactivatePlugins(map);
-		assertNotNull(resEntityList);
-		assertEquals(0, resEntityList.size());
-	}
+        List<MobileTerminalPlugin> resEntityList = testModelBean.inactivatePlugins(map);
+        assertNotNull(resEntityList);
+        assertEquals(0, resEntityList.size());
+    }
 
 }

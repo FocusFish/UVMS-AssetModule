@@ -13,5 +13,5 @@ package fish.focus.uvms.asset.client.model.search;
 
 public enum SearchFieldType {
 
-	LIST, NUMBER, DECIMAL, MIN_DECIMAL, MAX_DECIMAL, BOOLEAN, ID, DATE, STRING, CHILD;
+    LIST, NUMBER, DECIMAL, MIN_DECIMAL, MAX_DECIMAL, BOOLEAN, ID, DATE, STRING, CHILD;
 }

@@ -3,7 +3,7 @@
             xmlns="types.asset.wsdl.focus.fish"
             targetNamespace="types.asset.wsdl.focus.fish"
             version="1.0">
-    
+
     <xsd:complexType name="Asset">
         <xsd:sequence>
             <xsd:element name="assetId" type="AssetId"/>
@@ -38,7 +38,7 @@
             <xsd:element name="gfcm" type="xsd:string" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="AssetContact">
         <xsd:sequence>
             <xsd:element name="name" type="xsd:string"/>
@@ -51,17 +51,17 @@
 
     <xsd:complexType name="AssetNotes">
         <xsd:sequence>
-            <xsd:element name="id" type="xsd:string" />
-            <xsd:element name="date" type="xsd:string" />
-            <xsd:element name="activity" type="xsd:string" />
-            <xsd:element name="user" type="xsd:string" />
-            <xsd:element name="readyDate" type="xsd:string" />
-            <xsd:element name="licenseHolder" type="xsd:string" />
-            <xsd:element name="contact" type="xsd:string" />
-            <xsd:element name="sheetNumber" type="xsd:string" />
+            <xsd:element name="id" type="xsd:string"/>
+            <xsd:element name="date" type="xsd:string"/>
+            <xsd:element name="activity" type="xsd:string"/>
+            <xsd:element name="user" type="xsd:string"/>
+            <xsd:element name="readyDate" type="xsd:string"/>
+            <xsd:element name="licenseHolder" type="xsd:string"/>
+            <xsd:element name="contact" type="xsd:string"/>
+            <xsd:element name="sheetNumber" type="xsd:string"/>
             <xsd:element name="notes" type="xsd:string"/>
-            <xsd:element name="document" type="xsd:string" />
-            <xsd:element name="source" type="NoteSource" />
+            <xsd:element name="document" type="xsd:string"/>
+            <xsd:element name="source" type="NoteSource"/>
         </xsd:sequence>
     </xsd:complexType>
 
@@ -70,7 +70,7 @@
             <xsd:element name="code" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="AssetProdOrgModel">
         <xsd:sequence>
             <xsd:element name="id" type="xsd:long"/>
@@ -97,27 +97,27 @@
 
     <xsd:simpleType name="ContactSource">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="INTERNAL" />
-            <xsd:enumeration value="NATIONAL" />
+            <xsd:enumeration value="INTERNAL"/>
+            <xsd:enumeration value="NATIONAL"/>
         </xsd:restriction>
     </xsd:simpleType>
 
     <xsd:simpleType name="NoteSource">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="INTERNAL" />
-            <xsd:enumeration value="NATIONAL" />
+            <xsd:enumeration value="INTERNAL"/>
+            <xsd:enumeration value="NATIONAL"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="CarrierSource">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="INTERNAL" />
-            <xsd:enumeration value="NATIONAL" />
-            <xsd:enumeration value="XEU" />
-            <xsd:enumeration value="THIRD_COUNTRY" />
+            <xsd:enumeration value="INTERNAL"/>
+            <xsd:enumeration value="NATIONAL"/>
+            <xsd:enumeration value="XEU"/>
+            <xsd:enumeration value="THIRD_COUNTRY"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="EventCode">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="CEN"/>
@@ -131,7 +131,7 @@
             <xsd:enumeration value="UNK"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:complexType name="AssetHistoryId">
         <xsd:sequence>
             <xsd:element name="eventId" type="xsd:string"/>
@@ -139,29 +139,29 @@
             <xsd:element name="eventDate" type="xsd:dateTime"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="AssetId">
         <xsd:sequence>
-            <xsd:element name="type" type="AssetIdType" />
-            <xsd:element name="value" type="xsd:string" />
-            <xsd:element name="guid" type="xsd:string" />
+            <xsd:element name="type" type="AssetIdType"/>
+            <xsd:element name="value" type="xsd:string"/>
+            <xsd:element name="guid" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:simpleType name="AssetIdType">
         <xsd:restriction base="xsd:string">
-            <xsd:enumeration value="INTERNAL_ID" />
-            <xsd:enumeration value="CFR" />
-            <xsd:enumeration value="IRCS" />
-            <xsd:enumeration value="IMO" />
-            <xsd:enumeration value="MMSI" />
-            <xsd:enumeration value="GUID" />
-            <xsd:enumeration value="ICCAT" />
-            <xsd:enumeration value="UVI" />
-            <xsd:enumeration value="GFCM" />
+            <xsd:enumeration value="INTERNAL_ID"/>
+            <xsd:enumeration value="CFR"/>
+            <xsd:enumeration value="IRCS"/>
+            <xsd:enumeration value="IMO"/>
+            <xsd:enumeration value="MMSI"/>
+            <xsd:enumeration value="GUID"/>
+            <xsd:enumeration value="ICCAT"/>
+            <xsd:enumeration value="UVI"/>
+            <xsd:enumeration value="GFCM"/>
         </xsd:restriction>
     </xsd:simpleType>
-    
+
     <xsd:simpleType name="ConfigSearchField">
         <xsd:restriction base="xsd:string">
             <xsd:enumeration value="FLAG_STATE"/>
@@ -172,9 +172,9 @@
             <xsd:enumeration value="MMSI"/>
             <xsd:enumeration value="GUID"/>
             <xsd:enumeration value="HIST_GUID"/>
-            <xsd:enumeration value="ICCAT" />
-            <xsd:enumeration value="UVI" />
-            <xsd:enumeration value="GFCM" />
+            <xsd:enumeration value="ICCAT"/>
+            <xsd:enumeration value="UVI"/>
+            <xsd:enumeration value="GFCM"/>
             <xsd:enumeration value="HOMEPORT"/>
             <xsd:enumeration value="ASSET_TYPE"/> <!-- carrier type, eg. asset -->
             <xsd:enumeration value="LICENSE_TYPE"/>
@@ -193,35 +193,35 @@
             <xsd:element name="assetSearchCriteria" type="AssetListCriteria" minOccurs="1" maxOccurs="1"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="AssetListCriteria">
         <xsd:sequence>
             <xsd:element name="isDynamic" type="xsd:boolean" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="criterias" type="AssetListCriteriaPair" minOccurs="0" maxOccurs="unbounded" />
+            <xsd:element name="criterias" type="AssetListCriteriaPair" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="AssetListPagination">
         <xsd:sequence>
             <xsd:element name="page" type="xsd:int" minOccurs="1" maxOccurs="1"/>
             <xsd:element name="listSize" type="xsd:int" minOccurs="1" maxOccurs="1"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="AssetListCriteriaPair">
         <xsd:sequence>
-            <xsd:element name="key" type="ConfigSearchField" />
-            <xsd:element name="value" type="xsd:string" />
+            <xsd:element name="key" type="ConfigSearchField"/>
+            <xsd:element name="value" type="xsd:string"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <!-- common request, response, fault -->
-    
+
     <xsd:element name="AssetFault">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="code" type="xsd:int" />
-                <xsd:element name="fault" type="xsd:string" />
+                <xsd:element name="code" type="xsd:int"/>
+                <xsd:element name="fault" type="xsd:string"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -297,7 +297,7 @@
             <xsd:enumeration value="FISHING_GEAR_UPSERT"/>
         </xsd:restriction>
     </xsd:simpleType>
-            
+
     <xsd:complexType name="AssetDataSourceRequest" abstract="true">
         <xsd:sequence>
             <xsd:element name="method" type="AssetDataSourceMethod" minOccurs="1"/>

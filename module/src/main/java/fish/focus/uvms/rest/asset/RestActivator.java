@@ -18,6 +18,7 @@ import fish.focus.uvms.rest.asset.service.*;
 import fish.focus.uvms.rest.mobileterminal.services.MobileTerminalRestResource;
 import fish.focus.uvms.rest.mobileterminal.services.PluginRestResource;
 import fish.focus.uvms.rest.mobileterminal.services.PollRestResource;
+
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;

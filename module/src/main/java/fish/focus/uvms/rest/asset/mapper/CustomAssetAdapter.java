@@ -14,10 +14,11 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.bind.adapter.JsonbAdapter;
+
 import fish.focus.uvms.asset.domain.entity.Asset;
 
 public class CustomAssetAdapter implements JsonbAdapter<Asset, JsonObject> {
-    
+
     @Override
     public JsonObject adaptToJson(Asset asset) throws Exception {
         JsonObjectBuilder builder = Json.createObjectBuilder();

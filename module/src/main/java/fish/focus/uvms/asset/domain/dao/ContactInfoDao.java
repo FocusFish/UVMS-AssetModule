@@ -13,6 +13,7 @@ package fish.focus.uvms.asset.domain.dao;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
 import fish.focus.uvms.asset.domain.entity.ContactInfo;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -22,10 +23,10 @@ import java.util.*;
 
 @Stateless
 public class ContactInfoDao {
-    
+
     @PersistenceContext
     private EntityManager em;
-    
+
     public ContactInfo findContactInfo(UUID id) {
         return em.find(ContactInfo.class, id);
     }
@@ -52,7 +53,7 @@ public class ContactInfoDao {
     public List<ContactInfo> getContactInfoRevisionForAssetHistory(List<ContactInfo> contactInfoList, Instant updateDate) {
         AuditReader auditReader = AuditReaderFactory.get(em);
         List<ContactInfo> resultList = new ArrayList<>();
-        for(ContactInfo contactInfo : contactInfoList) { // An Asset can have multiple ContactInfo and each ContactInfo can have multiple History records.
+        for (ContactInfo contactInfo : contactInfoList) { // An Asset can have multiple ContactInfo and each ContactInfo can have multiple History records.
             List<ContactInfo> revisionList = getSortedContactInfoRevisions(auditReader, contactInfo);
             filterOlderRevisionsByAssetUpdatetime(resultList, updateDate, revisionList);
         }
@@ -72,11 +73,11 @@ public class ContactInfoDao {
     }
 
     private void filterOlderRevisionsByAssetUpdatetime(List<ContactInfo> resultList, Instant updateDate, List<ContactInfo> revisionList) {
-        for(ContactInfo ci : revisionList) {
-            if(ci.getAssetUpdateTime().equals(updateDate)) {
+        for (ContactInfo ci : revisionList) {
+            if (ci.getAssetUpdateTime().equals(updateDate)) {
                 resultList.add(ci);
-            } else if(ci.getAssetUpdateTime().isBefore(updateDate)) {
-                if(isUnique(ci.getId(), resultList)) {
+            } else if (ci.getAssetUpdateTime().isBefore(updateDate)) {
+                if (isUnique(ci.getId(), resultList)) {
                     resultList.add(ci);
                 }
             }

@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConfigurationDto implements Serializable{
+public class ConfigurationDto implements Serializable {
 
     private List<Config> configList = new ArrayList<>();
 

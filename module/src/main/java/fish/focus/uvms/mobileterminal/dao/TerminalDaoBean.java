@@ -78,8 +78,8 @@ public class TerminalDaoBean {
 
     @SuppressWarnings("unchecked")
     public List<MobileTerminal> getMobileTerminalsByQuery(String sql) {
-            Query query = em.createQuery(sql, MobileTerminal.class);
-            return query.getResultList();
+        Query query = em.createQuery(sql, MobileTerminal.class);
+        return query.getResultList();
     }
 
     public List<MobileTerminal> getMobileTerminalListWithNoActiveAsset() {
@@ -116,10 +116,10 @@ public class TerminalDaoBean {
 
         for (Number rev : revisionNumbers) {
             MobileTerminal audited = auditReader.find(MobileTerminal.class, mobileTerminalId, rev);
-            if((audited.getAsset() != null && assetId.equals(audited.getAsset().getId()) )
+            if ((audited.getAsset() != null && assetId.equals(audited.getAsset().getId()))
                     || (previousMatch != null && previousMatch.getAsset() != null && assetId.equals(previousMatch.getAsset().getId()))) {
 
-                if(previous != previousMatch){
+                if (previous != previousMatch) {
                     resultList.add(previous);
                 }
                 resultList.add(audited);
@@ -139,14 +139,14 @@ public class TerminalDaoBean {
                 .add(AuditEntity.property("asset_id").eq(assetId))
                 .addProjection(AuditEntity.id().distinct());
 
-        return  query.getResultList();
+        return query.getResultList();
     }
 
     public MobileTerminal getMobileTerminalByRequest(AssetMTEnrichmentRequest request) {
         try {
             Integer dnid = null;
             if (request.getDnidValue() != null) {
-                dnid =Integer.parseInt(request.getDnidValue());
+                dnid = Integer.parseInt(request.getDnidValue());
             }
             Integer memberNumber = null;
             if (request.getMemberNumberValue() != null) {
@@ -168,7 +168,7 @@ public class TerminalDaoBean {
     }
 
     public List<MobileTerminal> getMTListSearchPaginated(Integer pageNumber, Integer pageSize, List<MTSearchKeyValue> searchFields,
-                                                   boolean isDynamic, boolean includeArchived) {
+                                                         boolean isDynamic, boolean includeArchived) {
         try {
             AuditQuery query = createAuditQuery(searchFields, isDynamic, includeArchived);
             if (pageSize != null && pageNumber != null) {
@@ -193,7 +193,7 @@ public class TerminalDaoBean {
         }
     }
 
-    private void forceLoad(Object plugin){
+    private void forceLoad(Object plugin) {
         String s = plugin.toString();
         s = s.concat(s);
     }
@@ -204,7 +204,7 @@ public class TerminalDaoBean {
         //separate search fields for channel and for MT
         List<MTSearchKeyValue> channelSearchValues = new ArrayList<>();
         for (MTSearchKeyValue searchKeyValue : searchFields) {
-            if(searchKeyValue.getSearchField().getFieldType().equals(SearchFieldType.CHILD)){
+            if (searchKeyValue.getSearchField().getFieldType().equals(SearchFieldType.CHILD)) {
                 channelSearchValues.add(searchKeyValue);
             }
         }
@@ -224,7 +224,7 @@ public class TerminalDaoBean {
             if (!searchRevisions(searchFields)) {
                 aaQuery.add(AuditEntity.revisionNumber().maximize().computeAggregationInInstanceContext());
             }
-            if(!includeArchived) {
+            if (!includeArchived) {
                 aaQuery.add(AuditEntity.property("archived").eq(false));
             }
         }
@@ -256,9 +256,9 @@ public class TerminalDaoBean {
                 operatorUsed = true;
                 AuditDisjunction disjunctionOperator = AuditEntity.disjunction();
                 for (String v : searchKeyValue.getSearchValuesAsLowerCase()) {
-                    if(searchKeyValue.getSearchField().equals(MTSearchFields.ASSET_ID)){
+                    if (searchKeyValue.getSearchField().equals(MTSearchFields.ASSET_ID)) {
                         disjunctionOperator.add(AuditEntity.relatedId(searchKeyValue.getSearchField().getFieldName()).eq(UUID.fromString(v)));
-                    }else {
+                    } else {
                         disjunctionOperator.add(AuditEntity.property(searchKeyValue.getSearchField().getFieldName()).ilike(v, MatchMode.ANYWHERE));
                     }
                 }
@@ -284,7 +284,7 @@ public class TerminalDaoBean {
         }
 
 
-        AuditQuery query =  aaQuery.up();       //this moves the query to channel
+        AuditQuery query = aaQuery.up();       //this moves the query to channel
 
 
         ExtendableCriterion operatorChannel;
@@ -307,9 +307,9 @@ public class TerminalDaoBean {
                 channelOperatorUsed = true;
                 AuditDisjunction disjunctionOperator = AuditEntity.disjunction();
                 for (String v : channelSearchValue.getSearchValuesAsLowerCase()) {
-                    if(channelSearchValue.getSearchField().equals(MTSearchFields.DNID) || channelSearchValue.getSearchField().equals(MTSearchFields.MEMBER_NUMBER)){
+                    if (channelSearchValue.getSearchField().equals(MTSearchFields.DNID) || channelSearchValue.getSearchField().equals(MTSearchFields.MEMBER_NUMBER)) {
                         disjunctionOperator.add(AuditEntity.property(channelSearchValue.getSearchField().getFieldName()).eq(Integer.valueOf(v)));
-                    }else {
+                    } else {
                         disjunctionOperator.add(AuditEntity.property(channelSearchValue.getSearchField().getFieldName()).ilike(v, MatchMode.ANYWHERE));
                     }
                 }
@@ -386,35 +386,35 @@ public class TerminalDaoBean {
         return null;
     }
 
-    public MobileTerminal getMobileTerminalAtDateWithMemberNumberAndDnid(Integer memberNumber,Integer dnid, Instant date) {
+    public MobileTerminal getMobileTerminalAtDateWithMemberNumberAndDnid(Integer memberNumber, Integer dnid, Instant date) {
         AuditReader auditReader = AuditReaderFactory.get(em);
         Number revision;
         Channel channel;
-        
+
         try {
             revision = auditReader.getRevisionNumberForDate(Date.from(date));
         } catch (RevisionDoesNotExistException ex) {
             return null;
         }
-        
+
         try {
             channel = (Channel) auditReader.createQuery()
                     .forEntitiesAtRevision(Channel.class, revision)
-                    .add(AuditEntity.property("memberNumber").eq(memberNumber) )
-                    .add(AuditEntity.property("dnid").eq(dnid) )
-                    .setMaxResults( 1 )
+                    .add(AuditEntity.property("memberNumber").eq(memberNumber))
+                    .add(AuditEntity.property("dnid").eq(dnid))
+                    .setMaxResults(1)
                     .getSingleResult();
-        } catch (NoResultException ex){
+        } catch (NoResultException ex) {
             return null;
         }
-        
+
         return channel.getMobileTerminal();
     }
 
     public void flushEm() {
         em.flush();
     }
-    
+
     public List<VmsBillingDto> getVmsBillingList() {
     	
     	/*
@@ -432,19 +432,19 @@ public class TerminalDaoBean {
                 " mt.satellite_number, aa.national_id,\n" +
                 " ca.start_date,\n" +
                 " ca.end_date\n" +
-                "FROM asset.channel_aud ca \n" + 
-                "JOIN asset.mobileterminal_aud mt ON ca.mobterm_id = mt.id AND ca.rev = mt.rev \n" + 
-                "JOIN asset.asset_aud aa ON mt.asset_id = aa.id AND mt.rev = aa.rev \n" + 
-                "WHERE aa.rev = (SELECT MAX(aud.rev)\n" + 
-                "                      FROM asset.asset_aud aud\n" + 
-                "                      WHERE aud.rev <= ca.rev\n" + 
+                "FROM asset.channel_aud ca \n" +
+                "JOIN asset.mobileterminal_aud mt ON ca.mobterm_id = mt.id AND ca.rev = mt.rev \n" +
+                "JOIN asset.asset_aud aa ON mt.asset_id = aa.id AND mt.rev = aa.rev \n" +
+                "WHERE aa.rev = (SELECT MAX(aud.rev)\n" +
+                "                      FROM asset.asset_aud aud\n" +
+                "                      WHERE aud.rev <= ca.rev\n" +
                 "                      AND aa.id = aud.id)\n" +
                 "AND aa.national_id IS NOT NULL\n" +
                 "AND aa.rev > 1\n" +
                 "AND mt.rev > 1\n" +
                 "AND ca.rev > 1\n" +
                 "UNION\n" +
-                "SELECT c.dnid, c.member_number, c.com_channel_name,\n" + 
+                "SELECT c.dnid, c.member_number, c.com_channel_name,\n" +
                 " m.serial_no, m.satellite_number, a.national_id, c.start_date, c.end_date\n" +
                 "FROM asset.channel c \n" +
                 "JOIN asset.mobileterminal m ON c.mobterm_id = m.id \n" +
@@ -453,13 +453,13 @@ public class TerminalDaoBean {
 
         List<Object[]> vmsBillingObject = q.getResultList();
         List<VmsBillingDto> vmsBillingListDao = new ArrayList<>();
-        
+
         for (Object[] vmsBilling : vmsBillingObject) {
-            vmsBillingListDao.add(new VmsBillingDto((Integer)vmsBilling[0], (Integer)vmsBilling[1], 
-                    (String)vmsBilling[2], (String)vmsBilling[3], (String)vmsBilling[4], 
+            vmsBillingListDao.add(new VmsBillingDto((Integer) vmsBilling[0], (Integer) vmsBilling[1],
+                    (String) vmsBilling[2], (String) vmsBilling[3], (String) vmsBilling[4],
                     vmsBilling[5] != null ? Long.valueOf((Integer) vmsBilling[5]) : null,
-                    vmsBilling[6] != null ? vmsBilling[6].toString().split("\\.")[0]: null, 
-                    vmsBilling[7] != null ? vmsBilling[7].toString().split("\\.")[0]: null ));
+                    vmsBilling[6] != null ? vmsBilling[6].toString().split("\\.")[0] : null,
+                    vmsBilling[7] != null ? vmsBilling[7].toString().split("\\.")[0] : null));
         }
         return vmsBillingListDao;
     }

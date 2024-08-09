@@ -21,6 +21,7 @@ import fish.focus.uvms.mobileterminal.entity.MobileTerminalPluginCapability;
 import fish.focus.uvms.mobileterminal.entity.types.OceanRegionEnum;
 import fish.focus.uvms.mobileterminal.entity.types.TerminalCapability;
 import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;

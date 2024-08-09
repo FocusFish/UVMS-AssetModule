@@ -13,6 +13,7 @@ package fish.focus.uvms.mobileterminal.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 import fish.focus.uvms.mobileterminal.entity.types.PollTypeEnum;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -23,7 +24,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "pollbase", indexes = { @Index(columnList = "channel_guid", name = "pollbase_channel_FK_INX10", unique = false),
+@Table(name = "pollbase", indexes = {@Index(columnList = "channel_guid", name = "pollbase_channel_FK_INX10", unique = false),
         @Index(columnList = "mobileterminal_id", name = "pollbase_mobterm_FK_INX10", unique = false),})
 @Inheritance(strategy = InheritanceType.JOINED)
 @XmlRootElement
@@ -39,45 +40,35 @@ public class PollBase implements Serializable {
     public static final String FIND_BY_TYPE = "Poll.findByPollType";
     public static final String FIND_BY_USER = "Poll.findByPollUserCreator";
     public static final String FIND_BY_ASSET_IN_TIMESPAN = "Poll.findByAssetInTimespan";
-
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(generator = "POLLBASE_UUID")
     @GenericGenerator(name = "POLLBASE_UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id")
     private UUID id;
-
     @Column(name = "comment")
     @NotNull
     private String comment;
-
     @Size(max = 60)
     @Column(name = "createuser")
     private String creator;
-
     @Column(name = "channel_guid")
     @NotNull
     private UUID channelId;
-
     @Column(name = "createtime")
     private Instant createTime;
-
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "mobileterminal_id", foreignKey = @ForeignKey(name = "PollBase_MobileTerminal_FK"))
     @NotNull
     private MobileTerminal mobileterminal;
-
     @Size(max = 60)
     @Column(name = "upuser")
     private String updatedBy;
-
     @Column(name = "asset_id")
     private UUID assetId;
-
     @Column(name = "poll_type")
     @Enumerated(EnumType.STRING)
     private PollTypeEnum pollTypeEnum;
-
-    private static final long serialVersionUID = 1L;
 
     public PollBase() {
         super();

@@ -16,6 +16,7 @@ import javax.ejb.MessageDriven;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fish.focus.uvms.rest.security.UnionVMSFeature;
@@ -28,31 +29,31 @@ import fish.focus.wsdl.user.types.UserContext;
 import fish.focus.uvms.asset.message.AssetProducer;
 
 @MessageDriven(mappedName = "jms/queue/UVMSUserEvent", activationConfig = {
-        @ActivationConfigProperty(propertyName = "messagingType", propertyValue = "javax.jms.MessageListener"), 
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"), 
+        @ActivationConfigProperty(propertyName = "messagingType", propertyValue = "javax.jms.MessageListener"),
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
         @ActivationConfigProperty(propertyName = "destination", propertyValue = "UVMSUserEvent")})
 public class UserModuleMock implements MessageListener {
 
     final static Logger LOG = LoggerFactory.getLogger(UserModuleMock.class);
-    
+
     @EJB
     AssetProducer producer;
-    
+
     @Override
     public void onMessage(Message message) {
         try {
-        
-        UserContext userContext = getAssetUserContext();
-        String responseString;
+
+            UserContext userContext = getAssetUserContext();
+            String responseString;
             responseString = UserModuleResponseMapper.mapToGetUserContextResponse(userContext);
 
-        producer.sendResponseMessageToSender((TextMessage) message, responseString);
+            producer.sendResponseMessageToSender((TextMessage) message, responseString);
 
         } catch (Exception e) {
             LOG.error("MTUserModuleMock Error", e);
         }
     }
-    
+
     private UserContext getAssetUserContext() {
         UserContext userContext = new UserContext();
         userContext.setContextSet(new ContextSet());
