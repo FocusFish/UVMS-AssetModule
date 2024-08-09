@@ -39,7 +39,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getMobileTerminalListWithExistingButEmptyInput(){
+    public void getMobileTerminalListWithExistingButEmptyInput() {
         //First, to make sure that we have something in DB, create one MT
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
         MobileTerminal created = createMobileTerminal(mobileTerminal);
@@ -111,7 +111,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         assertEquals(1, response.getMobileTerminalList().size());
 
         // Wildcard in back of serial
-        String wildCardInBack = serialNumber.substring(0, serialNumber.length()-3) + "*";
+        String wildCardInBack = serialNumber.substring(0, serialNumber.length() - 3) + "*";
 
         mtQuery = new MTQuery();
         mtQuery.setSerialNumbers(Arrays.asList(wildCardInBack));
@@ -133,7 +133,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         assertEquals(1, response.getMobileTerminalList().size());
 
         // Wildcard at both ends
-        String wildCardAtBothEnds = "*" + serialNumber.substring(3, serialNumber.length()-3) + "*";
+        String wildCardAtBothEnds = "*" + serialNumber.substring(3, serialNumber.length() - 3) + "*";
 
         mtQuery = new MTQuery();
         mtQuery.setSerialNumbers(Arrays.asList(wildCardAtBothEnds));
@@ -585,7 +585,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         assertEquals(1, returnList.getMobileTerminalList().size());
     }
 
-    private MobileTerminal createMobileTerminal(MobileTerminal mt){
+    private MobileTerminal createMobileTerminal(MobileTerminal mt) {
         MobileTerminal created = getWebTargetExternal()
                 .path("mobileterminal")
                 .request(MediaType.APPLICATION_JSON)
@@ -593,7 +593,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
                 .post(Entity.json(mt), MobileTerminal.class);
         assertNotNull(created);
 
-        return  created;
+        return created;
     }
 
     private Asset createAndRestBasicAsset() {

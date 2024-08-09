@@ -1,6 +1,4 @@
-<definitions name="AssetDataSource"
-             targetNamespace="asset.wsdl.focus.fish"
-             xmlns:v="asset.wsdl.focus.fish"
+<definitions xmlns:v="asset.wsdl.focus.fish"
              xmlns:s="source.asset.wsdl.focus.fish"
              xmlns:t="types.asset.wsdl.focus.fish"
              xmlns:h="history.asset.wsdl.focus.fish"
@@ -8,6 +6,8 @@
              xmlns:f="fishinggear.asset.wsdl.focus.fish"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             name="AssetDataSource"
+             targetNamespace="asset.wsdl.focus.fish"
              xmlns="http://schemas.xmlsoap.org/wsdl/"
 >
 
@@ -21,7 +21,7 @@
             <xsd:import namespace="fishinggear.asset.wsdl.focus.fish" schemaLocation="FishingGear.xsd"/>
         </xsd:schema>
     </types>
-    
+
     <!-- fault exceptions -->
     <message name="AssetFaultException">
         <part name="body" element="t:AssetFault"/>
@@ -43,7 +43,7 @@
     <message name="DeleteAssetRequest">
         <part name="body" element="s:DeleteAssetRequest"/>
     </message>
-  
+
     <message name="GetAssetRequest">
         <part name="body" element="s:GetAssetRequest"/>
     </message>
@@ -55,11 +55,11 @@
     <message name="AssetListRequest">
         <part name="body" element="s:AssetListRequest"/>
     </message>
-    
+
     <message name="UpsertAssetRequest">
         <part name="body" element="s:UpsertAssetRequest"/>
     </message>
-  
+
     <!-- Asset responses -->
     <message name="GetAssetResponse">
         <part name="body" element="t:SingleAssetResponse"/>
@@ -76,7 +76,7 @@
     <message name="UpdateAssetResponse">
         <part name="body" element="t:SingleAssetResponse"/>
     </message>
-    
+
     <message name="AssetListResponse">
         <part name="body" element="t:ListAssetResponse"/>
     </message>
@@ -93,29 +93,29 @@
     <message name="AssetHistoryListRequest">
         <part name="body" element="h:AssetHistoryListByAssetIdRequest"/>
     </message>
-  
+
     <!-- Asset history responses -->
     <message name="GetAssetHistoryResponse">
         <part name="body" element="t:SingleAssetResponse"/>
     </message>
-    
+
     <message name="AssetHistoryListResponse">
         <part name="body" element="t:ListAssetResponse"/>
     </message>
 
     <!-- Move theese 2 to the right spot -->
 
-	<message name="PingRequest">
-		<part name="body" element="s:pingRequest"/>
-	</message>
-	<message name="PingResponse">
-		<part name="body" element="s:pingResponse"/>
-	</message>
+    <message name="PingRequest">
+        <part name="body" element="s:pingRequest"/>
+    </message>
+    <message name="PingResponse">
+        <part name="body" element="s:pingResponse"/>
+    </message>
 
     <message name="ConfigRequest">
         <part name="body" element="config:configRequest"/>
     </message>
-    
+
     <message name="ConfigResponse">
         <part name="body" element="config:configResponse"/>
     </message>
@@ -192,11 +192,11 @@
             <output message="v:AssetHistoryListResponse"/>
             <fault name="AssetHistoryListFaultException" message="v:AssetHistoryFaultException"/>
         </operation>
-		<operation name="Ping">
-			<input message="v:PingRequest"/>
-			<output message="v:PingResponse"/>
-		</operation>
-		<operation name="Config">
+        <operation name="Ping">
+            <input message="v:PingRequest"/>
+            <output message="v:PingResponse"/>
+        </operation>
+        <operation name="Config">
             <input message="v:ConfigRequest"/>
             <output message="v:ConfigResponse"/>
             <fault name="ConfigFaultException" message="v:AssetFaultException"/>
@@ -223,7 +223,6 @@
             <output message="v:UpsertFishingGearResponse"/>
             <fault name="FishingGearFaultException" message="v:AssetFaultException"/>
         </operation>
-
 
 
     </portType>
@@ -318,14 +317,14 @@
                 <soap:fault name="AssetHistoryListFaultException" use="literal"/>
             </fault>
         </operation>
-		<operation name="Ping">
-			<input>
-				<soap:body use="literal"/>
-			</input>
-			<output>
-				<soap:body use="literal"/>
-			</output>
-		</operation>
+        <operation name="Ping">
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
         <operation name="Config">
             <input>
                 <soap:body use="literal"/>

@@ -25,14 +25,14 @@ import javax.jms.TextMessage;
 import java.util.Arrays;
 
 @MessageDriven(mappedName = "jms/queue/UVMSConfigEvent", activationConfig = {
-        @ActivationConfigProperty(propertyName = "messagingType", propertyValue = "javax.jms.MessageListener"), 
-        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"), 
+        @ActivationConfigProperty(propertyName = "messagingType", propertyValue = "javax.jms.MessageListener"),
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
         @ActivationConfigProperty(propertyName = "destination", propertyValue = "UVMSConfigEvent")})
 public class ConfigServiceMock implements MessageListener {
 
     @EJB
     AssetProducer producer;
-    
+
     @Override
     public void onMessage(Message message) {
         try {

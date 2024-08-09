@@ -1,19 +1,20 @@
-<definitions name="MobileTerminalModule"
-             targetNamespace="urn:module.mobileterminal.schema.focus.fish:v1"
-             xmlns:module="urn:module.mobileterminal.schema.focus.fish:v1"
+<definitions xmlns:module="urn:module.mobileterminal.schema.focus.fish:v1"
              xmlns:mobterm="urn:types.mobileterminal.schema.focus.fish:v1"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             name="MobileTerminalModule"
+             targetNamespace="urn:module.mobileterminal.schema.focus.fish:v1"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
     <types>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                     targetNamespace="urn:module.mobileterminal.schema.focus.fish:v1">
-            <xsd:import namespace="urn:types.mobileterminal.schema.focus.fish:v1" schemaLocation="MobileTerminalElement.xsd"/>
+            <xsd:import namespace="urn:types.mobileterminal.schema.focus.fish:v1"
+                        schemaLocation="MobileTerminalElement.xsd"/>
 
             <xsd:simpleType name="MobileTerminalModuleMethod">
                 <xsd:restriction base="xsd:string">
-                	<xsd:enumeration value="GET_MOBILE_TERMINAL"/>
+                    <xsd:enumeration value="GET_MOBILE_TERMINAL"/>
                     <xsd:enumeration value="PING"/>
                     <xsd:enumeration value="LIST_MOBILE_TERMINALS"/>
                 </xsd:restriction>
@@ -27,13 +28,13 @@
 
             <xsd:element name="getMobileTerminalRequest">
                 <xsd:complexType>
-                	<xsd:complexContent>
-	                	<xsd:extension base="module:MobileTerminalModuleBaseRequest">
-		                    <xsd:sequence>
-		                        <xsd:element name="id" type="mobterm:MobileTerminalId"/>
-		                    </xsd:sequence>
-	                	</xsd:extension>
-                	</xsd:complexContent>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:MobileTerminalModuleBaseRequest">
+                            <xsd:sequence>
+                                <xsd:element name="id" type="mobterm:MobileTerminalId"/>
+                            </xsd:sequence>
+                        </xsd:extension>
+                    </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
 
@@ -62,34 +63,35 @@
                     <xsd:sequence>
                         <xsd:element name="totalNumberOfPages" type="xsd:int" minOccurs="1" maxOccurs="1"/>
                         <xsd:element name="currentPage" type="xsd:int" minOccurs="1" maxOccurs="1"/>
-                        <xsd:element name="mobileTerminal" type="mobterm:MobileTerminalType" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="mobileTerminal" type="mobterm:MobileTerminalType" minOccurs="0"
+                                     maxOccurs="unbounded"/>
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
 
             <xsd:element name="pingRequest">
-				<xsd:complexType>
-					<xsd:complexContent>
-						<xsd:extension base="module:MobileTerminalModuleBaseRequest"/>
-					</xsd:complexContent>
-				</xsd:complexType>
-			</xsd:element>
+                <xsd:complexType>
+                    <xsd:complexContent>
+                        <xsd:extension base="module:MobileTerminalModuleBaseRequest"/>
+                    </xsd:complexContent>
+                </xsd:complexType>
+            </xsd:element>
 
-			<xsd:element name="pingResponse">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:element name="response" type="xsd:string"/>
-					</xsd:sequence>
-				</xsd:complexType>
-			</xsd:element>
+            <xsd:element name="pingResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="response" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
         </xsd:schema>
 
     </types>
-    
+
     <message name="MobileTerminalFaultException">
         <part name="body" element="mobterm:mobileTerminalFault"/>
     </message>
-    
+
     <message name="GetMobileTerminalRequest">
         <part name="body" element="module:getMobileTerminalRequest"/>
     </message>

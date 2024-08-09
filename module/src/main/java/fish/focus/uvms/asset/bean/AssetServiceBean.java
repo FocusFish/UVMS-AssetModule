@@ -56,35 +56,26 @@ import java.util.stream.Collectors;
 public class AssetServiceBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(AssetServiceBean.class);
-
+    private static final int MMSI_MAX_LENGHT = 9;
     @Resource(name = "java:global/movement_endpoint")
     private String movementEndpoint;
-
     @Inject
     private AuditServiceBean auditService;
-
     @Inject
     private AssetFilterServiceBean assetFilterService;
-
     @Inject
     private AssetDao assetDao;
-
     @Inject
     private NoteDao noteDao;
-
     @Inject
     private ContactInfoDao contactDao;
-
     @Inject
     private MobileTerminalServiceBean mobileTerminalService;
-
     @Inject
     private InternalRestTokenHandler tokenHandler;
-
     @Inject
     @UpdatedAssetEvent
     private Event<Asset> updatedAssetEvent;
-
     @PersistenceContext
     private EntityManager em;
 
@@ -113,7 +104,7 @@ public class AssetServiceBean {
             }
         }
         List<Asset> assetEntityList = assetDao.getAssetListSearchPaginated(page, listSize, queryTree, includeInactivated);
-      
+
         // force to load children. FetchType.EAGER didn't work.
         assetEntityList.forEach(asset -> asset.getMobileTerminals().size());
         AssetListResponse listAssetResponse = new AssetListResponse();
@@ -129,7 +120,7 @@ public class AssetServiceBean {
         }
         return assetDao.getAssetCount(queryTree, includeInactivated);
     }
-    
+
     public Collection<AssetProjection> getAssetList(List<String> assetIdList) {
         List<UUID> assetUuidList = new ArrayList<>(assetIdList.size());
         for (String s : assetIdList) {
@@ -138,7 +129,10 @@ public class AssetServiceBean {
         List<AssetProjection> assets = assetDao.getAssetListByAssetGuids(assetUuidList);
         return assets.stream()
                 .collect(Collectors.toMap(AssetProjection::getId, Function.identity(),
-                        (a1, a2) -> {a1.getMobileTerminalIds().addAll(a2.getMobileTerminalIds()); return a1;}))
+                        (a1, a2) -> {
+                            a1.getMobileTerminalIds().addAll(a2.getMobileTerminalIds());
+                            return a1;
+                        }))
                 .values();
     }
 
@@ -291,7 +285,6 @@ public class AssetServiceBean {
         return assetDao.getAssetById(id);
     }
 
-
     public void deleteAsset(AssetIdentifier assetId, String value) {
         nullValidation(assetId, "AssetId is null");
         Asset assetEntity = getAssetById(assetId, value);
@@ -339,7 +332,7 @@ public class AssetServiceBean {
 
     public Note updateNote(Note note, String username) {
         Note oldNote = noteDao.findNote(note.getId());
-        if(oldNote != null && !oldNote.getCreatedBy().equals(username)){
+        if (oldNote != null && !oldNote.getCreatedBy().equals(username)) {
             throw new IllegalArgumentException("Can only change notes created by the same user");
         }
         note.setCreatedBy(username);
@@ -349,7 +342,7 @@ public class AssetServiceBean {
     public void deleteNote(UUID id, String username) {
         Note note = noteDao.findNote(id);
         nullValidation(note, "Could not find any note with id: " + id);
-        if(!note.getCreatedBy().equals(username)){
+        if (!note.getCreatedBy().equals(username)) {
             throw new IllegalArgumentException("Can only delete notes created by the same user");
         }
 
@@ -407,7 +400,7 @@ public class AssetServiceBean {
         }
 
         MobileTerminalTypeEnum transponderType = getTransponderType(request);
-        if (shouldANewShipBeCreated(request,asset, transponderType)) {
+        if (shouldANewShipBeCreated(request, asset, transponderType)) {
             asset = AssetUtil.createNewAssetFromRequest(request, assetDao.getNextUnknownShipNumber());
             createAsset(asset, asset.getUpdatedBy());
         }
@@ -419,9 +412,7 @@ public class AssetServiceBean {
         return assetMTEnrichmentResponse;
     }
 
-    private static final int MMSI_MAX_LENGHT = 9;
-
-    private boolean shouldANewShipBeCreated(AssetMTEnrichmentRequest request, Asset asset, MobileTerminalTypeEnum transponderType){
+    private boolean shouldANewShipBeCreated(AssetMTEnrichmentRequest request, Asset asset, MobileTerminalTypeEnum transponderType) {
         return asset == null &&
                 (request.getMmsiValue() == null || request.getMmsiValue().length() <= MMSI_MAX_LENGHT) &&
                 transponderType == null;
@@ -550,7 +541,7 @@ public class AssetServiceBean {
         if (asset.getIccat() != null && asset.getIccat().length() > 0) {
             assetId.put(AssetIdentifier.ICCAT, asset.getIccat());
         }
-        if (asset.getNationalId() != null ) {
+        if (asset.getNationalId() != null) {
             assetId.put(AssetIdentifier.NATIONAL, asset.getNationalId().toString());
         }
         return assetId;

@@ -12,12 +12,14 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.asset.util;
 
 import java.util.Objects;
+
 import fish.focus.uvms.asset.domain.entity.Asset;
 
 public class AssetComparator {
 
-    private AssetComparator() {}
-    
+    private AssetComparator() {
+    }
+
     // Compare all attributes except id, historyId, updateTime & updatedBy.
     public static boolean assetEquals(Asset asset1, Asset asset2) {
         if (asset1 == null || asset2 == null) {

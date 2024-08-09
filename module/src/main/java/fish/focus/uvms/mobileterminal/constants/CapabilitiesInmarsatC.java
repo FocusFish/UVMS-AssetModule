@@ -17,8 +17,8 @@ import fish.focus.uvms.mobileterminal.entity.types.TerminalCapability;
 public class CapabilitiesInmarsatC {
 
     public static boolean getCapability(TerminalCapability capability) {
-        if(capability != null) {
-            switch(capability) {
+        if (capability != null) {
+            switch (capability) {
                 case SUPPORT_MULTIPLE_CHANNEL:
                     return true;
                 case PLUGIN:

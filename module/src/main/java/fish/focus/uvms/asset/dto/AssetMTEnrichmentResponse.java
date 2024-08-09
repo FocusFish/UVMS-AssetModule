@@ -30,7 +30,8 @@ public class AssetMTEnrichmentResponse implements Serializable {
     private String serialNumber = null;
     private Boolean mobileTerminalIsInactive = null;
 
-    public AssetMTEnrichmentResponse(){}
+    public AssetMTEnrichmentResponse() {
+    }
 
     public String getAssetName() {
         return assetName;

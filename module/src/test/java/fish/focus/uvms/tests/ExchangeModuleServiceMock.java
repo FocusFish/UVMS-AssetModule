@@ -23,6 +23,7 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.json.bind.Jsonb;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fish.focus.schema.exchange.plugin.types.v1.PluginType;
@@ -71,16 +72,16 @@ public class ExchangeModuleServiceMock {
             configurable.setValue("TRUE");
             capabilityList.getCapability().add(configurable);
             serviceResponseType.setCapabilityList(capabilityList);
-            
+
             String message = jsonb.toJson(serviceResponseType);
             TextMessage textMessage = this.context.createTextMessage(message);
             textMessage.setStringProperty(MessageConstants.EVENT_STREAM_EVENT, "Service Registered");
             textMessage.setStringProperty(MessageConstants.EVENT_STREAM_SUBSCRIBER_LIST, null);
             MappedDiagnosticContext.addThreadMappedDiagnosticContextToMessageProperties(textMessage);
-    
+
             context.createProducer()
-                .setDeliveryMode(DeliveryMode.PERSISTENT)
-                .send(destination, textMessage);
+                    .setDeliveryMode(DeliveryMode.PERSISTENT)
+                    .send(destination, textMessage);
         } catch (JMSException e) {
             e.printStackTrace();
         }

@@ -77,7 +77,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
     @OperateOnDeployment("normal")
     public void upsertAssert() {
         Asset asset = AssetTestsHelper.createBiggerAsset();
-        Long nationalId = (long)(Math.random() * 10000000d);
+        Long nationalId = (long) (Math.random() * 10000000d);
         asset.setNationalId(nationalId);
         AssetBO abo = new AssetBO();
         abo.setAsset(asset);
@@ -456,7 +456,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         SearchBranch trunk = new SearchBranch(true);
         trunk.getFields().add(new SearchLeaf(SearchFields.NAME, asset.getName()));
 
-        List<Asset> assets = assetService.getAssetList(trunk, 1, 100,  false).getAssetList();
+        List<Asset> assets = assetService.getAssetList(trunk, 1, 100, false).getAssetList();
 
         assertFalse(assets.isEmpty());
         assertEquals(asset.getCfr(), assets.get(0).getCfr());
@@ -527,7 +527,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         try {
             assetService.deleteNote(toBeDeleted.getId(), "Someone else");
             fail();
-        }catch (Exception e){
+        } catch (Exception e) {
             assertTrue(e.getMessage().contains("Can only delete notes created by the same user"));
         }
     }
@@ -548,7 +548,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         try {
             assetService.updateNote(toBeUpdated, "Someone else");
             fail();
-        }catch (Exception e){
+        } catch (Exception e) {
             assertTrue(e.getMessage().contains("Can only change notes created by the same user"));
         }
     }
@@ -604,7 +604,8 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         try {
             userTransaction.commit();
             userTransaction.begin();
-        } catch (RollbackException | HeuristicMixedException | HeuristicRollbackException | SystemException | NotSupportedException e) {
+        } catch (RollbackException | HeuristicMixedException | HeuristicRollbackException | SystemException |
+                 NotSupportedException e) {
             throw new AssetServiceException(e);
         }
     }
@@ -690,26 +691,26 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         assertTrue(fetchedAssetGroups.size() > 0);
         assertTrue(fetchedAssetGroups.contains(createdAssetGroupId.toString()));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void collectAssetMTAssingCorrectAssetFromMTInformation() {
         String dnid = "1234";
-        
+
         Asset asset1 = createAsset();
         MobileTerminal mobileTerminal1 = testPollHelper.createBasicMobileTerminal();
         mobileTerminal1.getChannels().iterator().next().setDnid(Integer.parseInt(dnid));
         mobileTerminal1.setAsset(asset1);
         mobileTerminal1 = mobileTerminalService.createMobileTerminal(mobileTerminal1, "TEST");
         MobileTerminalPlugin plugin = mobileTerminal1.getPlugin();
-        
+
         Asset asset2 = createAsset();
         MobileTerminal mobileTerminal2 = testPollHelper.createBasicMobileTerminal();
         mobileTerminal2.setPlugin(plugin);
         mobileTerminal2.getChannels().iterator().next().setDnid(Integer.parseInt(dnid));
         mobileTerminal2.setAsset(asset2);
         mobileTerminal2 = mobileTerminalService.createMobileTerminal(mobileTerminal2, "TEST");
-        
+
         Asset asset3 = createAsset();
         MobileTerminal mobileTerminal3 = testPollHelper.createBasicMobileTerminal();
         mobileTerminal3.setPlugin(plugin);
@@ -720,22 +721,22 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         AssetMTEnrichmentRequest request = createRequest(mobileTerminal1);
         AssetMTEnrichmentResponse response = assetService.collectAssetMT(request);
         assertThat(response.getAssetUUID(), CoreMatchers.is(asset1.getId().toString()));
-        
+
         AssetMTEnrichmentRequest request2 = createRequest(mobileTerminal2);
         AssetMTEnrichmentResponse response2 = assetService.collectAssetMT(request2);
         assertThat(response2.getAssetUUID(), CoreMatchers.is(asset2.getId().toString()));
-        
+
         AssetMTEnrichmentRequest request3 = createRequest(mobileTerminal3);
         AssetMTEnrichmentResponse response3 = assetService.collectAssetMT(request3);
         assertThat(response3.getAssetUUID(), CoreMatchers.is(asset3.getId().toString()));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void collectAssetMTCreateUnknownAsset() {
         Asset nonExisting = AssetTestsHelper.createBasicAsset();
         nonExisting.setName(null);
-        
+
         AssetMTEnrichmentRequest request = createRequest(nonExisting);
         request.setDnidValue(null);
         request.setMemberNumberValue(null);
@@ -744,12 +745,12 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         AssetMTEnrichmentResponse response = assetService.collectAssetMT(request);
         assertTrue(response.getAssetName().startsWith("Unknown"));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void collectAssetMTDontCreateUnknownAssetForInmarsat() {
         MobileTerminal mobileTerminalNonExisting = testPollHelper.createBasicMobileTerminal();
-        
+
         AssetMTEnrichmentRequest request = createRequest(mobileTerminalNonExisting);
         AssetMTEnrichmentResponse response = assetService.collectAssetMT(request);
         assertThat(response.getAssetName(), CoreMatchers.is(CoreMatchers.nullValue()));
@@ -787,15 +788,15 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         AssetMTEnrichmentRequest request = new AssetMTEnrichmentRequest();
 
         Channel channel = mobileTerminal.getChannels().iterator().next();
-        
+
         // for mobileTerminal
         request.setMemberNumberValue(String.valueOf(channel.getMemberNumber()));
         request.setDnidValue(String.valueOf(channel.getDnid()));
         request.setTranspondertypeValue(mobileTerminal.getMobileTerminalType().toString());
-        
+
         return request;
     }
-    
+
     private AssetMTEnrichmentRequest createRequest(Asset asset) {
         AssetMTEnrichmentRequest request = new AssetMTEnrichmentRequest();
 

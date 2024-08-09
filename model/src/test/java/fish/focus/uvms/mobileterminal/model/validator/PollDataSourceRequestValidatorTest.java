@@ -29,170 +29,170 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PollDataSourceRequestValidatorTest {
-	
-	@Mock
-	private	PollRequestType requestType;
-	
+
+    @Mock
+    private PollRequestType requestType;
+
     @Before
     public void setUp() {
-    	MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.initMocks(this);
     }
-    
+
     @Test
     public void testCheckSamplingPollParams() {
-    	List<PollAttribute> attrList = new ArrayList<>();
-    	when(requestType.getAttributes()).thenReturn(attrList);
-    	try {
-    		PollDataSourceRequestValidator.checkSamplingPollParams(requestType);
-    		fail("Sampling poll.");
-    	} catch (RuntimeException e) {
-			assertTrue(true);
-    	}
-    	
-    	PollAttribute startDate = new PollAttribute();
-    	startDate.setKey(PollAttributeType.START_DATE);
-    	PollAttribute stopDate = new PollAttribute();
-    	stopDate.setKey(PollAttributeType.END_DATE);
-    	attrList.add(startDate);
-    	attrList.add(stopDate);
-    	
-    	PollDataSourceRequestValidator.checkSamplingPollParams(requestType);
+        List<PollAttribute> attrList = new ArrayList<>();
+        when(requestType.getAttributes()).thenReturn(attrList);
+        try {
+            PollDataSourceRequestValidator.checkSamplingPollParams(requestType);
+            fail("Sampling poll.");
+        } catch (RuntimeException e) {
+            assertTrue(true);
+        }
+
+        PollAttribute startDate = new PollAttribute();
+        startDate.setKey(PollAttributeType.START_DATE);
+        PollAttribute stopDate = new PollAttribute();
+        stopDate.setKey(PollAttributeType.END_DATE);
+        attrList.add(startDate);
+        attrList.add(stopDate);
+
+        PollDataSourceRequestValidator.checkSamplingPollParams(requestType);
     }
-    
+
     @Test
     public void testCheckProgramPollParams() {
-    	List<PollAttribute> attrList = new ArrayList<>();
-    	when(requestType.getAttributes()).thenReturn(attrList);
-    	
-    	try {
-    		PollDataSourceRequestValidator.checkProgramPollParams(requestType);
-    		fail("ProgramPoll poll.");
-    	} catch (RuntimeException e) {
-			assertTrue(true);
-    	}
-    	
-    	PollAttribute startDate = new PollAttribute();
-    	startDate.setKey(PollAttributeType.START_DATE);
-    	PollAttribute stopDate = new PollAttribute();
-    	stopDate.setKey(PollAttributeType.END_DATE);
-    	PollAttribute frequency = new PollAttribute();
-    	frequency.setKey(PollAttributeType.FREQUENCY);
-    	attrList.add(startDate);
-    	attrList.add(stopDate);
-    	attrList.add(frequency);
-    	
-    	PollDataSourceRequestValidator.checkProgramPollParams(requestType);
+        List<PollAttribute> attrList = new ArrayList<>();
+        when(requestType.getAttributes()).thenReturn(attrList);
+
+        try {
+            PollDataSourceRequestValidator.checkProgramPollParams(requestType);
+            fail("ProgramPoll poll.");
+        } catch (RuntimeException e) {
+            assertTrue(true);
+        }
+
+        PollAttribute startDate = new PollAttribute();
+        startDate.setKey(PollAttributeType.START_DATE);
+        PollAttribute stopDate = new PollAttribute();
+        stopDate.setKey(PollAttributeType.END_DATE);
+        PollAttribute frequency = new PollAttribute();
+        frequency.setKey(PollAttributeType.FREQUENCY);
+        attrList.add(startDate);
+        attrList.add(stopDate);
+        attrList.add(frequency);
+
+        PollDataSourceRequestValidator.checkProgramPollParams(requestType);
     }
-    
+
     @Test
     public void testCheckConfigurationPollParams() {
-    	List<PollAttribute> attrList = new ArrayList<>();
-    	when(requestType.getAttributes()).thenReturn(attrList);
-    	
-    	try {
-    		PollDataSourceRequestValidator.checkConfigurationPollParams(requestType);
-    		fail("Configuration poll.");
-    	} catch (RuntimeException e) {
-			assertTrue(true);
-    	}
-    	
-    	PollAttribute reportFrequency = new PollAttribute();
-    	reportFrequency.setKey(PollAttributeType.REPORT_FREQUENCY);
-    	PollAttribute gracePeriod = new PollAttribute();
-    	gracePeriod.setKey(PollAttributeType.GRACE_PERIOD);
-    	PollAttribute inPortGrace = new PollAttribute();
-    	inPortGrace.setKey(PollAttributeType.IN_PORT_GRACE);
-    	PollAttribute dnid = new PollAttribute();
-    	dnid.setKey(PollAttributeType.DNID);
-    	PollAttribute memberNumber = new PollAttribute();
-    	memberNumber.setKey(PollAttributeType.MEMBER_NUMBER);
-    	attrList.add(reportFrequency);
-    	attrList.add(gracePeriod);
-    	attrList.add(inPortGrace);
-    	attrList.add(dnid);
-    	attrList.add(memberNumber);
-    	
-    	PollDataSourceRequestValidator.checkConfigurationPollParams(requestType);
+        List<PollAttribute> attrList = new ArrayList<>();
+        when(requestType.getAttributes()).thenReturn(attrList);
+
+        try {
+            PollDataSourceRequestValidator.checkConfigurationPollParams(requestType);
+            fail("Configuration poll.");
+        } catch (RuntimeException e) {
+            assertTrue(true);
+        }
+
+        PollAttribute reportFrequency = new PollAttribute();
+        reportFrequency.setKey(PollAttributeType.REPORT_FREQUENCY);
+        PollAttribute gracePeriod = new PollAttribute();
+        gracePeriod.setKey(PollAttributeType.GRACE_PERIOD);
+        PollAttribute inPortGrace = new PollAttribute();
+        inPortGrace.setKey(PollAttributeType.IN_PORT_GRACE);
+        PollAttribute dnid = new PollAttribute();
+        dnid.setKey(PollAttributeType.DNID);
+        PollAttribute memberNumber = new PollAttribute();
+        memberNumber.setKey(PollAttributeType.MEMBER_NUMBER);
+        attrList.add(reportFrequency);
+        attrList.add(gracePeriod);
+        attrList.add(inPortGrace);
+        attrList.add(dnid);
+        attrList.add(memberNumber);
+
+        PollDataSourceRequestValidator.checkConfigurationPollParams(requestType);
     }
-    
+
     @Test
     public void testMobileTerminal() {
-    	List<PollMobileTerminal> mobTermList = new ArrayList<>();
-		when(requestType.getMobileTerminals()).thenReturn(mobTermList);
-		try {
-			PollDataSourceRequestValidator.validateMobileTerminals(requestType);
-			fail("No mobterminals to poll");
-		} catch (RuntimeException e) {
-			assertTrue(true);
-		}
-		
-		PollMobileTerminal pollMobTerm = new PollMobileTerminal();
-		PollMobileTerminal extraPollMobTerm = new PollMobileTerminal();
-		when(requestType.getPollType()).thenReturn(PollType.SAMPLING_POLL);
-		
-		mobTermList.add(pollMobTerm);
-		mobTermList.add(extraPollMobTerm);
-		
-		try {
-			PollDataSourceRequestValidator.validateMobileTerminals(requestType);
-			fail("Sampling poll too many");
-		} catch (RuntimeException e) {
-			assertTrue(true);
-		}
+        List<PollMobileTerminal> mobTermList = new ArrayList<>();
+        when(requestType.getMobileTerminals()).thenReturn(mobTermList);
+        try {
+            PollDataSourceRequestValidator.validateMobileTerminals(requestType);
+            fail("No mobterminals to poll");
+        } catch (RuntimeException e) {
+            assertTrue(true);
+        }
+
+        PollMobileTerminal pollMobTerm = new PollMobileTerminal();
+        PollMobileTerminal extraPollMobTerm = new PollMobileTerminal();
+        when(requestType.getPollType()).thenReturn(PollType.SAMPLING_POLL);
+
+        mobTermList.add(pollMobTerm);
+        mobTermList.add(extraPollMobTerm);
+
+        try {
+            PollDataSourceRequestValidator.validateMobileTerminals(requestType);
+            fail("Sampling poll too many");
+        } catch (RuntimeException e) {
+            assertTrue(true);
+        }
     }
-    
+
     @Test
     public void testMobileTerminalConfigurationPoll() {
-    	List<PollMobileTerminal> mobTermList = new ArrayList<>();
-		when(requestType.getMobileTerminals()).thenReturn(mobTermList);
-		
-		PollMobileTerminal pollMobTerm = new PollMobileTerminal();
-		PollMobileTerminal extraPollMobTerm = new PollMobileTerminal();
-		
-		mobTermList.add(pollMobTerm);
-		mobTermList.add(extraPollMobTerm);
-    	
-    	List<PollAttribute> pollAttrList = new ArrayList<>();
-		
-		when(requestType.getAttributes()).thenReturn(pollAttrList);
-		when(requestType.getPollType()).thenReturn(PollType.CONFIGURATION_POLL);
-		
-		try {
-			PollDataSourceRequestValidator.validateMobileTerminals(requestType);
-		} catch (RuntimeException e) {
-			fail("Valid configuration poll without dnid/memberNumber");
-		}
-		
-		PollAttribute dnid = new PollAttribute();
-		dnid.setKey(PollAttributeType.DNID);
-		pollAttrList.add(dnid);
-		
-		try {
-			PollDataSourceRequestValidator.validateMobileTerminals(requestType);
-			fail("Configuration poll too many");
-		} catch (RuntimeException e) {
-			mobTermList.remove(extraPollMobTerm);
-		}
-		
-		try {
-			PollDataSourceRequestValidator.validateMobileTerminals(requestType);
-		} catch (RuntimeException e) {
-			fail("Valid single configuration poll");
-		}
+        List<PollMobileTerminal> mobTermList = new ArrayList<>();
+        when(requestType.getMobileTerminals()).thenReturn(mobTermList);
+
+        PollMobileTerminal pollMobTerm = new PollMobileTerminal();
+        PollMobileTerminal extraPollMobTerm = new PollMobileTerminal();
+
+        mobTermList.add(pollMobTerm);
+        mobTermList.add(extraPollMobTerm);
+
+        List<PollAttribute> pollAttrList = new ArrayList<>();
+
+        when(requestType.getAttributes()).thenReturn(pollAttrList);
+        when(requestType.getPollType()).thenReturn(PollType.CONFIGURATION_POLL);
+
+        try {
+            PollDataSourceRequestValidator.validateMobileTerminals(requestType);
+        } catch (RuntimeException e) {
+            fail("Valid configuration poll without dnid/memberNumber");
+        }
+
+        PollAttribute dnid = new PollAttribute();
+        dnid.setKey(PollAttributeType.DNID);
+        pollAttrList.add(dnid);
+
+        try {
+            PollDataSourceRequestValidator.validateMobileTerminals(requestType);
+            fail("Configuration poll too many");
+        } catch (RuntimeException e) {
+            mobTermList.remove(extraPollMobTerm);
+        }
+
+        try {
+            PollDataSourceRequestValidator.validateMobileTerminals(requestType);
+        } catch (RuntimeException e) {
+            fail("Valid single configuration poll");
+        }
     }
 
-	@Test
-	public void testHasUser() {
-		PollDataSourceRequestValidator.validateHasUser("TEST_USER");
-	}
-    
+    @Test
+    public void testHasUser() {
+        PollDataSourceRequestValidator.validateHasUser("TEST_USER");
+    }
+
     @Test(expected = NullPointerException.class)
     public void testHasUser_NULL() {
-		PollDataSourceRequestValidator.validateHasUser(null);
+        PollDataSourceRequestValidator.validateHasUser(null);
     }
 
-	@Test(expected = NullPointerException.class)
-	public void testHasUser_EMPTY() {
-		PollDataSourceRequestValidator.validateHasUser("");
-	}
+    @Test(expected = NullPointerException.class)
+    public void testHasUser_EMPTY() {
+        PollDataSourceRequestValidator.validateHasUser("");
+    }
 }

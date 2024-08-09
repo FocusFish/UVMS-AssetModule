@@ -17,9 +17,9 @@ public enum MTSearchFields {
     ASSET_ID("asset"),
     TERMINAL_TYPE("mobileTerminalType"),
     SERIAL_NUMBER("serialNo"),
-	MEMBER_NUMBER("memberNumber", SearchFieldType.CHILD),  //  <-channel
-	DNID("dnid", SearchFieldType.CHILD),   // <- channel
-	SATELLITE_NUMBER("satelliteNumber"),
+    MEMBER_NUMBER("memberNumber", SearchFieldType.CHILD),  //  <-channel
+    DNID("dnid", SearchFieldType.CHILD),   // <- channel
+    SATELLITE_NUMBER("satelliteNumber"),
     SOFTWARE_VERSION("softwareVersion"),
     TRANSCEIVER_TYPE("transceiverType"),
     TRANSPONDER_TYPE("transceiverType"),
@@ -27,7 +27,6 @@ public enum MTSearchFields {
     MOBILETERMINAL_ID("id", SearchFieldType.ID),
     HIST_GUID("historyId", SearchFieldType.ID),
     DATE(null, SearchFieldType.DATE);
-
 
 
     private String fieldName;
@@ -50,5 +49,5 @@ public enum MTSearchFields {
     public SearchFieldType getFieldType() {
         return fieldType;
     }
-    
+
 }

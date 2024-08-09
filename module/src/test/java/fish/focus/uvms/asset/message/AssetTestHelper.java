@@ -62,7 +62,7 @@ public class AssetTestHelper {
         assetProdOrgModel.setName("NAME" + getRandomIntegers(10));
         assetProdOrgModel.setCode("CODE" + getRandomIntegers(10));
         asset.setProducer(assetProdOrgModel);
-        
+
         asset.getNotes().add(createBasicNote());
         asset.getNotes().add(createBasicNote());
 
@@ -70,7 +70,7 @@ public class AssetTestHelper {
         asset.getContact().add(createBasicContact());
         return asset;
     }
-    
+
     public static AssetNotes createBasicNote() {
         AssetNotes note = new AssetNotes();
         note.setDate(DateUtils.dateToEpochMilliseconds(Instant.now()));
@@ -79,7 +79,7 @@ public class AssetTestHelper {
         note.setNotes("Notes: " + getRandomIntegers(10));
         return note;
     }
-    
+
     public static AssetContact createBasicContact() {
         AssetContact contact = new AssetContact();
         contact.setName("Contact: " + getRandomIntegers(5));
@@ -87,7 +87,7 @@ public class AssetTestHelper {
         contact.setSource(ContactSource.NATIONAL);
         return contact;
     }
-    
+
     public static AssetListQuery createBasicAssetQuery() {
         AssetListQuery assetListQuery = new AssetListQuery();
         AssetListPagination assetListPagination = new AssetListPagination();
@@ -99,14 +99,14 @@ public class AssetTestHelper {
         assetListQuery.setAssetSearchCriteria(assetListCriteria);
         return assetListQuery;
     }
-    
+
     public static String getRandomIntegers(int length) {
         return new Random()
-                .ints(0,9)
+                .ints(0, 9)
                 .mapToObj(i -> String.valueOf(i))
                 .limit(length)
                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
                 .toString();
     }
-    
+
 }

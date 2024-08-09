@@ -43,7 +43,7 @@ public class CustomCodesRestResource {
 
     @PUT
     @Path("replace")
-    public Response replace(CustomCode customCode)  {
+    public Response replace(CustomCode customCode) {
         try {
             CustomCode replacedCustomCode = customCodesSvc.replace(customCode);
             return Response.ok(replacedCustomCode).header("MDC", MDC.get("requestId")).build();
@@ -57,16 +57,15 @@ public class CustomCodesRestResource {
     public Response retrieveCustomCode(
             @PathParam("constant") String constant,
             @PathParam("code") String code,
-            @QueryParam(value = "validFromDate")  String   validFromDate,
-            @QueryParam(value = "validToDate") String validToDate)
-    {
+            @QueryParam(value = "validFromDate") String validFromDate,
+            @QueryParam(value = "validToDate") String validToDate) {
         try {
             Instant fromDate = (validFromDate == null ? CustomCodesPK.STANDARD_START_DATE : DateUtils.stringToDate(validFromDate));
             Instant toDate = (validToDate == null ? CustomCodesPK.STANDARD_END_DATE : DateUtils.stringToDate(validToDate));
-            CustomCode customCode = customCodesSvc.get(constant,code,fromDate,toDate);
+            CustomCode customCode = customCodesSvc.get(constant, code, fromDate, toDate);
             return Response.ok(customCode).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
-            LOG.error("Error when fetching CustomCode. " + validFromDate + " " +  validToDate);
+            LOG.error("Error when fetching CustomCode. " + validFromDate + " " + validToDate);
             throw e;
         }
     }
@@ -76,8 +75,7 @@ public class CustomCodesRestResource {
     public Response exists(@PathParam("constant") String constant,
                            @PathParam("code") String code,
                            @QueryParam(value = "validFromDate") String validFromDate,
-                           @QueryParam(value = "validToDate") String validToDate)
-    {
+                           @QueryParam(value = "validToDate") String validToDate) {
         try {
 
             Instant fromDate = (validFromDate == null ? CustomCodesPK.STANDARD_START_DATE : DateUtils.stringToDate(validFromDate));
@@ -87,7 +85,7 @@ public class CustomCodesRestResource {
             pk.setCode(code);
             pk.setValidFromDate(fromDate);
             pk.setValidToDate(toDate);
-            Boolean exists = customCodesSvc.exists(constant, code,fromDate,toDate);
+            Boolean exists = customCodesSvc.exists(constant, code, fromDate, toDate);
 
             return Response.status(200).entity(exists).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
@@ -99,13 +97,12 @@ public class CustomCodesRestResource {
     @GET
     @Path("/{constant}/{code}/getfordate")
     public Response getForDate(@PathParam("constant") String constant,
-                           @PathParam("code") String code,
-                           @QueryParam(value = "date") String date)
-    {
+                               @PathParam("code") String code,
+                               @QueryParam(value = "date") String date) {
         try {
 
             Instant aDate = (date == null ? Instant.now() : DateUtils.stringToDate(date));
-            List<CustomCode> customCodes = customCodesSvc.getForDate(constant, code,aDate);
+            List<CustomCode> customCodes = customCodesSvc.getForDate(constant, code, aDate);
 
             return Response.ok(customCodes).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
@@ -117,9 +114,8 @@ public class CustomCodesRestResource {
     @GET
     @Path("/{constant}/{code}/verify")
     public Response verify(@PathParam("constant") String constant,
-                               @PathParam("code") String code,
-                               @QueryParam(value = "date") String date)
-    {
+                           @PathParam("code") String code,
+                           @QueryParam(value = "date") String date) {
         try {
 
             Instant aDate = (date == null ? Instant.now() : DateUtils.stringToDate(date));
@@ -134,7 +130,7 @@ public class CustomCodesRestResource {
 
     @GET
     @Path("/listconstants")
-    public Response getAllConstants(){
+    public Response getAllConstants() {
         try {
             List<String> constants = customCodesSvc.getAllConstants();
             return Response.ok(constants).header("MDC", MDC.get("requestId")).build();
@@ -146,7 +142,7 @@ public class CustomCodesRestResource {
 
     @GET
     @Path("/listcodesforconstant/{constant}")
-    public Response getCodesForConstant(@PathParam("constant") String constant){
+    public Response getCodesForConstant(@PathParam("constant") String constant) {
         try {
             List<CustomCode> customCodes = customCodesSvc.getAllFor(constant);
             return Response.ok(customCodes).header("MDC", MDC.get("requestId")).build();
@@ -161,13 +157,12 @@ public class CustomCodesRestResource {
     public Response deleteCustomCode(@PathParam("constant") String constant,
                                      @PathParam("code") String code,
                                      @QueryParam(value = "validFromDate") String validFromDate,
-                                     @QueryParam(value = "validToDate") String validToDate)
-    {
+                                     @QueryParam(value = "validToDate") String validToDate) {
         try {
 
             Instant fromDate = (validFromDate == null ? CustomCodesPK.STANDARD_START_DATE : DateUtils.stringToDate(validFromDate));
             Instant toDate = (validToDate == null ? CustomCodesPK.STANDARD_END_DATE : DateUtils.stringToDate(validToDate));
-            customCodesSvc.delete(constant, code,fromDate,toDate);
+            customCodesSvc.delete(constant, code, fromDate, toDate);
             return Response.ok().header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
             LOG.error("Error when getting config search fields.");

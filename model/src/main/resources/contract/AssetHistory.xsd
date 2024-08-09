@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns="history.asset.wsdl.focus.fish"
-    xmlns:t="types.asset.wsdl.focus.fish"
-    targetNamespace="history.asset.wsdl.focus.fish"
-    version="1.0">
-       
+            xmlns:t="types.asset.wsdl.focus.fish"
+            xmlns="history.asset.wsdl.focus.fish"
+            targetNamespace="history.asset.wsdl.focus.fish"
+            version="1.0">
+
     <xsd:import namespace="types.asset.wsdl.focus.fish" schemaLocation="AssetElement.xsd"/>
- 
+
     <xsd:element name="GetAssetHistoryRequest">
         <xsd:complexType>
             <xsd:complexContent>
@@ -18,7 +18,7 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
-            
+
     <xsd:element name="AssetHistoryListByAssetIdRequest">
         <xsd:complexType>
             <xsd:complexContent>

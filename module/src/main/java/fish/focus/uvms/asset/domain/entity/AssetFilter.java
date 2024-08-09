@@ -14,11 +14,14 @@ package fish.focus.uvms.asset.domain.entity;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import fish.focus.uvms.rest.asset.util.AssetFilterRestResponseAdapter;
+
 import javax.json.bind.annotation.JsonbTypeAdapter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 import static fish.focus.uvms.asset.domain.entity.AssetFilter.*;
+
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Set;
@@ -27,21 +30,19 @@ import java.util.UUID;
 @Entity
 @Table(name = "assetfilter")
 @NamedQueries({
-	@NamedQuery(name=ASSETFILTER_FIND_ALL, query="SELECT a FROM AssetFilter a"),
-	@NamedQuery(name=ASSETFILTER_BY_USER, query="SELECT a FROM AssetFilter a WHERE a.owner = :owner"),
-	@NamedQuery(name=ASSETFILTER_GUID_LIST, query="SELECT a FROM AssetFilter a WHERE a.id IN :guidList"),
-	@NamedQuery(name=ASSETFILTER_BY_ASSET_GUID, query="SELECT af FROM AssetFilter af JOIN af.queries afq JOIN afq.values afv WHERE afq.type = 'GUID' AND afv.valueString = :assetId"),
+        @NamedQuery(name = ASSETFILTER_FIND_ALL, query = "SELECT a FROM AssetFilter a"),
+        @NamedQuery(name = ASSETFILTER_BY_USER, query = "SELECT a FROM AssetFilter a WHERE a.owner = :owner"),
+        @NamedQuery(name = ASSETFILTER_GUID_LIST, query = "SELECT a FROM AssetFilter a WHERE a.id IN :guidList"),
+        @NamedQuery(name = ASSETFILTER_BY_ASSET_GUID, query = "SELECT af FROM AssetFilter af JOIN af.queries afq JOIN afq.values afv WHERE afq.type = 'GUID' AND afv.valueString = :assetId"),
 })
 @JsonbTypeAdapter(AssetFilterRestResponseAdapter.class)
 public class AssetFilter implements Serializable {
 
-	private static final long serialVersionUID = -1218306334950687248L;
-    
     public static final String ASSETFILTER_FIND_ALL = "AssetFilter.findAll";
     public static final String ASSETFILTER_BY_USER = "AssetFilter.findByUser";
     public static final String ASSETFILTER_GUID_LIST = "AssetFilter.findByGuidList";
     public static final String ASSETFILTER_BY_ASSET_GUID = "AssetFilter.findByAssetGuid";
-    
+    private static final long serialVersionUID = -1218306334950687248L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -58,57 +59,57 @@ public class AssetFilter implements Serializable {
     @Size(max = 255)
     @Column(name = "updatedby")
     private String updatedBy;
-    
+
     @Size(max = 255)
     @Column(name = "owner")
     private String owner;
-    
-    @OneToMany(mappedBy="assetFilter", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+
+    @OneToMany(mappedBy = "assetFilter", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Fetch(FetchMode.SELECT)
-    @Column(name="queries")
+    @Column(name = "queries")
     private Set<AssetFilterQuery> queries;
 
-	public UUID getId() {
-		return id;
-	}
+    public UUID getId() {
+        return id;
+    }
 
-	public void setId(UUID id) {
-		this.id = id;
-	}
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Instant getUpdateTime() {
-		return updateTime;
-	}
+    public Instant getUpdateTime() {
+        return updateTime;
+    }
 
-	public void setUpdateTime(Instant updateTime) {
-		this.updateTime = updateTime;
-	}
+    public void setUpdateTime(Instant updateTime) {
+        this.updateTime = updateTime;
+    }
 
-	public String getUpdatedBy() {
-		return updatedBy;
-	}
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
 
-	public void setUpdatedBy(String updatedBy) {
-		this.updatedBy = updatedBy;
-	}
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
 
-	public String getOwner() {
-		return owner;
-	}
+    public String getOwner() {
+        return owner;
+    }
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
 
-	public Set<AssetFilterQuery> getQueries() {
+    public Set<AssetFilterQuery> getQueries() {
         return queries;
     }
 

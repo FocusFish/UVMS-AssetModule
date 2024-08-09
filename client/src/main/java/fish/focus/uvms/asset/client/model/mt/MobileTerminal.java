@@ -18,207 +18,209 @@ import java.util.UUID;
 
 public class MobileTerminal {
 
-	private UUID id;
+    private UUID id;
 
-	private UUID historyId;
+    private UUID historyId;
 
-	private Boolean archived = false;
+    private Boolean archived = false;
 
-	private Boolean active = true;
+    private Boolean active = true;
 
-	private String source;
+    private String source;
 
-	private String mobileTerminalType;
+    private String mobileTerminalType;
 
-	private Instant updatetime;
+    private Instant updatetime;
 
-	private Instant createTime;
+    private Instant createTime;
 
-	private String updateuser;
+    private String updateuser;
 
-	private String serialNo;
+    private String serialNo;
 
-	private String satelliteNumber;
+    private String satelliteNumber;
 
-	private String antenna;
+    private String antenna;
 
-	private String transceiverType;
+    private String transceiverType;
 
-	private String softwareVersion;
+    private String softwareVersion;
 
-	private Set<Channel> channels;
+    private Set<Channel> channels;
 
-	private String assetId;
+    private String assetId;
 
-	private String comment;
+    private String comment;
 
-	private Boolean eastAtlanticOceanRegion = false;
+    private Boolean eastAtlanticOceanRegion = false;
 
-	private Boolean westAtlanticOceanRegion = false;
+    private Boolean westAtlanticOceanRegion = false;
 
-	private Boolean pacificOceanRegion = false;
+    private Boolean pacificOceanRegion = false;
 
-	private Boolean indianOceanRegion = false;
+    private Boolean indianOceanRegion = false;
 
     private Instant installDate;
 
     private Instant uninstallDate;
 
-	private String installedBy;
+    private String installedBy;
 
-	public UUID getId() {
-		return id;
-	}
+    public UUID getId() {
+        return id;
+    }
 
-	public void setId(UUID id) {
-		this.id = id;
-	}
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
-	public UUID getHistoryId() {
-		return historyId;
-	}
+    public UUID getHistoryId() {
+        return historyId;
+    }
 
-	public void setHistoryId(UUID historyId) {
-		this.historyId = historyId;
-	}
+    public void setHistoryId(UUID historyId) {
+        this.historyId = historyId;
+    }
 
-	public Boolean getArchived() {
-		return archived;
-	}
+    public Boolean getArchived() {
+        return archived;
+    }
 
-	public void setArchived(Boolean archived) {
-		this.archived = archived;
-	}
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
+    }
 
-	public Boolean getActive() {
-		return active;
-	}
+    public Boolean getActive() {
+        return active;
+    }
 
-	public void setActive(Boolean active) {
-		if(active != null){this.active = active;}
-	}
+    public void setActive(Boolean active) {
+        if (active != null) {
+            this.active = active;
+        }
+    }
 
-	public Instant getUpdatetime() {
-		return updatetime;
-	}
+    public Instant getUpdatetime() {
+        return updatetime;
+    }
 
-	public void setUpdatetime(Instant updatetime) {
-		this.updatetime = updatetime;
-	}
+    public void setUpdatetime(Instant updatetime) {
+        this.updatetime = updatetime;
+    }
 
-	public String getUpdateuser() {
-		return updateuser;
-	}
+    public String getUpdateuser() {
+        return updateuser;
+    }
 
-	public void setUpdateuser(String updateuser) {
-		this.updateuser = updateuser;
-	}
+    public void setUpdateuser(String updateuser) {
+        this.updateuser = updateuser;
+    }
 
-	public String getSerialNo() {
-		return serialNo;
-	}
+    public String getSerialNo() {
+        return serialNo;
+    }
 
-	public void setSerialNo(String serialNo) {
-		this.serialNo = serialNo;
-	}
+    public void setSerialNo(String serialNo) {
+        this.serialNo = serialNo;
+    }
 
-	public Instant getCreateTime() {
-		return createTime;
-	}
+    public Instant getCreateTime() {
+        return createTime;
+    }
 
-	public void setCreateTime(Instant createTime) {
-		this.createTime = createTime;
-	}
+    public void setCreateTime(Instant createTime) {
+        this.createTime = createTime;
+    }
 
-	public Set<Channel> getChannels() {
-		if(channels == null)
-			channels = new LinkedHashSet<>();
-		return channels;
-	}
+    public Set<Channel> getChannels() {
+        if (channels == null)
+            channels = new LinkedHashSet<>();
+        return channels;
+    }
 
-	public void setChannels(Set<Channel> channels) {
-		this.channels = channels;
-	}
+    public void setChannels(Set<Channel> channels) {
+        this.channels = channels;
+    }
 
-	public String getAssetId() {
-		return assetId;
-	}
+    public String getAssetId() {
+        return assetId;
+    }
 
-	public void setAssetId(String assetId) {
-		this.assetId = assetId;
-	}
+    public void setAssetId(String assetId) {
+        this.assetId = assetId;
+    }
 
-	public String getSatelliteNumber() {
-		return satelliteNumber;
-	}
+    public String getSatelliteNumber() {
+        return satelliteNumber;
+    }
 
-	public void setSatelliteNumber(String satelliteNumber) {
-		this.satelliteNumber = satelliteNumber;
-	}
+    public void setSatelliteNumber(String satelliteNumber) {
+        this.satelliteNumber = satelliteNumber;
+    }
 
-	public String getAntenna() {
-		return antenna;
-	}
+    public String getAntenna() {
+        return antenna;
+    }
 
-	public void setAntenna(String antenna) {
-		this.antenna = antenna;
-	}
+    public void setAntenna(String antenna) {
+        this.antenna = antenna;
+    }
 
-	public String getTransceiverType() {
-		return transceiverType;
-	}
+    public String getTransceiverType() {
+        return transceiverType;
+    }
 
-	public void setTransceiverType(String transceiverType) {
-		this.transceiverType = transceiverType;
-	}
+    public void setTransceiverType(String transceiverType) {
+        this.transceiverType = transceiverType;
+    }
 
-	public String getSoftwareVersion() {
-		return softwareVersion;
-	}
+    public String getSoftwareVersion() {
+        return softwareVersion;
+    }
 
-	public void setSoftwareVersion(String softwareVersion) {
-		this.softwareVersion = softwareVersion;
-	}
+    public void setSoftwareVersion(String softwareVersion) {
+        this.softwareVersion = softwareVersion;
+    }
 
-	public String getComment() {
-		return comment;
-	}
+    public String getComment() {
+        return comment;
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-	public Boolean getEastAtlanticOceanRegion() {
-		return eastAtlanticOceanRegion;
-	}
+    public Boolean getEastAtlanticOceanRegion() {
+        return eastAtlanticOceanRegion;
+    }
 
-	public void setEastAtlanticOceanRegion(Boolean eastAtlanticOceanRegion) {
-		this.eastAtlanticOceanRegion = eastAtlanticOceanRegion;
-	}
+    public void setEastAtlanticOceanRegion(Boolean eastAtlanticOceanRegion) {
+        this.eastAtlanticOceanRegion = eastAtlanticOceanRegion;
+    }
 
-	public Boolean getWestAtlanticOceanRegion() {
-		return westAtlanticOceanRegion;
-	}
+    public Boolean getWestAtlanticOceanRegion() {
+        return westAtlanticOceanRegion;
+    }
 
-	public void setWestAtlanticOceanRegion(Boolean westAtlanticOceanRegion) {
-		this.westAtlanticOceanRegion = westAtlanticOceanRegion;
-	}
+    public void setWestAtlanticOceanRegion(Boolean westAtlanticOceanRegion) {
+        this.westAtlanticOceanRegion = westAtlanticOceanRegion;
+    }
 
-	public Boolean getPacificOceanRegion() {
-		return pacificOceanRegion;
-	}
+    public Boolean getPacificOceanRegion() {
+        return pacificOceanRegion;
+    }
 
-	public void setPacificOceanRegion(Boolean pacificOceanRegion) {
-		this.pacificOceanRegion = pacificOceanRegion;
-	}
+    public void setPacificOceanRegion(Boolean pacificOceanRegion) {
+        this.pacificOceanRegion = pacificOceanRegion;
+    }
 
-	public Boolean getIndianOceanRegion() {
-		return indianOceanRegion;
-	}
+    public Boolean getIndianOceanRegion() {
+        return indianOceanRegion;
+    }
 
-	public void setIndianOceanRegion(Boolean indianOceanRegion) {
-		this.indianOceanRegion = indianOceanRegion;
-	}
+    public void setIndianOceanRegion(Boolean indianOceanRegion) {
+        this.indianOceanRegion = indianOceanRegion;
+    }
 
     public Instant getInstallDate() {
         return installDate;
@@ -236,27 +238,27 @@ public class MobileTerminal {
         this.uninstallDate = uninstallDate;
     }
 
-	public String getInstalledBy() {
-		return installedBy;
-	}
+    public String getInstalledBy() {
+        return installedBy;
+    }
 
-	public void setInstalledBy(String installedBy) {
-		this.installedBy = installedBy;
-	}
+    public void setInstalledBy(String installedBy) {
+        this.installedBy = installedBy;
+    }
 
-	public String getSource() {
-		return source;
-	}
+    public String getSource() {
+        return source;
+    }
 
-	public void setSource(String source) {
-		this.source = source;
-	}
+    public void setSource(String source) {
+        this.source = source;
+    }
 
-	public String getMobileTerminalType() {
-		return mobileTerminalType;
-	}
+    public String getMobileTerminalType() {
+        return mobileTerminalType;
+    }
 
-	public void setMobileTerminalType(String mobileTerminalType) {
-		this.mobileTerminalType = mobileTerminalType;
-	}
+    public void setMobileTerminalType(String mobileTerminalType) {
+        this.mobileTerminalType = mobileTerminalType;
+    }
 }

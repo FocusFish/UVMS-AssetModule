@@ -6,15 +6,13 @@ import javax.persistence.EmbeddedId;
 
 public class CustomCode {
 
+    @EmbeddedId
+    CustomCodesPK primaryKey;
+    private String description;
+    private Map<String, String> nameValue = new HashMap<>();
     public CustomCode() {
         // for json
     }
-
-    @EmbeddedId
-    CustomCodesPK primaryKey;
-
-    private String description;
-    private Map<String, String> nameValue = new HashMap<>();
 
     public CustomCodesPK getPrimaryKey() {
         return primaryKey;

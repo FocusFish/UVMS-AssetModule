@@ -22,40 +22,37 @@ import javax.json.bind.Jsonb;
 public class EventStreamSender {
 
     private final static Logger LOG = LoggerFactory.getLogger(EventStreamSender.class);
-
-    @Resource(mappedName = "java:/" + MessageConstants.EVENT_STREAM_TOPIC)
-    private Destination destination;
-
     @Inject
     @JMSConnectionFactory("java:/ConnectionFactory")
     JMSContext context;
-
+    @Resource(mappedName = "java:/" + MessageConstants.EVENT_STREAM_TOPIC)
+    private Destination destination;
     private Jsonb jsonb;
 
     @PostConstruct
     public void init() {
-        jsonb =  new JsonBConfigurator().getContext(null);
+        jsonb = new JsonBConfigurator().getContext(null);
     }
 
-    public void updatedAsset(@Observes(during = TransactionPhase.AFTER_SUCCESS) @UpdatedAssetEvent Asset asset){
+    public void updatedAsset(@Observes(during = TransactionPhase.AFTER_SUCCESS) @UpdatedAssetEvent Asset asset) {
         try {
             if (asset != null) {
                 String outgoingJson = jsonb.toJson(asset);
                 sendMessageOnEventStream(outgoingJson, "Updated Asset");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             LOG.error("Error while sending message on event stream: ", e);
             throw new RuntimeException(e);
         }
     }
 
-    public void mergeAsset(@Observes(during = TransactionPhase.AFTER_SUCCESS) @UpdatedAssetEvent AssetMergeInfo mergeInfo){
+    public void mergeAsset(@Observes(during = TransactionPhase.AFTER_SUCCESS) @UpdatedAssetEvent AssetMergeInfo mergeInfo) {
         try {
             if (mergeInfo != null) {
                 String outgoingJson = jsonb.toJson(mergeInfo);
                 sendMessageOnEventStream(outgoingJson, "Merged Asset");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             LOG.error("Error while sending message on event stream: ", e);
             throw new RuntimeException(e);
         }
@@ -68,7 +65,7 @@ public class EventStreamSender {
         MappedDiagnosticContext.addThreadMappedDiagnosticContextToMessageProperties(message);
 
         context.createProducer()
-            .setDeliveryMode(DeliveryMode.PERSISTENT)
-            .send(destination, message);
+                .setDeliveryMode(DeliveryMode.PERSISTENT)
+                .send(destination, message);
     }
 }

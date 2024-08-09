@@ -67,30 +67,30 @@ public class AssetMessageEvent {
         this.assetGuid = assetGuid;
     }
 
-    public AssetMessageEvent(TextMessage message, Asset asset, String username){
+    public AssetMessageEvent(TextMessage message, Asset asset, String username) {
         this.message = message;
         this.asset = asset;
         this.username = username;
     }
 
-    public AssetMessageEvent(TextMessage message, FishingGear fishingGear, String username){
+    public AssetMessageEvent(TextMessage message, FishingGear fishingGear, String username) {
         this.message = message;
         this.username = username;
         this.fishingGear = fishingGear;
     }
 
-    public TextMessage getMessage() {
-        return message;
-    }
-
-    public AssetMessageEvent(TextMessage message, GetFlagStateByGuidAndDateRequest getFlagStateByGuidAndDateRequest){
+    public AssetMessageEvent(TextMessage message, GetFlagStateByGuidAndDateRequest getFlagStateByGuidAndDateRequest) {
         this.message = message;
         this.getFlagStateByGuidAndDateRequest = getFlagStateByGuidAndDateRequest;
     }
 
-    public AssetMessageEvent(TextMessage message, GetAssetFromAssetIdAndDateRequest getAssetFromAssetIdAndDateRequest){
+    public AssetMessageEvent(TextMessage message, GetAssetFromAssetIdAndDateRequest getAssetFromAssetIdAndDateRequest) {
         this.message = message;
         this.getAssetFromAssetIdAndDateRequest = getAssetFromAssetIdAndDateRequest;
+    }
+
+    public TextMessage getMessage() {
+        return message;
     }
 
     public void setMessage(TextMessage message) {
@@ -153,7 +153,7 @@ public class AssetMessageEvent {
     public void setFishingGear(FishingGear fishingGear) {
         this.fishingGear = fishingGear;
     }
-    
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

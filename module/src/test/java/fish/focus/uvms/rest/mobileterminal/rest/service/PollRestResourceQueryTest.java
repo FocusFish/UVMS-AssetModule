@@ -85,7 +85,7 @@ public class PollRestResourceQueryTest extends AbstractAssetRestTest {
         assertNotNull(createdPoll);
 
         String pollGuid;
-        if(createdPoll.isUnsentPoll()){
+        if (createdPoll.isUnsentPoll()) {
             pollGuid = createdPoll.getUnsentPolls().get(0);
         } else {
             pollGuid = createdPoll.getSentPolls().get(0);
@@ -102,7 +102,7 @@ public class PollRestResourceQueryTest extends AbstractAssetRestTest {
         assertNotNull(createdPoll2);
 
         String pollGuid2;
-        if(createdPoll2.isUnsentPoll()){
+        if (createdPoll2.isUnsentPoll()) {
             pollGuid2 = createdPoll2.getUnsentPolls().get(0);
         } else {
             pollGuid2 = createdPoll2.getSentPolls().get(0);
@@ -144,7 +144,7 @@ public class PollRestResourceQueryTest extends AbstractAssetRestTest {
         assertNotNull(createdPoll);
 
         String pollGuid;
-        if(createdPoll.isUnsentPoll()){
+        if (createdPoll.isUnsentPoll()) {
             pollGuid = createdPoll.getUnsentPolls().get(0);
         } else {
             pollGuid = createdPoll.getSentPolls().get(0);
@@ -184,7 +184,7 @@ public class PollRestResourceQueryTest extends AbstractAssetRestTest {
         assertNotNull(createdPoll);
 
         String pollGuid;
-        if(createdPoll.isUnsentPoll()){
+        if (createdPoll.isUnsentPoll()) {
             pollGuid = createdPoll.getUnsentPolls().get(0);
         } else {
             pollGuid = createdPoll.getSentPolls().get(0);
@@ -224,7 +224,7 @@ public class PollRestResourceQueryTest extends AbstractAssetRestTest {
         assertNotNull(createdPoll);
 
         String pollGuid;
-        if(createdPoll.isUnsentPoll()){
+        if (createdPoll.isUnsentPoll()) {
             pollGuid = createdPoll.getUnsentPolls().get(0);
         } else {
             pollGuid = createdPoll.getSentPolls().get(0);
@@ -264,7 +264,7 @@ public class PollRestResourceQueryTest extends AbstractAssetRestTest {
         assertNotNull(createdPoll);
 
         String pollGuid;
-        if(createdPoll.isUnsentPoll()){
+        if (createdPoll.isUnsentPoll()) {
             pollGuid = createdPoll.getUnsentPolls().get(0);
         } else {
             pollGuid = createdPoll.getSentPolls().get(0);
@@ -307,7 +307,7 @@ public class PollRestResourceQueryTest extends AbstractAssetRestTest {
         assertNotNull(createdPoll);
 
         String pollGuid;
-        if(createdPoll.isUnsentPoll()){
+        if (createdPoll.isUnsentPoll()) {
             pollGuid = createdPoll.getUnsentPolls().get(0);
         } else {
             pollGuid = createdPoll.getSentPolls().get(0);
@@ -344,7 +344,7 @@ public class PollRestResourceQueryTest extends AbstractAssetRestTest {
         assertNotNull(createdPoll);
 
         String pollGuid;
-        if(createdPoll.isUnsentPoll()){
+        if (createdPoll.isUnsentPoll()) {
             pollGuid = createdPoll.getUnsentPolls().get(0);
         } else {
             pollGuid = createdPoll.getSentPolls().get(0);
@@ -377,7 +377,7 @@ public class PollRestResourceQueryTest extends AbstractAssetRestTest {
         return response;
     }
 
-    private Asset createAndRestBasicAsset(){
+    private Asset createAndRestBasicAsset() {
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = getWebTargetExternal()
                 .path("asset")

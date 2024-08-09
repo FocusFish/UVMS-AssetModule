@@ -3,6 +3,7 @@ package fish.focus.uvms.mobileterminal.model.dto;
 import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
+
 import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
 import fish.focus.uvms.mobileterminal.model.constants.TerminalSourceEnum;
 

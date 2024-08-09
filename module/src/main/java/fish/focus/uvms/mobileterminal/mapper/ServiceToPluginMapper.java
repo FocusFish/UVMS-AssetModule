@@ -22,30 +22,31 @@ import java.util.List;
 
 public class ServiceToPluginMapper {
 
-    private ServiceToPluginMapper() {}
+    private ServiceToPluginMapper() {
+    }
 
-	public static PluginService mapToPlugin(ServiceResponseType service) {
-		PluginService plugin = new PluginService();
-		plugin.setInactive(!service.isActive());
-		plugin.setLabelName(service.getName());
-		plugin.setServiceName(service.getServiceClassName());
-		plugin.setSatelliteType(service.getSatelliteType());
-		if(service.getCapabilityList() != null) {
-			plugin.getCapability().addAll(mapToPluginCapabilityList(service.getCapabilityList().getCapability()));
-		}
-		return plugin;
-	}
-	
-	private static List<PluginCapability> mapToPluginCapabilityList(List<CapabilityType> capabilities) {
-		List<PluginCapability> capabilityList = new ArrayList<>();
-		if(capabilities != null) {
-			for(CapabilityType capability : capabilities) {
-				PluginCapability pluginCapability = new PluginCapability();
-				pluginCapability.setName(PluginCapabilityType.fromValue(capability.getType().name()));
-				pluginCapability.setValue(capability.getValue());
-				capabilityList.add(pluginCapability);
-			}
-		}
-		return capabilityList;
-	}
+    public static PluginService mapToPlugin(ServiceResponseType service) {
+        PluginService plugin = new PluginService();
+        plugin.setInactive(!service.isActive());
+        plugin.setLabelName(service.getName());
+        plugin.setServiceName(service.getServiceClassName());
+        plugin.setSatelliteType(service.getSatelliteType());
+        if (service.getCapabilityList() != null) {
+            plugin.getCapability().addAll(mapToPluginCapabilityList(service.getCapabilityList().getCapability()));
+        }
+        return plugin;
+    }
+
+    private static List<PluginCapability> mapToPluginCapabilityList(List<CapabilityType> capabilities) {
+        List<PluginCapability> capabilityList = new ArrayList<>();
+        if (capabilities != null) {
+            for (CapabilityType capability : capabilities) {
+                PluginCapability pluginCapability = new PluginCapability();
+                pluginCapability.setName(PluginCapabilityType.fromValue(capability.getType().name()));
+                pluginCapability.setValue(capability.getValue());
+                capabilityList.add(pluginCapability);
+            }
+        }
+        return capabilityList;
+    }
 }

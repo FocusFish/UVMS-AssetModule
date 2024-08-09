@@ -39,7 +39,7 @@ public abstract class AbstractClientTest {
     }
 
     @Deployment(name = "uvms", order = 1)
-    public static Archive<?> createExchangeMock(){
+    public static Archive<?> createExchangeMock() {
 
         WebArchive testWar = ShrinkWrap.create(WebArchive.class, "unionvms.war");
         File[] files = Maven.configureResolver().loadPomFromFile("pom.xml")

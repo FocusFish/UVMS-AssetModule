@@ -25,8 +25,8 @@ public enum AttributeInmarsatC {
     TRANSCEIVER_TYPE;
 
     public static AttributeInmarsatC getAttribute(String type) {
-        for(AttributeInmarsatC attr : AttributeInmarsatC.values()) {
-            if(attr.name().equalsIgnoreCase(type)) {
+        for (AttributeInmarsatC attr : AttributeInmarsatC.values()) {
+            if (attr.name().equalsIgnoreCase(type)) {
                 return attr;
             }
         }

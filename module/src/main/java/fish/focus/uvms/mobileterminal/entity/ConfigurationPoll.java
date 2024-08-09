@@ -49,9 +49,9 @@ public class ConfigurationPoll extends PollBase {
         ConfigurationPoll that = (ConfigurationPoll) o;
         return
                 Objects.equals(getId(), that.getId()) &&
-                Objects.equals(reportingFrequency, that.reportingFrequency) &&
-                Objects.equals(gracePeriod, that.gracePeriod) &&
-                Objects.equals(inPortGrace, that.inPortGrace);
+                        Objects.equals(reportingFrequency, that.reportingFrequency) &&
+                        Objects.equals(gracePeriod, that.gracePeriod) &&
+                        Objects.equals(inPortGrace, that.inPortGrace);
     }
 
     @Override

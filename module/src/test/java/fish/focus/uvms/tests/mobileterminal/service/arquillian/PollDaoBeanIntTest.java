@@ -33,11 +33,12 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class PollDaoBeanIntTest extends TransactionalTests {
 
-    @EJB
-    private PollDaoBean pollDao;
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+    @EJB
+    private PollDaoBean pollDao;
+    @Inject
+    private TestPollHelper testPollHelper;
 
     @Test
     @OperateOnDeployment("normal")
@@ -55,7 +56,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
         thrown.expect(ConstraintViolationException.class);
 
         PollBase poll = createPollHelper();
-        char [] updatedBy = new char[61];
+        char[] updatedBy = new char[61];
         Arrays.fill(updatedBy, 'x');
         poll.setUpdatedBy(new String(updatedBy));
 
@@ -71,8 +72,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
             Assert.fail();
 
             em.flush();
-        }
-        catch(RuntimeException e){
+        } catch (RuntimeException e) {
             Assert.assertTrue(true);
         }
     }
@@ -323,18 +323,18 @@ public class PollDaoBeanIntTest extends TransactionalTests {
         String sql = PollSearchMapper.createSelectSearchSql(listOfPollSearchKeyValue, true, PollTypeEnum.MANUAL_POLL);
         pollDao.getPollListSearchPaginated(pageNumber, pageSize, sql, listOfPollSearchKeyValue);
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void testGetPollListSearchPaginated_PollSearchField_POLL_ID() {
         PollBase poll = createPollHelper();
-    	pollDao.createPoll(poll);
+        pollDao.createPoll(poll);
         em.flush();
 
         String testValue1 = UUID.randomUUID().toString();
         String testValue2 = UUID.randomUUID().toString();
         List<String> pollSearchKeyValueList = Arrays.asList(testValue1, testValue2);
-        
+
         PollSearchKeyValue pollSearchKeyValue1 = new PollSearchKeyValue();
         pollSearchKeyValue1.setSearchField(PollSearchField.POLL_ID);
         pollSearchKeyValue1.setValues(pollSearchKeyValueList);
@@ -361,7 +361,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
         pollSearchKeyValue1.setValues(listOfPollSearchKeyValues1);
 
         List<PollSearchKeyValue> listOfPollSearchKeyValue = Collections.singletonList(pollSearchKeyValue1);
-        
+
         Integer pageNumber = 1;
         Integer pageSize = 2;
 
@@ -373,11 +373,11 @@ public class PollDaoBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void testGetPollListSearchPaginated_PollSearchField_TERMINAL_TYPE() {
-    	String testEnumValue1 = "INMARSAT_C";
+        String testEnumValue1 = "INMARSAT_C";
         String testEnumValue2 = "IRIDIUM";
 
         List<String> pollSearchKeyValuesList = Arrays.asList(testEnumValue1, testEnumValue2);
-        
+
         PollSearchKeyValue pollSearchKeyValue1 = new PollSearchKeyValue();
         pollSearchKeyValue1.setSearchField(PollSearchField.TERMINAL_TYPE);
         pollSearchKeyValue1.setValues(pollSearchKeyValuesList);
@@ -439,8 +439,6 @@ public class PollDaoBeanIntTest extends TransactionalTests {
         assertEquals(0, byAssetInTimespan.size());
     }
 
-    @Inject
-    private TestPollHelper testPollHelper;
     private PollBase createPollHelper() {
         PollBase poll = new PollBase();
         poll.setCreateTime(Instant.now());

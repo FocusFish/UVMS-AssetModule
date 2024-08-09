@@ -2,6 +2,7 @@ package fish.focus.uvms.mobileterminal.dto;
 
 import java.time.Instant;
 import java.util.UUID;
+
 import fish.focus.uvms.mobileterminal.entity.types.PollTypeEnum;
 
 public class SanePollDto {

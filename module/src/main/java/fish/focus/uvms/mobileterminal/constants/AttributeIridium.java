@@ -19,8 +19,8 @@ public enum AttributeIridium {
     SERIAL_NUMBER;
 
     public static AttributeIridium getAttribute(String type) {
-        for(AttributeIridium attr : AttributeIridium.values()) {
-            if(attr.name().equalsIgnoreCase(type)) {
+        for (AttributeIridium attr : AttributeIridium.values()) {
+            if (attr.name().equalsIgnoreCase(type)) {
                 return attr;
             }
         }

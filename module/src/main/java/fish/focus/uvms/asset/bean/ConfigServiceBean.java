@@ -28,43 +28,43 @@ import java.util.Map;
 
 @Stateless
 public class ConfigServiceBean {
-	private static final Logger LOG = LoggerFactory.getLogger(ConfigServiceBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigServiceBean.class);
 
-	@EJB
-	private ParameterService parameterService;
+    @EJB
+    private ParameterService parameterService;
 
-	public Map<String, String> getParameters() throws AssetServiceException {
-		try {
-			Map<String, String> parameters = new HashMap<>();
-			List<SettingType> allSettings = parameterService.getAllSettings();
-			for (SettingType settingType : allSettings) {
-				parameters.put(settingType.getKey(), settingType.getValue());
-			}
-			return parameters;
-		} catch (Exception e) {
-			LOG.error("[ Error when getting asset parameters from local database. ] {}", e);
-			throw new AssetServiceException("Couldn't get parameters");
-		}
-	}
+    public Map<String, String> getParameters() throws AssetServiceException {
+        try {
+            Map<String, String> parameters = new HashMap<>();
+            List<SettingType> allSettings = parameterService.getAllSettings();
+            for (SettingType settingType : allSettings) {
+                parameters.put(settingType.getKey(), settingType.getValue());
+            }
+            return parameters;
+        } catch (Exception e) {
+            LOG.error("[ Error when getting asset parameters from local database. ] {}", e);
+            throw new AssetServiceException("Couldn't get parameters");
+        }
+    }
 
-	private  List<String> getGearTypes() {
-		List<String> values = new ArrayList<>();
-		return values;
-	}
+    private List<String> getGearTypes() {
+        List<String> values = new ArrayList<>();
+        return values;
+    }
 
-	private  List<String> getLengthUnit() {
-		List<String> values = new ArrayList<>();
-		for (UnitLength unit : UnitLength.values()) {
-			values.add(unit.name());
-		}
-		return values;
-	}
+    private List<String> getLengthUnit() {
+        List<String> values = new ArrayList<>();
+        for (UnitLength unit : UnitLength.values()) {
+            values.add(unit.name());
+        }
+        return values;
+    }
 
-	private  List<String> getTonnageUnit() {
-		List<String> values = new ArrayList<>();
-		for (UnitTonnage unit : UnitTonnage.values()) {
-			values.add(unit.name());
-		}
-		return values;
-	}
+    private List<String> getTonnageUnit() {
+        List<String> values = new ArrayList<>();
+        for (UnitTonnage unit : UnitTonnage.values()) {
+            values.add(unit.name());
+        }
+        return values;
+    }
 }

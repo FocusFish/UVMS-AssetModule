@@ -1,6 +1,7 @@
 package fish.focus.uvms.tests;
 
 import java.io.File;
+
 import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
@@ -33,12 +34,12 @@ public abstract class BuildAssetServiceDeployment {
 
         testWar.delete("/WEB-INF/web.xml");
         testWar.addAsWebInfResource("mock-web.xml", "web.xml");
-        
+
         return testWar;
     }
 
     @Deployment(name = "uvms", order = 1)
-    public static Archive<?> createExchangeMock(){
+    public static Archive<?> createExchangeMock() {
 
         WebArchive testWar = ShrinkWrap.create(WebArchive.class, "unionvms.war");
         File[] files = Maven.resolver().loadPomFromFile("pom.xml")

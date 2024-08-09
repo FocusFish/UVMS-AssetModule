@@ -31,34 +31,28 @@ import java.time.temporal.ChronoUnit;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Jem
  */
 @RunWith(Arquillian.class)
 public class EventStreamSenderTest extends BuildAssetServiceDeployment {
-    
+
     private final static Logger LOG = LoggerFactory.getLogger(EventStreamSenderTest.class);
-
-    @Resource(mappedName = "java:/ConnectionFactory")
-    private ConnectionFactory connectionFactory;
-
     @Inject
     AssetDao assetDao;
-
     @Inject
     AssetRemapTask assetRemapTask;
-
     JMSHelper jmsHelper;
     MessageConsumer subscriber;
     Topic eventBus;
     Session session;
-
+    @Resource(mappedName = "java:/ConnectionFactory")
+    private ConnectionFactory connectionFactory;
     private Jsonb jsonb;
 
     @Before
     public void init() {
         jmsHelper = new JMSHelper();
-        jsonb =  new JsonBConfigurator().getContext(null);
+        jsonb = new JsonBConfigurator().getContext(null);
     }
 
     @Test
@@ -67,7 +61,7 @@ public class EventStreamSenderTest extends BuildAssetServiceDeployment {
         fish.focus.wsdl.asset.types.Asset asset = AssetTestHelper.createBasicAsset();
         jmsHelper.upsertAsset(asset);
         registerSubscriber();
-        TextMessage message = (TextMessage)listenOnEventStream(5000l);
+        TextMessage message = (TextMessage) listenOnEventStream(5000l);
         assertNotNull(message);
 
         assertEquals("Updated Asset", message.getStringProperty(MessageConstants.EVENT_STREAM_EVENT));
@@ -83,11 +77,11 @@ public class EventStreamSenderTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void checkThatMergeMessageComesOnSSEStreamTest() throws Exception{
+    public void checkThatMergeMessageComesOnSSEStreamTest() throws Exception {
         fish.focus.wsdl.asset.types.Asset asset1 = AssetTestHelper.createBasicAsset();
         jmsHelper.upsertAsset(asset1);
         registerSubscriber();
-        TextMessage message = (TextMessage)listenOnEventStream(5000l);
+        TextMessage message = (TextMessage) listenOnEventStream(5000l);
         assertNotNull(message);
         assertEquals("Updated Asset", message.getStringProperty(MessageConstants.EVENT_STREAM_EVENT));
         Asset oldAsset = jsonb.fromJson(message.getText(), Asset.class);
@@ -95,7 +89,7 @@ public class EventStreamSenderTest extends BuildAssetServiceDeployment {
         fish.focus.wsdl.asset.types.Asset asset2 = AssetTestHelper.createBasicAsset();
         jmsHelper.upsertAsset(asset2);
         registerSubscriber();
-        message = (TextMessage)listenOnEventStream(5000l);
+        message = (TextMessage) listenOnEventStream(5000l);
         assertNotNull(message);
         assertEquals("Updated Asset", message.getStringProperty(MessageConstants.EVENT_STREAM_EVENT));
         Asset newAsset = jsonb.fromJson(message.getText(), Asset.class);
@@ -111,7 +105,7 @@ public class EventStreamSenderTest extends BuildAssetServiceDeployment {
         System.setProperty("MovementsRemapped", "0");
         assetRemapTask.remap();
         System.clearProperty("MovementsRemapped");
-        message = (TextMessage)listenOnEventStream(5000l);
+        message = (TextMessage) listenOnEventStream(5000l);
         assertNotNull(message);
         assertEquals("Merged Asset", message.getStringProperty(MessageConstants.EVENT_STREAM_EVENT));
 
@@ -139,5 +133,5 @@ public class EventStreamSenderTest extends BuildAssetServiceDeployment {
             subscriber.close();
         }
     }
-    
+
 }

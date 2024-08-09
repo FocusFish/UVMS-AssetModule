@@ -6,7 +6,7 @@ public class AssetMTEnrichmentRequest {
 
     private String transpondertypeValue = null;  // the server only looks for TRANSPONDER_TYPE
     private String pluginType = null;
-    private String user= null;
+    private String user = null;
 
     // for mobileTerminal
     private String dnidValue = null;
@@ -27,7 +27,7 @@ public class AssetMTEnrichmentRequest {
     private String iccatValue = null;
     private String externalMarking = null;
 
-    public AssetMTEnrichmentRequest(){
+    public AssetMTEnrichmentRequest() {
     }
 
     public String getTranspondertypeValue() {
@@ -106,7 +106,7 @@ public class AssetMTEnrichmentRequest {
         return id;
     }
 
-    public void  setIdValue(UUID id) {
+    public void setIdValue(UUID id) {
         this.id = id;
     }
 

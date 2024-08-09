@@ -23,12 +23,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PollTimerTask implements Runnable{
+public class PollTimerTask implements Runnable {
 
     private final static Logger LOG = LoggerFactory.getLogger(PollTimerTask.class);
     private PollServiceBean pollService;
 
-    public PollTimerTask(PollServiceBean pollService){
+    public PollTimerTask(PollServiceBean pollService) {
         this.pollService = pollService;
     }
 
@@ -57,7 +57,7 @@ public class PollTimerTask implements Runnable{
         }
     }
 
-    private List<ProgramPoll> filterOutProgramPollsThatAreOverdue(List<ProgramPoll> programs){
+    private List<ProgramPoll> filterOutProgramPollsThatAreOverdue(List<ProgramPoll> programs) {
         List<ProgramPoll> validPollPrograms = new ArrayList<>(programs.size());
 
         for (ProgramPoll pollProgram : programs) {

@@ -11,7 +11,7 @@ public class JsonBConfiguratorAsset extends JsonBConfigurator {
         super();
         config.withDeserializers(new SearchBranchDeserializer());
     }
-    
+
     @Override
     public Jsonb getContext(Class<?> type) {
         return JsonbBuilder.newBuilder()

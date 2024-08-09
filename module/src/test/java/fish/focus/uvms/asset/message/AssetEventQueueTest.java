@@ -42,13 +42,11 @@ import static org.junit.Assert.assertTrue;
 @RunWith(Arquillian.class)
 public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
-    private JMSHelper jmsHelper = new JMSHelper();
-
     @Inject
     AssetModelMapper assetModelMapper;
-
     @Inject
     AssetServiceBean assetServiceBean;
+    private JMSHelper jmsHelper = new JMSHelper();
 
     @Test
     @OperateOnDeployment("normal")
@@ -60,7 +58,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         Message response = jmsHelper.listenForResponse(correlationId);
         assertThat(response, is(notNullValue()));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetByCFRTest() throws Exception {
@@ -69,14 +67,14 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         // TODO Find better solution, this is needed due to async jms call
         Thread.sleep(2000);
         Asset assetById = jmsHelper.getAssetById(asset.getCfr(), AssetIdType.CFR);
-        
+
         assertThat(assetById, is(notNullValue()));
         assertThat(assetById.getCfr(), is(asset.getCfr()));
         assertThat(assetById.getName(), is(asset.getName()));
         assertThat(assetById.getExternalMarking(), is(asset.getExternalMarking()));
         assertThat(assetById.getIrcs(), is(asset.getIrcs()));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetByIRCSTest() throws Exception {
@@ -94,7 +92,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         assertEquals(AssetIdType.GUID, assetById.getAssetId().getType());
         assertEquals(assetById.getAssetId().getGuid(), assetById.getAssetId().getValue()); //since guid and value are supposed t obe the same
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetByMMSITest() throws Exception {
@@ -102,7 +100,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         jmsHelper.upsertAsset(asset);
         Thread.sleep(2000);
         Asset assetById = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
-        
+
         assertThat(assetById, is(notNullValue()));
         assertThat(assetById.getCfr(), is(asset.getCfr()));
         assertThat(assetById.getName(), is(asset.getName()));
@@ -121,16 +119,16 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         asset.setName(newName);
         jmsHelper.upsertAsset(asset);
         Thread.sleep(2000);
-        
+
         Asset assetById = jmsHelper.getAssetById(asset.getCfr(), AssetIdType.CFR);
-        
+
         assertThat(assetById, is(notNullValue()));
         assertThat(assetById.getCfr(), is(asset.getCfr()));
         assertThat(assetById.getName(), is(newName));
         assertThat(assetById.getExternalMarking(), is(asset.getExternalMarking()));
         assertThat(assetById.getIrcs(), is(asset.getIrcs()));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void assetSourceTest() throws Exception {
@@ -138,7 +136,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         asset.setSource(CarrierSource.INTERNAL);
         jmsHelper.upsertAsset(asset);
         Thread.sleep(2000);
-        
+
         Asset fetchedAsset = jmsHelper.getAssetById(asset.getCfr(), AssetIdType.CFR);
         assertThat(fetchedAsset.getSource(), is(asset.getSource()));
     }
@@ -259,7 +257,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         Thread.sleep(2000);
 
         // an ais with a "random" mmsi
-        String mmsi = UUID.randomUUID().toString().substring(0,10);
+        String mmsi = UUID.randomUUID().toString().substring(0, 10);
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
         newAsset.setMmsi(mmsi);
@@ -317,7 +315,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         Thread.sleep(2000);
 
         // an ais with a "random" ircs
-        String ircs = UUID.randomUUID().toString().substring(0,9);
+        String ircs = UUID.randomUUID().toString().substring(0, 9);
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
         newAsset.setIrcs(ircs);
@@ -583,7 +581,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         Asset assetType = AssetTestHelper.createBasicAsset();
         fish.focus.uvms.asset.domain.entity.Asset asset = assetModelMapper.toAssetEntity(assetType);
         asset.setName("Create with national id");
-        Long nationalId = (long)(Math.random() * 10000000d);
+        Long nationalId = (long) (Math.random() * 10000000d);
         asset.setNationalId(nationalId);
 
         jmsHelper.upsertAssetUsingMethod(asset);
@@ -594,7 +592,6 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         assertEquals(asset.getName(), assetById.getName());
 
     }
-
 
 
 }

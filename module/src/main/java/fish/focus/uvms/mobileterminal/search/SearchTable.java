@@ -12,38 +12,38 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.mobileterminal.search;
 
 public enum SearchTable {
-    
-	ASSET("Asset", "a"),
-	TERMINAL("MobileTerminal", "mt"),
-	
-	INMARSATC("MobileTerminalInmarsatC", "t"),
-	INMARSATC_HISTORY("MobileTerminalInmarsatCHistory", "mh"),
-	CHANNEL_INMARSATC("ChannelInmarsatC", "c"),
-	CHANNEL_INMARSATC_HISTORY("ChannelInmarsatCHistory", "ch"),
-	
-	IRIDIUM("MobileTerminalIridium", "t"),
-	IRIDIUM_HISTORY("MobileTerminalIridiumHistory", "mh"),
-	CHANNEL_IRIDIUM("ChannelIridium", "c"),
-	CHANNEL_IRIDIUM_HISTORY("ChannelIridiumHistory", "ch"),
 
-	CONFIGURATION_POLL("ConfigurationPoll", "cp"),
-	SAMPLING_POLL("SamplingPoll", "sp"),
-	PROGRAM_POLL("ProgramPoll", "pp"),
-	POLL_BASE("PollBase", "pb");
-	
-	private String tableName;
-	private String tableAlias;
-	
-	SearchTable(String tableName, String tableAlias) {
-		this.tableName=tableName;
-		this.tableAlias = tableAlias;
-	}
+    ASSET("Asset", "a"),
+    TERMINAL("MobileTerminal", "mt"),
 
-	public String getTableAlias() {
-		return tableAlias;
-	}
+    INMARSATC("MobileTerminalInmarsatC", "t"),
+    INMARSATC_HISTORY("MobileTerminalInmarsatCHistory", "mh"),
+    CHANNEL_INMARSATC("ChannelInmarsatC", "c"),
+    CHANNEL_INMARSATC_HISTORY("ChannelInmarsatCHistory", "ch"),
 
-	public String getTableName() {
-		return tableName;
-	}
+    IRIDIUM("MobileTerminalIridium", "t"),
+    IRIDIUM_HISTORY("MobileTerminalIridiumHistory", "mh"),
+    CHANNEL_IRIDIUM("ChannelIridium", "c"),
+    CHANNEL_IRIDIUM_HISTORY("ChannelIridiumHistory", "ch"),
+
+    CONFIGURATION_POLL("ConfigurationPoll", "cp"),
+    SAMPLING_POLL("SamplingPoll", "sp"),
+    PROGRAM_POLL("ProgramPoll", "pp"),
+    POLL_BASE("PollBase", "pb");
+
+    private String tableName;
+    private String tableAlias;
+
+    SearchTable(String tableName, String tableAlias) {
+        this.tableName = tableName;
+        this.tableAlias = tableAlias;
+    }
+
+    public String getTableAlias() {
+        return tableAlias;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
 }

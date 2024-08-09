@@ -1,18 +1,18 @@
-<definitions name="AssetModule"
-             targetNamespace="module.asset.wsdl.focus.fish"
-             xmlns:v="module.asset.wsdl.focus.fish"
+<definitions xmlns:v="module.asset.wsdl.focus.fish"
              xmlns:tv="types.asset.wsdl.focus.fish"
              xmlns:fg="fishinggear.asset.wsdl.focus.fish"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             name="AssetModule"
+             targetNamespace="module.asset.wsdl.focus.fish"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
     <types>
         <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="module.asset.wsdl.focus.fish">
-            
+
             <xsd:import namespace="types.asset.wsdl.focus.fish" schemaLocation="AssetElement.xsd"/>
             <xsd:import namespace="fishinggear.asset.wsdl.focus.fish" schemaLocation="FishingGear.xsd"/>
-            
+
             <xsd:simpleType name="AssetModuleMethod">
                 <xsd:restriction base="xsd:string">
                     <xsd:enumeration value="GET_ASSET"/>
@@ -31,7 +31,7 @@
                     <xsd:enumeration value="GET_ASSET_FROMASSETID_AND_DATE"/>
                 </xsd:restriction>
             </xsd:simpleType>
-            
+
             <xsd:complexType name="AssetModuleRequest" abstract="true">
                 <xsd:sequence>
                     <xsd:element name="method" type="v:AssetModuleMethod" minOccurs="1"/>
@@ -43,7 +43,7 @@
                     <xsd:complexContent>
                         <xsd:extension base="v:AssetModuleRequest">
                             <xsd:sequence>
-                                <xsd:element name="assetGuid" type="xsd:string" minOccurs="1" maxOccurs="1" />
+                                <xsd:element name="assetGuid" type="xsd:string" minOccurs="1" maxOccurs="1"/>
                                 <xsd:element name="date" type="xsd:string" minOccurs="1" maxOccurs="1"/>
                             </xsd:sequence>
                         </xsd:extension>
@@ -65,7 +65,7 @@
                     <xsd:complexContent>
                         <xsd:extension base="v:AssetModuleRequest">
                             <xsd:sequence>
-                                <xsd:element name="assetId" type="tv:AssetId" minOccurs="1" maxOccurs="1" />
+                                <xsd:element name="assetId" type="tv:AssetId" minOccurs="1" maxOccurs="1"/>
                                 <xsd:element name="date" type="xsd:date" minOccurs="1" maxOccurs="1"/>
                             </xsd:sequence>
                         </xsd:extension>
@@ -96,7 +96,7 @@
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <xsd:element name="AssetListModuleRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
@@ -108,7 +108,7 @@
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <xsd:element name="GetAssetModuleResponse">
                 <xsd:complexType>
                     <xsd:sequence>
@@ -116,7 +116,7 @@
                     </xsd:sequence>
                 </xsd:complexType>
             </xsd:element>
-            
+
             <!-- Ping request -->
             <xsd:element name="pingRequest">
                 <xsd:complexType>
@@ -183,12 +183,12 @@
             <xsd:element name="UpsertFishingGearModuleRequest">
                 <xsd:complexType>
                     <xsd:complexContent>
-                    <xsd:extension base="v:AssetModuleRequest">
-                        <xsd:sequence>
-                            <xsd:element name="username" type="xsd:string"/>
-                            <xsd:element name="fishingGear" type="tv:FishingGear" minOccurs="1" maxOccurs="1"/>
-                        </xsd:sequence>
-                    </xsd:extension>
+                        <xsd:extension base="v:AssetModuleRequest">
+                            <xsd:sequence>
+                                <xsd:element name="username" type="xsd:string"/>
+                                <xsd:element name="fishingGear" type="tv:FishingGear" minOccurs="1" maxOccurs="1"/>
+                            </xsd:sequence>
+                        </xsd:extension>
                     </xsd:complexContent>
                 </xsd:complexType>
             </xsd:element>
@@ -203,11 +203,11 @@
 
         </xsd:schema>
     </types>
-    
+
     <message name="AssetModuleFaultException">
         <part name="body" element="tv:AssetFault"/>
     </message>
-    
+
     <message name="AssetModuleRequest">
         <part name="body" element="v:GetAssetModuleRequest"/>
     </message>
@@ -231,11 +231,10 @@
     <message name="AssetListModuleResponse">
         <part name="body" element="tv:ListAssetResponse"/>
     </message>
-    
+
     <message name="AssetGroupByUserRequest">
         <part name="body" element="v:AssetGroupListByUserRequest"/>
     </message>
-
 
 
     <message name="PingRequest">

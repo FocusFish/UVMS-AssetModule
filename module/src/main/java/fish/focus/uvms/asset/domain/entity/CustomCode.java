@@ -1,7 +1,9 @@
 package fish.focus.uvms.asset.domain.entity;
 
 import javax.persistence.*;
+
 import static fish.focus.uvms.asset.domain.entity.CustomCode.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,27 +19,23 @@ public class CustomCode {
     public static final String CUSTOMCODES_GETALLFOR = "CUSTOMCODES.GETALLFOR";
     public static final String CUSTOMCODES_GETALLCONSTANTS = "CUSTOMCODES.GETALLCONSTANTS";
     public static final String CUSTOMCODES_GETCUSTOMCODE_FOR_SPECIFIC_DATE = "CUSTOMCODES.GETCUSTOMCODE_FOR_SPECIFIC_DATE";
-
-    public CustomCode(){
-        // for json
-    }
-
     @EmbeddedId
     CustomCodesPK primaryKey;
-
     @Column(name = "description")
     private String description;
-
     @Column(name = "namevalue")
-    private Map<String,String> nameValue = new HashMap<>();
+    private Map<String, String> nameValue = new HashMap<>();
 
+    public CustomCode() {
+        // for json
+    }
 
     @EmbeddedId
     public CustomCodesPK getPrimaryKey() {
         return primaryKey;
     }
 
-    public void setPrimaryKey(CustomCodesPK primaryKey){
+    public void setPrimaryKey(CustomCodesPK primaryKey) {
         this.primaryKey = primaryKey;
     }
 
@@ -50,13 +48,13 @@ public class CustomCode {
     }
 
     @ElementCollection(fetch = FetchType.EAGER) // this is a collection of primitives
-    @MapKeyColumn(name="key") // column name for map "key"
-    @Column(name="value") // column name for map "value"
-    public Map<String,String> getNameValue() {
+    @MapKeyColumn(name = "key") // column name for map "key"
+    @Column(name = "value") // column name for map "value"
+    public Map<String, String> getNameValue() {
         return nameValue;
     }
 
-    public void  setNameValue(Map<String,String> nameValue) {
+    public void setNameValue(Map<String, String> nameValue) {
         this.nameValue = nameValue;
     }
 }

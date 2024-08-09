@@ -1,83 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0"
          xmlns="http://java.sun.com/xml/ns/javaee">
 
     <context-param>
         <param-name>javamelody.datasources</param-name>
         <param-value>java:/jdbc/uvms_asset</param-value>
     </context-param>
-	<listener>
-		<listener-class>net.bull.javamelody.SessionListener</listener-class>
-	</listener>
+    <listener>
+        <listener-class>net.bull.javamelody.SessionListener</listener-class>
+    </listener>
     <filter>
-		<filter-name>javamelody</filter-name>
-		<filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
-		<async-supported>true</async-supported>
-		<init-param>
-			<param-name>displayed-counters</param-name>
-			<param-value>http,sql,ejb,error,log</param-value>
-		</init-param>
-		<init-param>
-			<param-name>system-actions-enabled</param-name>
-			<param-value>true</param-value>
-		</init-param>
-		<init-param>
-			<param-name>storage-directory</param-name>
-			<param-value>javamelody-asset</param-value>
-		</init-param>
-		<init-param>
-			<param-name>datasources</param-name>
-			<param-value>java:/jdbc/uvms_asset</param-value>
-		</init-param>
-	</filter>
-	<filter-mapping>
-		<filter-name>javamelody</filter-name>
-		<url-pattern>/*</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>ASYNC</dispatcher>
-	</filter-mapping>
+        <filter-name>javamelody</filter-name>
+        <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
+        <async-supported>true</async-supported>
+        <init-param>
+            <param-name>displayed-counters</param-name>
+            <param-value>http,sql,ejb,error,log</param-value>
+        </init-param>
+        <init-param>
+            <param-name>system-actions-enabled</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>storage-directory</param-name>
+            <param-value>javamelody-asset</param-value>
+        </init-param>
+        <init-param>
+            <param-name>datasources</param-name>
+            <param-value>java:/jdbc/uvms_asset</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>javamelody</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ASYNC</dispatcher>
+    </filter-mapping>
 
-	<filter>
-		<filter-name>RequestFilter</filter-name>
-		<filter-class>fish.focus.uvms.rest.asset.filter.RequestFilter</filter-class>
-		<async-supported>true</async-supported>
-	</filter>
+    <filter>
+        <filter-name>RequestFilter</filter-name>
+        <filter-class>fish.focus.uvms.rest.asset.filter.RequestFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
 
-	<filter-mapping>
-		<filter-name>RequestFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
+    <filter-mapping>
+        <filter-name>RequestFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
         <filter-class>fish.focus.uvms.rest.security.AuthenticationFilter</filter-class>
-		<async-supported>true</async-supported>
+        <async-supported>true</async-supported>
     </filter>
 
-	<filter-mapping>
-		<filter-name>AuthenticationFilter</filter-name>
-		<url-pattern>/rest/config/*</url-pattern>
-		<url-pattern>/rest/asset/*</url-pattern>
-		<url-pattern>/rest/group/*</url-pattern>
-		<url-pattern>/rest/filter/*</url-pattern>
-		<url-pattern>/rest/customcodes/*</url-pattern>
-		<url-pattern>/rest/mobileterminal/*</url-pattern>
-		<url-pattern>/rest/poll/*</url-pattern>
-		<url-pattern>/rest/plugin/*</url-pattern>
-		<url-pattern>/rest/sse/*</url-pattern>
-	</filter-mapping>
-	
-	<filter>
-	     <filter-name>MDCFilter</filter-name>
-	     <filter-class>fish.focus.uvms.commons.rest.filter.MDCFilter</filter-class>
-		 <async-supported>true</async-supported>
-	</filter>
-	
-	<filter-mapping>
-		<filter-name>MDCFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/rest/config/*</url-pattern>
+        <url-pattern>/rest/asset/*</url-pattern>
+        <url-pattern>/rest/group/*</url-pattern>
+        <url-pattern>/rest/filter/*</url-pattern>
+        <url-pattern>/rest/customcodes/*</url-pattern>
+        <url-pattern>/rest/mobileterminal/*</url-pattern>
+        <url-pattern>/rest/poll/*</url-pattern>
+        <url-pattern>/rest/plugin/*</url-pattern>
+        <url-pattern>/rest/sse/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>MDCFilter</filter-name>
+        <filter-class>fish.focus.uvms.commons.rest.filter.MDCFilter</filter-class>
+        <async-supported>true</async-supported>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>MDCFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 </web-app>
 
 

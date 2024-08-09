@@ -45,46 +45,46 @@ public class PollDataSourceRequestValidator {
             throw new NullPointerException("No mobile terminals to poll");
         }
         switch (pollRequest.getPollType()) {
-        case CONFIGURATION_POLL:
-            boolean canPollMultiple = true;
-            for (PollAttribute attr : pollRequest.getAttributes()) {
-                if (PollAttributeType.DNID.equals(attr.getKey())) {
-                    canPollMultiple = false;
+            case CONFIGURATION_POLL:
+                boolean canPollMultiple = true;
+                for (PollAttribute attr : pollRequest.getAttributes()) {
+                    if (PollAttributeType.DNID.equals(attr.getKey())) {
+                        canPollMultiple = false;
+                    }
+                    if (PollAttributeType.MEMBER_NUMBER.equals(attr.getKey())) {
+                        canPollMultiple = false;
+                    }
                 }
-                if (PollAttributeType.MEMBER_NUMBER.equals(attr.getKey())) {
-                    canPollMultiple = false;
+                if (!canPollMultiple && pollRequest.getMobileTerminals().size() > CONFIGURATION_POLL_MAX_SIZE) {
+                    throw new IllegalArgumentException("Too many mobile terminals to send a configuration of dnid/memberid poll");
                 }
-            }
-            if (!canPollMultiple && pollRequest.getMobileTerminals().size() > CONFIGURATION_POLL_MAX_SIZE) {
-                throw new IllegalArgumentException("Too many mobile terminals to send a configuration of dnid/memberid poll");
-            }
-            break;
-        case SAMPLING_POLL:
-            if (pollRequest.getMobileTerminals().size() > SAMPLING_POLL_MAX_SIZE) {
-                throw new IllegalArgumentException("Too many mobile terminals to send a configuration poll");
-            }
-            break;
-        default:
-            break;
+                break;
+            case SAMPLING_POLL:
+                if (pollRequest.getMobileTerminals().size() > SAMPLING_POLL_MAX_SIZE) {
+                    throw new IllegalArgumentException("Too many mobile terminals to send a configuration poll");
+                }
+                break;
+            default:
+                break;
         }
     }
 
     private static void validateCorrectRequestType(PollRequestType pollRequest) {
 
         switch (pollRequest.getPollType()) {
-        case CONFIGURATION_POLL:
-            checkConfigurationPollParams(pollRequest);
-            break;
-        case MANUAL_POLL:
-            break;
-        case PROGRAM_POLL:
-            checkProgramPollParams(pollRequest);
-            break;
-        case SAMPLING_POLL:
-            checkSamplingPollParams(pollRequest);
-            break;
-        default:
-            throw new IllegalArgumentException("pollRequest with PollType " + pollRequest.getPollType() + " validation not impemented");
+            case CONFIGURATION_POLL:
+                checkConfigurationPollParams(pollRequest);
+                break;
+            case MANUAL_POLL:
+                break;
+            case PROGRAM_POLL:
+                checkProgramPollParams(pollRequest);
+                break;
+            case SAMPLING_POLL:
+                checkSamplingPollParams(pollRequest);
+                break;
+            default:
+                throw new IllegalArgumentException("pollRequest with PollType " + pollRequest.getPollType() + " validation not impemented");
         }
     }
 
@@ -150,7 +150,7 @@ public class PollDataSourceRequestValidator {
                         .append("] ");
                 count++;
             }
-            if(count > 0)
+            if (count > 0)
                 throw new RuntimeException(builder.toString());
         }
     }

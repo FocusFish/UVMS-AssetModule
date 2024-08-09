@@ -44,7 +44,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
     private Jsonb jsonb;
 
     @Before
-    public void init(){
+    public void init() {
         jsonb = new JsonBConfigurator().getContext(null);
     }
 
@@ -122,7 +122,8 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .path("assetList")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
-                .post(Entity.json(idList), new GenericType<List<Asset>>() {});
+                .post(Entity.json(idList), new GenericType<List<Asset>>() {
+                });
 
         assertNotNull(fetchedAssets);
         assertThat(fetchedAssets.size(), is(1));
@@ -149,7 +150,8 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .path("assetList")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
-                .post(Entity.json(idList), new GenericType<List<AssetProjection>>() {});
+                .post(Entity.json(idList), new GenericType<List<AssetProjection>>() {
+                });
 
         assertNotNull(fetchedAssets);
         assertThat(fetchedAssets.size(), is(1));
@@ -185,7 +187,8 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .path("assetList")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
-                .post(Entity.json(idList), new GenericType<List<AssetProjection>>() {});
+                .post(Entity.json(idList), new GenericType<List<AssetProjection>>() {
+                });
 
         assertNotNull(fetchedAssets);
         assertThat(fetchedAssets.size(), is(1));
@@ -218,7 +221,8 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .path("vesselTypes")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
-                .get(new GenericType<List<String>>() {});
+                .get(new GenericType<List<String>>() {
+                });
 
         assertNotNull(vesselTypes);
         assertFalse(vesselTypes.isEmpty());
@@ -433,10 +437,11 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .get();
 
-        List<Asset> assetRevisions = response.readEntity(new GenericType<List<Asset>>() {});
+        List<Asset> assetRevisions = response.readEntity(new GenericType<List<Asset>>() {
+        });
 
         assertNotNull(assetRevisions);
-        assertThat(assetRevisions.size() , is(2));
+        assertThat(assetRevisions.size(), is(2));
     }
 
     @Test
@@ -472,7 +477,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         // You really could argue that this should be a bad request but the server was returning 400 for everything,
         // if there is only one thing returned for every error it is better if it is a 500
 //        assertThat(response.getStatus(), is(Status.INTERNAL_SERVER_ERROR.getStatusCode()));
-        Integer code  = response.readEntity(AppError.class).code;
+        Integer code = response.readEntity(AppError.class).code;
         assertThat(code, is(Status.INTERNAL_SERVER_ERROR.getStatusCode()));
         assertThat(response.getStatus(), is(Status.OK.getStatusCode()));
 
@@ -495,7 +500,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .put(Entity.json(""), Asset.class);
 
         assertNotNull(archivedAsset);
-        assertThat(archivedAsset.getActive() , is(false));
+        assertThat(archivedAsset.getActive(), is(false));
     }
 
     @Test
@@ -573,7 +578,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .put(Entity.json(""), Asset.class);
 
         assertNotNull(archivedAsset);
-        assertThat(archivedAsset.getActive() , is(false));
+        assertThat(archivedAsset.getActive(), is(false));
 
         Asset unarchivedAsset = getWebTargetExternal()
                 .path("asset")
@@ -585,7 +590,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .put(Entity.json(""), Asset.class);
 
         assertNotNull(unarchivedAsset);
-        assertThat(unarchivedAsset.getActive() , is(true));
+        assertThat(unarchivedAsset.getActive(), is(true));
     }
 
     @Test
@@ -602,7 +607,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         assertNotNull(response);
         // You really could argue that this should be a bad request but the server was returning 400 for everything,
         // if there is only one thing returned for every error it is better if it is a 500
-        assertThat(response.getStatus() , is(Status.OK.getStatusCode()));
+        assertThat(response.getStatus(), is(Status.OK.getStatusCode()));
     }
 
     @Test
@@ -956,18 +961,19 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         assertNotNull(response);
         assertEquals(200, response.getStatus());
 
-        Map<String, Note> fetchedNotes = response.readEntity(new GenericType<Map<String, Note>>() {});
+        Map<String, Note> fetchedNotes = response.readEntity(new GenericType<Map<String, Note>>() {
+        });
         assertThat(fetchedNotes.size(), is(1));
         Note fetchedNote = fetchedNotes.values().iterator().next();
         assertThat(fetchedNote.getNote(), is(createdNote.getNote()));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getNoteByIdTest() {
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = restCreateAsset(asset);
-        
+
         Note note = AssetHelper.createBasicNote();
         note.setAssetId(createdAsset.getId());
 
@@ -987,7 +993,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .get(Note.class);
-        
+
         assertEquals(aNote.getId(), createdNote.getId());
     }
 
@@ -1005,7 +1011,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
 
         assertNull(aNote);
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void deleteNoteTest() {
@@ -1034,7 +1040,8 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         assertNotNull(response);
         assertEquals(200, response.getStatus());
 
-        Map<String, Note> fetchedNotes = response.readEntity(new GenericType<Map<String, Note>>() {});
+        Map<String, Note> fetchedNotes = response.readEntity(new GenericType<Map<String, Note>>() {
+        });
         assertThat(fetchedNotes.size(), is(1));
 
         // Delete note
@@ -1060,13 +1067,14 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         assertNotNull(response);
         assertEquals(200, response.getStatus());
 
-        fetchedNotes = response.readEntity(new GenericType<Map<String, Note>>() {});
+        fetchedNotes = response.readEntity(new GenericType<Map<String, Note>>() {
+        });
         assertThat(fetchedNotes.size(), is(0));
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getContactInfo(){
+    public void getContactInfo() {
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = restCreateAsset(asset);
 
@@ -1147,7 +1155,8 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .get();
 
-        List<Asset> assetRevisions = response.readEntity(new GenericType<List<Asset>>() {});
+        List<Asset> assetRevisions = response.readEntity(new GenericType<List<Asset>>() {
+        });
 
         assertNotNull(assetRevisions);
         assertEquals(2, assetRevisions.size());
@@ -1162,7 +1171,8 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .get();
 
-        List<ContactInfo> contactInfoRevisions = res.readEntity(new GenericType<List<ContactInfo>>() {});
+        List<ContactInfo> contactInfoRevisions = res.readEntity(new GenericType<List<ContactInfo>>() {
+        });
 
         assertNotNull(contactInfoRevisions);
         assertEquals(1, contactInfoRevisions.size());
@@ -1198,7 +1208,8 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .get();
 
-        List<ChangeHistoryRow> assetChanges = response.readEntity(new GenericType<List<ChangeHistoryRow>>() {});
+        List<ChangeHistoryRow> assetChanges = response.readEntity(new GenericType<List<ChangeHistoryRow>>() {
+        });
 
         assertNotNull(assetChanges);
         assertEquals(2, assetChanges.size());
@@ -1268,7 +1279,8 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .get();
 
-        List<ChangeHistoryRow> assetChanges = response.readEntity(new GenericType<List<ChangeHistoryRow>>() {});
+        List<ChangeHistoryRow> assetChanges = response.readEntity(new GenericType<List<ChangeHistoryRow>>() {
+        });
 
         assertNotNull(assetChanges);
         assertEquals(3, assetChanges.size());
@@ -1282,7 +1294,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
 
     }
 
-    private Asset restCreateAsset(Asset asset){
+    private Asset restCreateAsset(Asset asset) {
         Asset createdAsset = getWebTargetExternal()
                 .path("asset")
                 .request(MediaType.APPLICATION_JSON)
@@ -1291,7 +1303,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         return createdAsset;
     }
 
-    private Asset restCreateAssetInternal(Asset asset){
+    private Asset restCreateAssetInternal(Asset asset) {
         Asset createdAsset = getWebTargetInternal()
                 .path("asset")
                 .request(MediaType.APPLICATION_JSON)
@@ -1300,7 +1312,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         return createdAsset;
     }
 
-    private Asset restUpdateAsset(Asset asset){
+    private Asset restUpdateAsset(Asset asset) {
         Asset updatedAsset = getWebTargetExternal()
                 .path("asset")
                 .request(MediaType.APPLICATION_JSON)
@@ -1309,13 +1321,13 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         return updatedAsset;
     }
 
-    private Asset createIdOnlyAsset(String id){
+    private Asset createIdOnlyAsset(String id) {
         Asset asset = new Asset();
         asset.setId(UUID.fromString(id));
         return asset;
     }
 
-    private Set<MobileTerminal> createListOfIdOnlyMTs(List<String> idList){
+    private Set<MobileTerminal> createListOfIdOnlyMTs(List<String> idList) {
         Set<MobileTerminal> mtList = new HashSet<>();
         for (String s : idList) {
             MobileTerminal mt = new MobileTerminal();

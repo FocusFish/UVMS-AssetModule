@@ -23,6 +23,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fish.focus.uvms.asset.model.exception.AssetException;
@@ -71,7 +72,7 @@ public class JAXBMarshaller {
      *
      * @param <R>
      * @param textMessage
-     * @param clazz pperException
+     * @param clazz       pperException
      * @return
      * @throws AssetException
      */
@@ -93,7 +94,7 @@ public class JAXBMarshaller {
             LOG.debug("Unmarshalling time: {}", (System.currentTimeMillis() - before));
             return object;
         } catch (JMSException | JAXBException ex) {
-            throw new AssetException(ErrorCode.UNMARSHALLING_ERROR.getMessage(), ex,  ErrorCode.UNMARSHALLING_ERROR.getCode());
+            throw new AssetException(ErrorCode.UNMARSHALLING_ERROR.getMessage(), ex, ErrorCode.UNMARSHALLING_ERROR.getCode());
         }
     }
 }

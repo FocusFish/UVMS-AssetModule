@@ -18,23 +18,23 @@ import fish.focus.uvms.mobileterminal.model.constants.AuditOperationEnum;
 
 public class AuditModuleRequestMapper {
 
-    public static String mapAuditLogMobileTerminalCreated(String guid, String username)  {
+    public static String mapAuditLogMobileTerminalCreated(String guid, String username) {
         return mapToAuditLog(AuditObjectTypeEnum.MOBILE_TERMINAL.getValue(), AuditOperationEnum.CREATE.getValue(), guid, AuditOperationEnum.CREATE.getValue(), username);
     }
 
-    public static String mapAuditLogMobileTerminalUpdated(String guid, String comment, String username)  {
+    public static String mapAuditLogMobileTerminalUpdated(String guid, String comment, String username) {
         return mapToAuditLog(AuditObjectTypeEnum.MOBILE_TERMINAL.getValue(), AuditOperationEnum.UPDATE.getValue(), guid, comment, username);
     }
 
-    public static String mapAuditLogMobileTerminalAssigned(String guid, String comment, String username)  {
+    public static String mapAuditLogMobileTerminalAssigned(String guid, String comment, String username) {
         return mapToAuditLog(AuditObjectTypeEnum.MOBILE_TERMINAL.getValue(), AuditOperationEnum.LINKED.getValue(), guid, comment, username);
     }
 
-    public static String mapAuditLogMobileTerminalUnassigned(String guid, String comment, String username)  {
+    public static String mapAuditLogMobileTerminalUnassigned(String guid, String comment, String username) {
         return mapToAuditLog(AuditObjectTypeEnum.MOBILE_TERMINAL.getValue(), AuditOperationEnum.UNLINKED.getValue(), guid, comment, username);
     }
 
-    public static String mapAuditLogMobileTerminalActivated(String guid, String comment, String username)  {
+    public static String mapAuditLogMobileTerminalActivated(String guid, String comment, String username) {
         return mapToAuditLog(AuditObjectTypeEnum.MOBILE_TERMINAL.getValue(), AuditOperationEnum.ACTIVATE.getValue(), guid, comment, username);
     }
 
@@ -42,15 +42,15 @@ public class AuditModuleRequestMapper {
         return mapToAuditLog(AuditObjectTypeEnum.MOBILE_TERMINAL.getValue(), AuditOperationEnum.INACTIVATE.getValue(), guid, comment, username);
     }
 
-    public static String mapAuditLogMobileTerminalArchived(String guid, String comment, String username)  {
+    public static String mapAuditLogMobileTerminalArchived(String guid, String comment, String username) {
         return mapToAuditLog(AuditObjectTypeEnum.MOBILE_TERMINAL.getValue(), AuditOperationEnum.ARCHIVE.getValue(), guid, comment, username);
     }
 
-    public static String mapAuditLogMobileTerminalUnarchived(String guid, String comment, String username)  {
+    public static String mapAuditLogMobileTerminalUnarchived(String guid, String comment, String username) {
         return mapToAuditLog(AuditObjectTypeEnum.MOBILE_TERMINAL.getValue(), AuditOperationEnum.UNARCHIVE.getValue(), guid, comment, username);
     }
 
-    public static String mapAuditLogPollCreated(PollType pollType, String guid, String comment, String username)  {
+    public static String mapAuditLogPollCreated(PollType pollType, String guid, String comment, String username) {
         AuditObjectTypeEnum pollTypeEnum;
         switch (pollType) {
             case PROGRAM_POLL:
@@ -77,7 +77,7 @@ public class AuditModuleRequestMapper {
         return mapToAuditLog(AuditObjectTypeEnum.PROGRAM_POLL.getValue(), AuditOperationEnum.START.getValue(), guid, AuditOperationEnum.START.getValue(), username);
     }
 
-    public static String mapAuditLogProgramPollStopped(String guid, String username)  {
+    public static String mapAuditLogProgramPollStopped(String guid, String username) {
         return mapToAuditLog(AuditObjectTypeEnum.PROGRAM_POLL.getValue(), AuditOperationEnum.STOP.getValue(), guid, AuditOperationEnum.STOP.getValue(), username);
     }
 

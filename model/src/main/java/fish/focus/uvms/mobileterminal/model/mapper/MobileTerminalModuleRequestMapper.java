@@ -17,6 +17,7 @@ import fish.focus.schema.mobileterminal.types.v1.MobileTerminalListQuery;
 import fish.focus.schema.mobileterminal.types.v1.MobileTerminalType;
 import fish.focus.uvms.asset.model.exception.AssetException;
 import fish.focus.uvms.asset.model.mapper.JAXBMarshaller;
+
 import java.util.List;
 
 public class MobileTerminalModuleRequestMapper {

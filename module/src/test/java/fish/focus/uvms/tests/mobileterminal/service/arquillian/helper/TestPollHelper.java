@@ -11,6 +11,7 @@ import fish.focus.uvms.mobileterminal.entity.types.PollTypeEnum;
 import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
 import fish.focus.uvms.mobileterminal.model.constants.TerminalSourceEnum;
 import fish.focus.uvms.tests.asset.service.arquillian.arquillian.AssetTestsHelper;
+
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;

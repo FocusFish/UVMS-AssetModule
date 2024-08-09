@@ -64,8 +64,8 @@ public class ExchangeModuleRestMock {
     }
 
     @POST
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    @Produces(value = {MediaType.APPLICATION_JSON})
     @Path("/pluginCommand")
     public Response sendCommandToPlugin(SetCommandRequest request) {
         return Response.ok().build();

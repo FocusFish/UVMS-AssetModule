@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fish.focus.schema.exchange.module.v1.GetServiceListRequest;
@@ -141,13 +142,13 @@ public class ConfigServiceBeanMT {
 
         GetServiceListResponse response = exchangeClient.getServiceList(request);
 
-        if(response == null){
+        if (response == null) {
             throw new NullPointerException("No response from exchange");
         }
 
         response.getService().stream()
-            .map(ServiceToPluginMapper::mapToPlugin)
-            .forEach(this::upsertPlugin);
+                .map(ServiceToPluginMapper::mapToPlugin)
+                .forEach(this::upsertPlugin);
     }
 
     public List<MobileTerminalPlugin> inactivatePlugins(Map<String, PluginService> map) {
@@ -166,7 +167,7 @@ public class ConfigServiceBeanMT {
 
     public MobileTerminalPlugin updatePlugin(PluginService plugin) {
         MobileTerminalPlugin entity = mobileTerminalPluginDao.getPluginByServiceName(plugin.getServiceName());
-        if(entity == null){
+        if (entity == null) {
             return null;
         }
         if (PluginMapper.equals(entity, plugin)) {

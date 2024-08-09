@@ -26,8 +26,8 @@ public enum ChannelFieldInmarsatC {
     DNID;
 
     public static ChannelFieldInmarsatC getAttribute(String type) {
-        for(ChannelFieldInmarsatC attr : ChannelFieldInmarsatC.values()) {
-            if(attr.name().equalsIgnoreCase(type)) {
+        for (ChannelFieldInmarsatC attr : ChannelFieldInmarsatC.values()) {
+            if (attr.name().equalsIgnoreCase(type)) {
                 return attr;
             }
         }

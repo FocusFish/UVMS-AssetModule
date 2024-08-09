@@ -14,7 +14,7 @@ import java.util.Objects;
         @NamedQuery(name = ProgramPoll.PROGRAM_FIND_ALIVE, query = "SELECT p FROM ProgramPoll  p WHERE p.stopDate > :currentDate " +
                 "AND p.pollState <> fish.focus.schema.mobileterminal.polltypes.v1.ProgramPollStatus.ARCHIVED"),
         @NamedQuery(name = ProgramPoll.PROGRAM_FIND_RUNNING_AND_STARTED,
-                query = "SELECT p FROM ProgramPoll  p WHERE p.startDate < :currentDate AND p.pollState = fish.focus.schema.mobileterminal.polltypes.v1.ProgramPollStatus.STARTED") })
+                query = "SELECT p FROM ProgramPoll  p WHERE p.startDate < :currentDate AND p.pollState = fish.focus.schema.mobileterminal.polltypes.v1.ProgramPollStatus.STARTED")})
 public class ProgramPoll extends PollBase {
 
     public static final String PROGRAM_FIND_ALL = "PollProgram.findAll";

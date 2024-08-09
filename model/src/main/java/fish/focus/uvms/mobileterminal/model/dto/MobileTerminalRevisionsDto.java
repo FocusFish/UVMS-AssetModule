@@ -3,6 +3,7 @@ package fish.focus.uvms.mobileterminal.model.dto;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import fish.focus.uvms.asset.remote.dto.ChangeHistoryRow;
 
 public class MobileTerminalRevisionsDto {

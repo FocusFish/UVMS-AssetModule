@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.ejb.EJB;
+
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Before;
@@ -21,7 +22,7 @@ import fish.focus.uvms.asset.domain.entity.AssetFilterValue;
 import fish.focus.uvms.tests.TransactionalTests;
 
 @RunWith(Arquillian.class)
-public class AssetFilterServiceBeanTest extends TransactionalTests{
+public class AssetFilterServiceBeanTest extends TransactionalTests {
 
     @EJB
     private AssetServiceBean assetService;
@@ -32,40 +33,42 @@ public class AssetFilterServiceBeanTest extends TransactionalTests{
     private AssetFilter assetFilter;
     private AssetFilterQuery assetFilterQuery;
     private AssetFilterValue assetFilterValue;
-    
+
     @Before
     public void initAssets() {
-    	assetFilter = createAssetFilterEntity("Test Testblom");
-    	assetFilterQuery = createAssetFilterQueryEntity(assetFilter);
-    	assetFilterValue = createAssetFilterValueEntity(assetFilterQuery.getId(),"test value");
+        assetFilter = createAssetFilterEntity("Test Testblom");
+        assetFilterQuery = createAssetFilterQueryEntity(assetFilter);
+        assetFilterValue = createAssetFilterValueEntity(assetFilterQuery.getId(), "test value");
     }
-    
+
     private AssetFilter createAssetFilterEntity(String user) {
-    	AssetFilter af = new AssetFilter();
-    	af.setUpdatedBy("test");
-    	af.setUpdateTime(Instant.now());
-    	af.setName("The Name");
-    	af.setOwner(user);
+        AssetFilter af = new AssetFilter();
+        af.setUpdatedBy("test");
+        af.setUpdateTime(Instant.now());
+        af.setName("The Name");
+        af.setOwner(user);
         return assetFilterService.createAssetFilter(af, user);
     }
+
     private AssetFilterQuery createAssetFilterQueryEntity(AssetFilter af) {
-    	AssetFilterQuery assetFilterQuery = new AssetFilterQuery();
+        AssetFilterQuery assetFilterQuery = new AssetFilterQuery();
         assetFilterQuery.setAssetFilter(af);
         assetFilterQuery.setType("GUID");
         assetFilterQuery.setValueType(AssetFilterValueType.NUMBER);
         assetFilterQuery.setInverse(false);
         return assetFilterService.createAssetFilterQuery(af.getId(), assetFilterQuery);
     }
-	private AssetFilterValue createAssetFilterValueEntity(UUID parentAssetFilterQueryId, String testValue) {
-	    AssetFilterValue afv = new AssetFilterValue();
-	    afv.setValueString(testValue);
-	    return assetFilterService.createAssetFilterValue(parentAssetFilterQueryId, afv);
-	}
 
-	@Test
+    private AssetFilterValue createAssetFilterValueEntity(UUID parentAssetFilterQueryId, String testValue) {
+        AssetFilterValue afv = new AssetFilterValue();
+        afv.setValueString(testValue);
+        return assetFilterService.createAssetFilterValue(parentAssetFilterQueryId, afv);
+    }
+
+    @Test
     @OperateOnDeployment("normal")
     public void deleteAssetFilterById() {
-		AssetFilter createdAssetFilterEntity = createAssetFilterEntity("jkldsfajfd");
+        AssetFilter createdAssetFilterEntity = createAssetFilterEntity("jkldsfajfd");
         UUID guid = createdAssetFilterEntity.getId();
         assetFilterService.deleteAssetFilterById(createdAssetFilterEntity.getId(), createdAssetFilterEntity.getOwner());
         AssetFilter fetchedAssetFilterEntity = assetFilterService.getAssetFilterById(guid);
@@ -75,8 +78,8 @@ public class AssetFilterServiceBeanTest extends TransactionalTests{
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetFilterById()  {
-    	AssetFilter createdAssetFilterEntity = assetFilter;
+    public void getAssetFilterById() {
+        AssetFilter createdAssetFilterEntity = assetFilter;
         UUID guid = createdAssetFilterEntity.getId();
         AssetFilter fetchedAssetFilterEntity = assetFilterService.getAssetFilterById(guid);
         assertEquals(fetchedAssetFilterEntity.getId(), guid);
@@ -84,7 +87,7 @@ public class AssetFilterServiceBeanTest extends TransactionalTests{
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetFilterByAssetId()  {
+    public void getAssetFilterByAssetId() {
         UUID assetId = UUID.randomUUID();
 
         AssetFilter createdAssetFilterEntity = assetFilter;
@@ -98,7 +101,7 @@ public class AssetFilterServiceBeanTest extends TransactionalTests{
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetFilterByAssetId_TwoAssetFilters()  {    //Since you create one in the init
+    public void getAssetFilterByAssetId_TwoAssetFilters() {    //Since you create one in the init
         UUID assetId = UUID.randomUUID();
 
         AssetFilter createdAssetFilter = createAssetFilterEntity("Filter Tester");
@@ -114,7 +117,7 @@ public class AssetFilterServiceBeanTest extends TransactionalTests{
     @Test
     @OperateOnDeployment("normal")
     public void updateAssetFilter() {
-    	AssetFilter createdAssetFilterEntity = assetFilter;
+        AssetFilter createdAssetFilterEntity = assetFilter;
         UUID guid = createdAssetFilterEntity.getId();
         String oldUserName = createdAssetFilterEntity.getOwner();
         String newUserName = "UPDATED_SERVICE_TEST";
@@ -135,13 +138,13 @@ public class AssetFilterServiceBeanTest extends TransactionalTests{
         String user3 = UUID.randomUUID().toString();
 
         for (int i = 0; i < 3; i++) {
-        	createAssetFilterEntity(user1);
+            createAssetFilterEntity(user1);
         }
         for (int i = 0; i < 8; i++) {
-        	createAssetFilterEntity(user2);
+            createAssetFilterEntity(user2);
         }
         for (int i = 0; i < 11; i++) {
-        	createAssetFilterEntity(user3);
+            createAssetFilterEntity(user3);
         }
 
         List<AssetFilter> listUser1 = assetFilterService.getAssetFilterList(user1);
@@ -152,13 +155,13 @@ public class AssetFilterServiceBeanTest extends TransactionalTests{
         assertEquals(8, listUser2.size());
         assertEquals(11, listUser3.size());
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void updateAssetFilterValue() {
-    	AssetFilterValue createdAssetFilterValue = assetFilterValue;
-    	AssetFilterValue fetchedAssetFilterValue = assetFilterService.getAssetFilterValue(createdAssetFilterValue.getId());
-    	fetchedAssetFilterValue.setValueString("CHANGEDVALUE");
+        AssetFilterValue createdAssetFilterValue = assetFilterValue;
+        AssetFilterValue fetchedAssetFilterValue = assetFilterService.getAssetFilterValue(createdAssetFilterValue.getId());
+        fetchedAssetFilterValue.setValueString("CHANGEDVALUE");
         assetFilterService.updateAssetFilterValue(fetchedAssetFilterValue, "TEST");
         AssetFilterValue fetchedAssetFilterValue2 = assetFilterService.getAssetFilterValue(createdAssetFilterValue.getId());
         assertEquals(fetchedAssetFilterValue2.getValueString(), "CHANGEDVALUE");
@@ -167,7 +170,7 @@ public class AssetFilterServiceBeanTest extends TransactionalTests{
     @Test
     @OperateOnDeployment("normal")
     public void getAssetFilterValue() {
-    	AssetFilterValue fetchedAssetFilterValue = assetFilterService.getAssetFilterValue(assetFilterValue.getId());
+        AssetFilterValue fetchedAssetFilterValue = assetFilterService.getAssetFilterValue(assetFilterValue.getId());
         assertNotNull(fetchedAssetFilterValue);
     }
 

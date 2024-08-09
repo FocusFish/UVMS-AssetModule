@@ -41,27 +41,21 @@ import static org.junit.Assert.*;
 public class PollServiceBeanIntTest extends TransactionalTests {
 
     private static final String MESSAGE_PRODUCER_METHODS_FAIL = "MESSAGE_PRODUCER_METHODS_FAIL";
-
-    @Inject
-    private PollServiceBean pollServiceBean;
-
-    @EJB
-    private TestPollHelper testPollHelper;
-
-    @EJB
-    private PollProgramDaoBean pollProgramDao;
-
-    @Inject
-    private AssetDao assetDao;
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
+    @Inject
+    private PollServiceBean pollServiceBean;
+    @EJB
+    private TestPollHelper testPollHelper;
+    @EJB
+    private PollProgramDaoBean pollProgramDao;
+    @Inject
+    private AssetDao assetDao;
     private Calendar cal = Calendar.getInstance();
 
     @Test
     @OperateOnDeployment("normal")
-    public void createPoll()  {
+    public void createPoll() {
         System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "false");
         PollRequestType pollRequestType = testPollHelper.createPollRequestType();
         CreatePollResultDto createPollResultDto = pollServiceBean.createPoll(pollRequestType);
@@ -78,7 +72,7 @@ public class PollServiceBeanIntTest extends TransactionalTests {
         CreatePollResultDto createPollResultDto = pollServiceBean.createPoll(pollRequestType);
         em.flush();
 
-        if(createPollResultDto.getSentPolls().size() == 0 && createPollResultDto.getUnsentPolls().size() == 0) {
+        if (createPollResultDto.getSentPolls().size() == 0 && createPollResultDto.getUnsentPolls().size() == 0) {
             Assert.fail();
         }
     }
@@ -91,8 +85,7 @@ public class PollServiceBeanIntTest extends TransactionalTests {
             PollRequestType pollRequestType = testPollHelper.createPollRequestType();
             pollServiceBean.createPoll(pollRequestType);
             Assert.fail();
-        }
-        catch(Throwable t){
+        } catch (Throwable t) {
             Assert.assertTrue(true);
         }
     }
@@ -272,7 +265,7 @@ public class PollServiceBeanIntTest extends TransactionalTests {
         System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "false");
 
         int startedProgramPollsBefore = pollServiceBean.getPollProgramRunningAndStarted().size();
-        
+
         Instant startDate = testPollHelper.getStartDate();
         Instant latestRun = testPollHelper.getLatestRunDate();
         Instant stopDate = testPollHelper.getStopDate();
@@ -296,8 +289,7 @@ public class PollServiceBeanIntTest extends TransactionalTests {
         try {
             pollServiceBean.startProgramPoll(null, "TEST");
             Assert.fail();
-        }
-        catch(EJBTransactionRolledbackException e){
+        } catch (EJBTransactionRolledbackException e) {
             Assert.assertTrue(true);
         }
     }
@@ -361,9 +353,9 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     }
 
     private boolean validatePollKeyValue(List<PollValue> values, PollKey key, String value) {
-        for(PollValue v : values) {
+        for (PollValue v : values) {
             PollKey pollKey = v.getKey();
-            if(pollKey.equals(key) && v.getValue().equalsIgnoreCase(value)) {
+            if (pollKey.equals(key) && v.getValue().equalsIgnoreCase(value)) {
                 return true;
             }
         }

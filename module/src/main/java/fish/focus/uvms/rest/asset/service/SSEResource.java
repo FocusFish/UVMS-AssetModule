@@ -42,7 +42,7 @@ public class SSEResource {
         this.sseBroadcaster = sse.newBroadcaster();
     }
 
-    public void updatedAsset(@Observes(during = TransactionPhase.AFTER_SUCCESS) @UpdatedAssetEvent Asset asset){
+    public void updatedAsset(@Observes(during = TransactionPhase.AFTER_SUCCESS) @UpdatedAssetEvent Asset asset) {
         try {
             if (asset != null) {
                 String outboundJson = jsonb.toJson(asset);
@@ -56,13 +56,13 @@ public class SSEResource {
                         .build();
                 sseBroadcaster.broadcast(sseEvent);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             LOG.error("Error while broadcasting SSE: ", e);
             throw new RuntimeException(e);
         }
     }
 
-    public void mergeAsset(@Observes(during = TransactionPhase.AFTER_SUCCESS) @UpdatedAssetEvent AssetMergeInfo mergeInfo){
+    public void mergeAsset(@Observes(during = TransactionPhase.AFTER_SUCCESS) @UpdatedAssetEvent AssetMergeInfo mergeInfo) {
         try {
             if (mergeInfo != null) {
                 String outboundJson = jsonb.toJson(mergeInfo);
@@ -76,7 +76,7 @@ public class SSEResource {
                         .build();
                 sseBroadcaster.broadcast(sseEvent);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             LOG.error("Error while broadcasting SSE: ", e);
             throw new RuntimeException(e);
         }

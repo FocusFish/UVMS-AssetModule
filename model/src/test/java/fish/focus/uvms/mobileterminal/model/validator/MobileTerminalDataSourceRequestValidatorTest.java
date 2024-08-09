@@ -29,122 +29,122 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MobileTerminalDataSourceRequestValidatorTest {
-	
-	@Mock
-	private	MobileTerminalType mobTermType;
-	
+
+    @Mock
+    private MobileTerminalType mobTermType;
+
     @Before
     public void setUp() {
-    	MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.initMocks(this);
     }
-    
+
     @Test
     public void testValidateComChannels() {
-    	ComChannelType channel = new ComChannelType();
-    	channel.setName("VMS");
-		ComChannelAttribute dnid = new ComChannelAttribute();
-		dnid.setType("DNID");
-		channel.getAttributes().add(dnid);
-		
-		List<ComChannelType> comChannelTypes = new ArrayList<>();
-		comChannelTypes.add(channel);
-		when(mobTermType.getChannels()).thenReturn(comChannelTypes);
-		
-    	try {
-    		MobileTerminalDataSourceRequestValidator.validateComChannels(mobTermType);
-    		fail("Missing field");
-    	} catch (IllegalArgumentException e) {
-    		assertTrue(true);
-    	}
-    	
-    	ComChannelAttribute memberNumber = new ComChannelAttribute();
-		memberNumber.setType("MEMBER_NUMBER");
-		channel.getAttributes().add(memberNumber);
-		
-		try {
-    		MobileTerminalDataSourceRequestValidator.validateComChannels(mobTermType);
-    	} catch (IllegalArgumentException e) {
-    		fail("Should validate");
-    	}
-    	
-    	ComChannelAttribute dnid2 = new ComChannelAttribute();
-		dnid2.setType("DNID");
-		channel.getAttributes().add(dnid2);
-		
-		try {
-    		MobileTerminalDataSourceRequestValidator.validateComChannels(mobTermType);
-    		fail("Multiple fields");
-    	} catch (IllegalArgumentException e) {
-			assertTrue(true);
-    	}
+        ComChannelType channel = new ComChannelType();
+        channel.setName("VMS");
+        ComChannelAttribute dnid = new ComChannelAttribute();
+        dnid.setType("DNID");
+        channel.getAttributes().add(dnid);
+
+        List<ComChannelType> comChannelTypes = new ArrayList<>();
+        comChannelTypes.add(channel);
+        when(mobTermType.getChannels()).thenReturn(comChannelTypes);
+
+        try {
+            MobileTerminalDataSourceRequestValidator.validateComChannels(mobTermType);
+            fail("Missing field");
+        } catch (IllegalArgumentException e) {
+            assertTrue(true);
+        }
+
+        ComChannelAttribute memberNumber = new ComChannelAttribute();
+        memberNumber.setType("MEMBER_NUMBER");
+        channel.getAttributes().add(memberNumber);
+
+        try {
+            MobileTerminalDataSourceRequestValidator.validateComChannels(mobTermType);
+        } catch (IllegalArgumentException e) {
+            fail("Should validate");
+        }
+
+        ComChannelAttribute dnid2 = new ComChannelAttribute();
+        dnid2.setType("DNID");
+        channel.getAttributes().add(dnid2);
+
+        try {
+            MobileTerminalDataSourceRequestValidator.validateComChannels(mobTermType);
+            fail("Multiple fields");
+        } catch (IllegalArgumentException e) {
+            assertTrue(true);
+        }
     }
-    
+
     @Test
     public void testValidateMobileTerminalAttributeMultipleOceans() {
-    	List<MobileTerminalAttribute> attrList = new ArrayList<>();
-    	MobileTerminalAttribute attr = new MobileTerminalAttribute();
-    	attr.setType("MULTIPLE_OCEAN");
-    	attrList.add(attr);
-    	attrList.add(attr);
-    	MobileTerminalDataSourceRequestValidator.validateMobileTerminalAttributes(attrList);
+        List<MobileTerminalAttribute> attrList = new ArrayList<>();
+        MobileTerminalAttribute attr = new MobileTerminalAttribute();
+        attr.setType("MULTIPLE_OCEAN");
+        attrList.add(attr);
+        attrList.add(attr);
+        MobileTerminalDataSourceRequestValidator.validateMobileTerminalAttributes(attrList);
     }
-    
-    @Test(expected=IllegalArgumentException.class)
+
+    @Test(expected = IllegalArgumentException.class)
     public void testValidateMobileTerminalAttributeNonUnique() {
-    	List<MobileTerminalAttribute> attrList = new ArrayList<>();
-    	MobileTerminalAttribute attr = new MobileTerminalAttribute();
-    	attr.setType("ANTENNA");
-    	attrList.add(attr);
-    	attrList.add(attr);
-    	MobileTerminalDataSourceRequestValidator.validateMobileTerminalAttributes(attrList);
+        List<MobileTerminalAttribute> attrList = new ArrayList<>();
+        MobileTerminalAttribute attr = new MobileTerminalAttribute();
+        attr.setType("ANTENNA");
+        attrList.add(attr);
+        attrList.add(attr);
+        MobileTerminalDataSourceRequestValidator.validateMobileTerminalAttributes(attrList);
     }
-    
+
     @Test
     public void testValidateMobileTerminalAttributes() {
-    	List<MobileTerminalAttribute> attrList = new ArrayList<>();
-    	MobileTerminalAttribute attr = new MobileTerminalAttribute();
-    	attr.setType("ANTENNA");
-    	attrList.add(attr);
-    	MobileTerminalDataSourceRequestValidator.validateMobileTerminalAttributes(attrList);
+        List<MobileTerminalAttribute> attrList = new ArrayList<>();
+        MobileTerminalAttribute attr = new MobileTerminalAttribute();
+        attr.setType("ANTENNA");
+        attrList.add(attr);
+        MobileTerminalDataSourceRequestValidator.validateMobileTerminalAttributes(attrList);
     }
-    
+
     @Test
     public void testValidateMobileTerminalAttributesEmpty() {
-    	List<MobileTerminalAttribute> attrList = new ArrayList<>();
-    	MobileTerminalDataSourceRequestValidator.validateMobileTerminalAttributes(attrList);
+        List<MobileTerminalAttribute> attrList = new ArrayList<>();
+        MobileTerminalDataSourceRequestValidator.validateMobileTerminalAttributes(attrList);
     }
-    
+
     @Test
     public void testValidateMobileTerminalId() {
-    	
-		try {
-			MobileTerminalDataSourceRequestValidator.validateMobileTerminalId(null);
-			fail("MobileTerminalId NULL");
-		} catch (NullPointerException e) {
-			assertTrue(true);
-		}
-		
-		MobileTerminalId id = new MobileTerminalId();
-		try {
-			MobileTerminalDataSourceRequestValidator.validateMobileTerminalId(id);
-			fail("MobileTerminalId GUID NULL ");
-		} catch (NullPointerException e) {
-			assertTrue(true);
-		}
-		
-		id.setGuid("");
-		try {
-			MobileTerminalDataSourceRequestValidator.validateMobileTerminalId(id);
-			fail("MobileTerminalId GUID Empty");
-		} catch (NullPointerException e) {
-			assertTrue(true);
-		}
-		id.setGuid("ABCD-EFGH-IJKL-MNOP-1234-5678-0000");
-		
-		try {
-			MobileTerminalDataSourceRequestValidator.validateMobileTerminalId(id);
-		} catch (NullPointerException e) {
-			fail("MobileTerminalId valid");
-		}
+
+        try {
+            MobileTerminalDataSourceRequestValidator.validateMobileTerminalId(null);
+            fail("MobileTerminalId NULL");
+        } catch (NullPointerException e) {
+            assertTrue(true);
+        }
+
+        MobileTerminalId id = new MobileTerminalId();
+        try {
+            MobileTerminalDataSourceRequestValidator.validateMobileTerminalId(id);
+            fail("MobileTerminalId GUID NULL ");
+        } catch (NullPointerException e) {
+            assertTrue(true);
+        }
+
+        id.setGuid("");
+        try {
+            MobileTerminalDataSourceRequestValidator.validateMobileTerminalId(id);
+            fail("MobileTerminalId GUID Empty");
+        } catch (NullPointerException e) {
+            assertTrue(true);
+        }
+        id.setGuid("ABCD-EFGH-IJKL-MNOP-1234-5678-0000");
+
+        try {
+            MobileTerminalDataSourceRequestValidator.validateMobileTerminalId(id);
+        } catch (NullPointerException e) {
+            fail("MobileTerminalId valid");
+        }
     }
 }

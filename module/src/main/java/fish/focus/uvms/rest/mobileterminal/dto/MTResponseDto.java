@@ -13,10 +13,11 @@ package fish.focus.uvms.rest.mobileterminal.dto;
 
 import org.slf4j.MDC;
 import fish.focus.uvms.rest.mobileterminal.error.MTResponseCode;
+
 import java.util.Objects;
 
 /**
- ** @param <T>
+ * * @param <T>
  */
 public class MTResponseDto<T> {
 
@@ -28,10 +29,10 @@ public class MTResponseDto<T> {
         this.data = data;
         this.code = code.getCode();
     }
-    
+
     public MTResponseDto(T data, Integer code) {
-    	this.data = data;
-    	this.code = code;
+        this.data = data;
+        this.code = code;
     }
 
     public T getData() {
@@ -43,7 +44,7 @@ public class MTResponseDto<T> {
     }
 
     public String getRequestId() {
-        return requestId ;
+        return requestId;
     }
 
     @Override

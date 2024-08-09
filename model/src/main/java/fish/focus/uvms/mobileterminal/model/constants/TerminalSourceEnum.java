@@ -12,8 +12,8 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.mobileterminal.model.constants;
 
 public enum TerminalSourceEnum {
-	INTERNAL(1),
-	NATIONAL(2);
+    INTERNAL(1),
+    NATIONAL(2);
 
     private Integer id;
 
@@ -21,15 +21,15 @@ public enum TerminalSourceEnum {
         this.id = id;
     }
 
-	public Integer getId() {
-		return id;
-	}
+    public static TerminalSourceEnum fromValue(String v) {
+        return valueOf(v);
+    }
 
-	public String value() {
-		return name();
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public static TerminalSourceEnum fromValue(String v) {
-		return valueOf(v);
-	}
+    public String value() {
+        return name();
+    }
 }

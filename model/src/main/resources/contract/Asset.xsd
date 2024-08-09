@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns="source.asset.wsdl.focus.fish"
             xmlns:t="types.asset.wsdl.focus.fish"
+            xmlns="source.asset.wsdl.focus.fish"
             targetNamespace="source.asset.wsdl.focus.fish"
             version="1.0">
-    
+
     <xsd:import namespace="types.asset.wsdl.focus.fish" schemaLocation="AssetElement.xsd"/>
 
     <xsd:element name="GetAssetRequest">
@@ -54,7 +54,7 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
-            
+
     <xsd:element name="UpsertAssetRequest">
         <xsd:complexType>
             <xsd:complexContent>
@@ -66,7 +66,7 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
-            
+
     <xsd:element name="AssetListRequest">
         <xsd:complexType>
             <xsd:complexContent>
@@ -78,23 +78,23 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
-    
-	<!-- Ping request -->
-	<xsd:element name="pingRequest">
-		<xsd:complexType>
-			<xsd:complexContent>
-				<xsd:extension base="t:AssetDataSourceRequest"/>
-			</xsd:complexContent>
-		</xsd:complexType>
-	</xsd:element>
-	
-	<xsd:element name="pingResponse">
-		<xsd:complexType>
-			<xsd:sequence>
-				<xsd:element name="response" type="xsd:string"/>
-			</xsd:sequence>
-		</xsd:complexType>
-	</xsd:element>
+
+    <!-- Ping request -->
+    <xsd:element name="pingRequest">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="t:AssetDataSourceRequest"/>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="pingResponse">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="response" type="xsd:string"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
 
     <xsd:element name="AssetListGroupByFlagStateRequest">
         <xsd:complexType>

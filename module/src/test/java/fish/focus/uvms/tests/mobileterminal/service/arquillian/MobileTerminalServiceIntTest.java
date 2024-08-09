@@ -40,28 +40,21 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
 
     // TODO we do test on those transactions that are wrong in construction
     private static final String MESSAGE_PRODUCER_METHODS_FAIL = "MESSAGE_PRODUCER_METHODS_FAIL";
-
-    @EJB
-    private TestPollHelper testPollHelper;
-
-    @EJB
-    private MobileTerminalServiceBean mobileTerminalService;
-
-    @Inject
-    private MobileTerminalPluginDaoBean pluginDao;
-
-    @Inject
-    private AssetDao assetDao;
-
-    @Inject
-    private AssetServiceBean assetService;
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private static final String USERNAME = "TEST_USERNAME";
     private static final String NEW_MOBILETERMINAL_TYPE = "IRIDIUM";
     private static final String TEST_COMMENT = "TEST_COMMENT";
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+    @EJB
+    private TestPollHelper testPollHelper;
+    @EJB
+    private MobileTerminalServiceBean mobileTerminalService;
+    @Inject
+    private MobileTerminalPluginDaoBean pluginDao;
+    @Inject
+    private AssetDao assetDao;
+    @Inject
+    private AssetServiceBean assetService;
 
     @Test
     @OperateOnDeployment("normal")
@@ -99,7 +92,7 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
         MobileTerminal created = mobileTerminalService.createMobileTerminal(terminal, "Test_User");
         assertNotNull(created);
 
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             MobileTerminal fetched = mobileTerminalService.getMobileTerminalEntityById(created.getId());
             List<String> nameList1 = new ArrayList<>();
             for (Channel c : fetched.getChannels()) {

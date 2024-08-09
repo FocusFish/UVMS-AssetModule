@@ -42,5 +42,5 @@ public class AssetListResponse {
     public void setCurrentPage(Integer currentPage) {
         this.currentPage = currentPage;
     }
-    
+
 }

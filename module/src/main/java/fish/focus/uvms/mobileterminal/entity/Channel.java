@@ -26,6 +26,7 @@ package fish.focus.uvms.mobileterminal.entity;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.envers.Audited;
 import fish.focus.uvms.mobileterminal.constants.MobileTerminalConstants;
+
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -37,295 +38,292 @@ import java.util.UUID;
 
 /**
  * The persistent class for the channel database table.
- * 
  */
 @Entity
 @Table(name = "channel",
-		indexes = {
-			@Index(columnList = "mobterm_id", name = "channel_mobterm_FK_INX01", unique = false),
-			@Index(columnList = "dnid", name = "channel_INX01", unique = false)
-		},
-		uniqueConstraints = {
-			@UniqueConstraint(name = "channel_uc_historyid" , columnNames = "historyid"),
-			@UniqueConstraint(name = "channel_uc_dnid_member_number" , columnNames = {"dnid", "member_number"})
-		})
+        indexes = {
+                @Index(columnList = "mobterm_id", name = "channel_mobterm_FK_INX01", unique = false),
+                @Index(columnList = "dnid", name = "channel_INX01", unique = false)
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(name = "channel_uc_historyid", columnNames = "historyid"),
+                @UniqueConstraint(name = "channel_uc_dnid_member_number", columnNames = {"dnid", "member_number"})
+        })
 @Audited
 @NamedNativeQueries({
-		@NamedNativeQuery(name=Channel.LOWEST_UNUSED_MEMBER_NUMBER_FOR_DNID_NATIV_SQL, query = "SELECT MIN(a.member_number) + 1 AS firstFree \n" +
-				"FROM (SELECT member_number FROM asset.channel where dnid = :dnid UNION SELECT 0) a\n" +
-				"LEFT JOIN asset.channel b ON b.dnid = :dnid AND b.member_number = a.member_number + 1\n" +
-				"WHERE b.member_number IS NULL AND a.member_number < 255"),
+        @NamedNativeQuery(name = Channel.LOWEST_UNUSED_MEMBER_NUMBER_FOR_DNID_NATIV_SQL, query = "SELECT MIN(a.member_number) + 1 AS firstFree \n" +
+                "FROM (SELECT member_number FROM asset.channel where dnid = :dnid UNION SELECT 0) a\n" +
+                "LEFT JOIN asset.channel b ON b.dnid = :dnid AND b.member_number = a.member_number + 1\n" +
+                "WHERE b.member_number IS NULL AND a.member_number < 255"),
 })
 public class Channel implements Serializable {
-	private static final long serialVersionUID = 1L;
+    public static final String LOWEST_UNUSED_MEMBER_NUMBER_FOR_DNID_NATIV_SQL = "Channel.LowestUnusedMemberNumberForDnidNativeSql";
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(generator = "CHANNEL_UUID")
+    @GenericGenerator(name = "CHANNEL_UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id")
+    private UUID id;
 
-	public static final String LOWEST_UNUSED_MEMBER_NUMBER_FOR_DNID_NATIV_SQL = "Channel.LowestUnusedMemberNumberForDnidNativeSql";
+    @Column(name = "historyid")
+    private UUID historyId;
 
-	@Id
-	@GeneratedValue(generator = "CHANNEL_UUID")
-	@GenericGenerator(name = "CHANNEL_UUID", strategy = "org.hibernate.id.UUIDGenerator")
-	@Column(name = "id")
-	private UUID id;
+    @Column(name = "archived")
+    private Boolean archived = false;
 
-	@Column(name = "historyid")
-	private UUID historyId;
+    @Column(name = "updattime")
+    private Instant updateTime;
 
-	@Column(name="archived")
-	private Boolean archived = false;
+    @Column(name = "updateuser")
+    private String updateUser;
 
-	@Column(name="updattime")
-	private Instant updateTime;
+    @JsonbTransient
+    @ManyToOne
+    @JoinColumn(name = "mobterm_id", foreignKey = @ForeignKey(name = "Channel_MobileTerminal_FK"))
+    private MobileTerminal mobileTerminal;
 
-	@Column(name="updateuser")
-	private String updateUser;
+    @NotNull
+    @Column(name = "com_channel_name")
+    private String name;
 
-	@JsonbTransient
-	@ManyToOne
-	@JoinColumn(name="mobterm_id", foreignKey = @ForeignKey(name = "Channel_MobileTerminal_FK"))
-	private MobileTerminal mobileTerminal;
+    @Column(name = "active")
+    private boolean active = true;
 
-	@NotNull
-	@Column(name="com_channel_name")
-	private String name;
+    @Column(name = "chan_def")
+    private boolean defaultChannel;
 
-	@Column(name="active")
-	private boolean active = true;
+    @Column(name = "chan_conf")
+    private boolean configChannel;
 
-	@Column(name="chan_def")
-	private boolean defaultChannel;
+    @Column(name = "chan_poll")
+    private boolean pollChannel;
 
-	@Column(name="chan_conf")
-	private boolean configChannel;
+    @NotNull
+    @Column(name = "dnid")
+    private Integer dnid;
 
-	@Column(name="chan_poll")
-	private boolean pollChannel;
+    @NotNull
+    @Column(name = "expected_frequency")
+    private Duration expectedFrequency;
 
-	@NotNull
-	@Column(name="dnid")
-	private Integer dnid;
+    @NotNull
+    @Column(name = "expected_frequency_in_port")
+    private Duration expectedFrequencyInPort;
 
-	@NotNull
-	@Column(name="expected_frequency")
-	private Duration expectedFrequency;
+    @NotNull
+    @Column(name = "frequency_grace_period")
+    private Duration frequencyGracePeriod;
 
-	@NotNull
-	@Column(name="expected_frequency_in_port")
-	private Duration expectedFrequencyInPort;
+    @Column(name = "les_description")
+    private String lesDescription;
 
-	@NotNull
-	@Column(name="frequency_grace_period")
-	private Duration frequencyGracePeriod;
+    @NotNull
+    @Column(name = "member_number")
+    private Integer memberNumber;
 
-	@Column(name="les_description")
-	private String lesDescription;
+    @Column(name = "start_date")
+    private Instant startDate;
 
-	@NotNull
-	@Column(name="member_number")
-	private Integer memberNumber;
+    @Column(name = "end_date")
+    private Instant endDate;
 
-	@Column(name="start_date")
-	private Instant startDate;
+    public Channel() {
 
-	@Column(name="end_date")
-	private Instant endDate;
+    }
 
-	public Channel(){
-
-	}
-
-	@PrePersist
-	@PreUpdate
-	private void generateNewHistoryId() {
-		this.historyId = UUID.randomUUID();
-		this.updateTime = Instant.now();
-		if(this.startDate == null){
+    @PrePersist
+    @PreUpdate
+    private void generateNewHistoryId() {
+        this.historyId = UUID.randomUUID();
+        this.updateTime = Instant.now();
+        if (this.startDate == null) {
             this.startDate = Instant.now();
         }
-		if(this.mobileTerminal != null){
-			this.updateUser = mobileTerminal.getUpdateuser();
-		}
-	}
+        if (this.mobileTerminal != null) {
+            this.updateUser = mobileTerminal.getUpdateuser();
+        }
+    }
 
-	public UUID getId() {
-		return id;
-	}
+    public UUID getId() {
+        return id;
+    }
 
-	public void setId(UUID id) {
-		this.id = id;
-	}
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
-	public UUID getHistoryId() {
-		return historyId;
-	}
+    public UUID getHistoryId() {
+        return historyId;
+    }
 
-	public void setHistoryId(UUID historyId) {
-		this.historyId = historyId;
-	}
+    public void setHistoryId(UUID historyId) {
+        this.historyId = historyId;
+    }
 
-	public Boolean getArchived() {
-		return archived;
-	}
+    public Boolean getArchived() {
+        return archived;
+    }
 
-	public void setArchived(Boolean archived) {
-		this.archived = archived;
-	}
+    public void setArchived(Boolean archived) {
+        this.archived = archived;
+    }
 
-	public Instant getUpdateTime() {
-		return updateTime;
-	}
+    public Instant getUpdateTime() {
+        return updateTime;
+    }
 
-	public void setUpdateTime(Instant updateTime) {
-		this.updateTime = updateTime;
-	}
+    public void setUpdateTime(Instant updateTime) {
+        this.updateTime = updateTime;
+    }
 
-	public String getUpdateUser() {
-		return updateUser;
-	}
+    public String getUpdateUser() {
+        return updateUser;
+    }
 
-	public void setUpdateUser(String updateUser) {
-		this.updateUser = updateUser;
-	}
+    public void setUpdateUser(String updateUser) {
+        this.updateUser = updateUser;
+    }
 
-	public MobileTerminal getMobileTerminal() {
-		return mobileTerminal;
-	}
+    public MobileTerminal getMobileTerminal() {
+        return mobileTerminal;
+    }
 
-	public void setMobileTerminal(MobileTerminal mobileTerminal) {
-		this.mobileTerminal = mobileTerminal;
-	}
+    public void setMobileTerminal(MobileTerminal mobileTerminal) {
+        this.mobileTerminal = mobileTerminal;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public boolean isActive() {
-		return active;
-	}
+    public boolean isActive() {
+        return active;
+    }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
-	public boolean isDefaultChannel() {
-		return defaultChannel;
-	}
+    public boolean isDefaultChannel() {
+        return defaultChannel;
+    }
 
-	public void setDefaultChannel(boolean defaultChannel) {
-		this.defaultChannel = defaultChannel;
-	}
+    public void setDefaultChannel(boolean defaultChannel) {
+        this.defaultChannel = defaultChannel;
+    }
 
-	public boolean isConfigChannel() {
-		return configChannel;
-	}
+    public boolean isConfigChannel() {
+        return configChannel;
+    }
 
-	public void setConfigChannel(boolean configChannel) {
-		this.configChannel = configChannel;
-	}
+    public void setConfigChannel(boolean configChannel) {
+        this.configChannel = configChannel;
+    }
 
-	public boolean isPollChannel() {
-		return pollChannel;
-	}
+    public boolean isPollChannel() {
+        return pollChannel;
+    }
 
-	public void setPollChannel(boolean pollChannel) {
-		this.pollChannel = pollChannel;
-	}
+    public void setPollChannel(boolean pollChannel) {
+        this.pollChannel = pollChannel;
+    }
 
-	public Integer getDnid() {
-		return dnid;
-	}
+    public Integer getDnid() {
+        return dnid;
+    }
 
-	public void setDnid(Integer dnid) {
-		this.dnid = dnid;
-	}
+    public void setDnid(Integer dnid) {
+        this.dnid = dnid;
+    }
 
-	public Duration getExpectedFrequency() {
-		return expectedFrequency;
-	}
+    public Duration getExpectedFrequency() {
+        return expectedFrequency;
+    }
 
-	public void setExpectedFrequency(Duration expectedFrequency) {
-		this.expectedFrequency = expectedFrequency;
-	}
+    public void setExpectedFrequency(Duration expectedFrequency) {
+        this.expectedFrequency = expectedFrequency;
+    }
 
-	public Duration getExpectedFrequencyInPort() {
-		return expectedFrequencyInPort;
-	}
+    public Duration getExpectedFrequencyInPort() {
+        return expectedFrequencyInPort;
+    }
 
-	public void setExpectedFrequencyInPort(Duration expectedFrequencyInPort) {
-		this.expectedFrequencyInPort = expectedFrequencyInPort;
-	}
+    public void setExpectedFrequencyInPort(Duration expectedFrequencyInPort) {
+        this.expectedFrequencyInPort = expectedFrequencyInPort;
+    }
 
-	public Duration getFrequencyGracePeriod() {
-		return frequencyGracePeriod;
-	}
+    public Duration getFrequencyGracePeriod() {
+        return frequencyGracePeriod;
+    }
 
-	public void setFrequencyGracePeriod(Duration frequencyGracePeriod) {
-		this.frequencyGracePeriod = frequencyGracePeriod;
-	}
+    public void setFrequencyGracePeriod(Duration frequencyGracePeriod) {
+        this.frequencyGracePeriod = frequencyGracePeriod;
+    }
 
-	public String getLesDescription() {
-		return lesDescription;
-	}
+    public String getLesDescription() {
+        return lesDescription;
+    }
 
-	public void setLesDescription(String lesDescription) {
-		this.lesDescription = lesDescription;
-	}
+    public void setLesDescription(String lesDescription) {
+        this.lesDescription = lesDescription;
+    }
 
-	public Integer getMemberNumber() {
-		return memberNumber;
-	}
+    public Integer getMemberNumber() {
+        return memberNumber;
+    }
 
-	public void setMemberNumber(Integer memberNumber) {
-		this.memberNumber = memberNumber;
-	}
+    public void setMemberNumber(Integer memberNumber) {
+        this.memberNumber = memberNumber;
+    }
 
-	public Instant getStartDate() {
-		return startDate;
-	}
+    public Instant getStartDate() {
+        return startDate;
+    }
 
-	public void setStartDate(Instant startDate) {
-		this.startDate = startDate;
-	}
+    public void setStartDate(Instant startDate) {
+        this.startDate = startDate;
+    }
 
-	public Instant getEndDate() {
-		return endDate;
-	}
+    public Instant getEndDate() {
+        return endDate;
+    }
 
-	public void setEndDate(Instant endDate) {
-		this.endDate = endDate;
-	}
+    public void setEndDate(Instant endDate) {
+        this.endDate = endDate;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Channel channel = (Channel) o;
-		return active == channel.active &&
-				defaultChannel == channel.defaultChannel &&
-				configChannel == channel.configChannel &&
-				pollChannel == channel.pollChannel &&
-				Objects.equals(id, channel.id) &&
-				Objects.equals(historyId, channel.historyId) &&
-				Objects.equals(archived, channel.archived) &&
-				Objects.equals(updateTime, channel.updateTime) &&
-				Objects.equals(updateUser, channel.updateUser) &&
-				Objects.equals(name, channel.name) &&
-				Objects.equals(dnid, channel.dnid) &&
-				Objects.equals(expectedFrequency, channel.expectedFrequency) &&
-				Objects.equals(expectedFrequencyInPort, channel.expectedFrequencyInPort) &&
-				Objects.equals(frequencyGracePeriod, channel.frequencyGracePeriod) &&
-				Objects.equals(lesDescription, channel.lesDescription) &&
-				Objects.equals(memberNumber, channel.memberNumber) &&
-				Objects.equals(startDate, channel.startDate) &&
-				Objects.equals(endDate, channel.endDate);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Channel channel = (Channel) o;
+        return active == channel.active &&
+                defaultChannel == channel.defaultChannel &&
+                configChannel == channel.configChannel &&
+                pollChannel == channel.pollChannel &&
+                Objects.equals(id, channel.id) &&
+                Objects.equals(historyId, channel.historyId) &&
+                Objects.equals(archived, channel.archived) &&
+                Objects.equals(updateTime, channel.updateTime) &&
+                Objects.equals(updateUser, channel.updateUser) &&
+                Objects.equals(name, channel.name) &&
+                Objects.equals(dnid, channel.dnid) &&
+                Objects.equals(expectedFrequency, channel.expectedFrequency) &&
+                Objects.equals(expectedFrequencyInPort, channel.expectedFrequencyInPort) &&
+                Objects.equals(frequencyGracePeriod, channel.frequencyGracePeriod) &&
+                Objects.equals(lesDescription, channel.lesDescription) &&
+                Objects.equals(memberNumber, channel.memberNumber) &&
+                Objects.equals(startDate, channel.startDate) &&
+                Objects.equals(endDate, channel.endDate);
+    }
 
-	@Override
-	public int hashCode() {
+    @Override
+    public int hashCode() {
 
-		return Objects.hash(id, historyId, archived, updateTime, updateUser, mobileTerminal, name, active, defaultChannel, configChannel, pollChannel, dnid, expectedFrequency, expectedFrequencyInPort, frequencyGracePeriod, lesDescription, memberNumber, startDate, endDate);
-	}
+        return Objects.hash(id, historyId, archived, updateTime, updateUser, mobileTerminal, name, active, defaultChannel, configChannel, pollChannel, dnid, expectedFrequency, expectedFrequencyInPort, frequencyGracePeriod, lesDescription, memberNumber, startDate, endDate);
+    }
 }

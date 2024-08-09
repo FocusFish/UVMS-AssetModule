@@ -111,21 +111,21 @@ public class AssetModuleResponseMapper {
         return fault;
     }
 
-    public static UpsertAssetModuleResponse createUpsertAssetModuleResponse(Asset asset){
+    public static UpsertAssetModuleResponse createUpsertAssetModuleResponse(Asset asset) {
         UpsertAssetModuleResponse response = new UpsertAssetModuleResponse();
         response.setAsset(asset);
         return response;
     }
 
-    public static UpsertAssetModuleResponse createUpsertAssetListModuleResponse(Asset asset){
+    public static UpsertAssetModuleResponse createUpsertAssetListModuleResponse(Asset asset) {
         UpsertAssetModuleResponse response = new UpsertAssetModuleResponse();
         response.setAsset(asset);
         return response;
     }
 
     public static String createUpsertFishingGearModuleResponse(FishingGear fishingGear) throws AssetException {
-            UpsertFishingGearModuleResponse upsertResponse = new UpsertFishingGearModuleResponse();
-            upsertResponse.setFishingGear(fishingGear);
-            return JAXBMarshaller.marshallJaxBObjectToString(upsertResponse);
+        UpsertFishingGearModuleResponse upsertResponse = new UpsertFishingGearModuleResponse();
+        upsertResponse.setFishingGear(fishingGear);
+        return JAXBMarshaller.marshallJaxBObjectToString(upsertResponse);
     }
 }

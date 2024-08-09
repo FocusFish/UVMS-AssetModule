@@ -38,22 +38,19 @@ import java.io.StringWriter;
 import java.util.Arrays;
 
 @MessageDriven(mappedName = MessageConstants.QUEUE_ASSET_EVENT, activationConfig = {
-    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
-    @ActivationConfigProperty(propertyName = "destination", propertyValue = MessageConstants.QUEUE_ASSET_EVENT),
+        @ActivationConfigProperty(propertyName = "destinationType", propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
+        @ActivationConfigProperty(propertyName = "destination", propertyValue = MessageConstants.QUEUE_ASSET_EVENT),
 })
 public class MessageConsumerBean implements MessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(MessageConsumerBean.class);
-
-    @Inject
-    private AssetMessageEventBean messageEventBean;
-    
-    @Inject
-    private AssetMessageJSONBean assetJsonBean;
-    
     @Inject
     @AssetMessageErrorEvent
     Event<AssetMessageEvent> assetErrorEvent;
+    @Inject
+    private AssetMessageEventBean messageEventBean;
+    @Inject
+    private AssetMessageJSONBean assetJsonBean;
 
     @Override
     public void onMessage(Message message) {
@@ -95,7 +92,7 @@ public class MessageConsumerBean implements MessageListener {
                     assetErrorEvent.fire(new AssetMessageEvent(textMessage, AssetModuleResponseMapper.createFaultMessage(FaultCode.ASSET_MESSAGE, "Method not implemented")));
             }
         } catch (Exception e) {
-            LOG.error("[ Error when receiving message in AssetModule. ]" + findLineInStackTrace(e,"duplicate key value violates unique constraint"));
+            LOG.error("[ Error when receiving message in AssetModule. ]" + findLineInStackTrace(e, "duplicate key value violates unique constraint"));
             assetErrorEvent.fire(new AssetMessageEvent(textMessage, AssetModuleResponseMapper.createFaultMessage(FaultCode.ASSET_MESSAGE, "Method not implemented")));
         }
     }

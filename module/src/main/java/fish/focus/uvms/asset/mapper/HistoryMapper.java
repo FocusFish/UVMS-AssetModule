@@ -57,7 +57,7 @@ public class HistoryMapper {
                     Object newValue;
                     if (field.getName().equals(ASSET_UPDATER_FIELD) || field.getName().equals(ASSET_UPDATE_TIME_FIELD)
                             || field.getName().equals(ASSET_MOBILE_TERMINALS_FIELD)) {
-                        if(!field.getName().equals(ASSET_MOBILE_TERMINALS_FIELD)) {
+                        if (!field.getName().equals(ASSET_MOBILE_TERMINALS_FIELD)) {
                             continue;
                         }
                         oldValue = previousAsset.getMobileTerminals().stream().map(MobileTerminal::getId).collect(Collectors.toSet());
@@ -76,11 +76,10 @@ public class HistoryMapper {
             }
 
             return returnList;
-        }catch (IllegalAccessException e){
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
-
 
 
     public static Map<String, ChangeHistoryRow> mobileTerminalChangeHistory(List<MobileTerminal> histories) {
@@ -123,15 +122,15 @@ public class HistoryMapper {
                             || field.getName().equals(MOBILE_TERMINAL_PLUGIN_FIELD)
                             || field.getName().equals(MOBILE_TERMINAL_HISTORY_ID)) {
                         continue;
-                    }else {
+                    } else {
                         oldValue = FieldUtils.readDeclaredField(previousMt, field.getName(), true);
                         newValue = FieldUtils.readDeclaredField(mt, field.getName(), true);
                     }
                     if (!Objects.equals(oldValue, newValue)) {
-                        if(field.getName().equals(MOBILE_TERMINAL_CHANNEL_FIELD)){
+                        if (field.getName().equals(MOBILE_TERMINAL_CHANNEL_FIELD)) {
                             Map<String, ChannelChangeHistory> channelChangeHistoryRows = checkDifferencesBetweenChannels(previousMt.getChannels(), mt.getChannels());
                             row.setChannelChanges(channelChangeHistoryRows);
-                        }else {
+                        } else {
                             row.addNewItem(field.getName(), oldValue, newValue);
                         }
                     }
@@ -144,12 +143,12 @@ public class HistoryMapper {
             }
 
             return returnMap;
-        }catch (IllegalAccessException e){
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static Map<String, ChannelChangeHistory> checkDifferencesBetweenChannels(Set<ChannelDto> oldInputSet, Set<ChannelDto> newInputSet){
+    private static Map<String, ChannelChangeHistory> checkDifferencesBetweenChannels(Set<ChannelDto> oldInputSet, Set<ChannelDto> newInputSet) {
         Map<String, ChannelChangeHistory> returnMap = new HashMap<>();
         Set<ChannelDto> workingNewSet = new HashSet<>(newInputSet);
 
@@ -158,15 +157,15 @@ public class HistoryMapper {
             ChannelChangeHistory channelChangeHistory = new ChannelChangeHistory();
             channelChangeHistory.setHistoryId(channelDto.getHistoryId());
             channelChangeHistory.setId(channelDto.getId());
-            if(sameChannelInNewSet.isPresent()) {
-                if(!channelDto.getHistoryId().equals(sameChannelInNewSet.get().getHistoryId())) {
+            if (sameChannelInNewSet.isPresent()) {
+                if (!channelDto.getHistoryId().equals(sameChannelInNewSet.get().getHistoryId())) {
                     channelChangeHistory.setChanges(channelChangeHistory(Arrays.asList(channelDto, sameChannelInNewSet.get())).get(0).getChanges());
                     channelChangeHistory.setChangeType(ChangeType.UPDATED);
                 }
 
                 workingNewSet.remove(sameChannelInNewSet.get());
 
-            }else{  //if the old channel is not among the new channels
+            } else {  //if the old channel is not among the new channels
                 ChannelDto creatorAndTimeChannel = new ChannelDto();
                 creatorAndTimeChannel.setUpdateUser(channelDto.getUpdateUser());
                 creatorAndTimeChannel.setUpdateTime(channelDto.getUpdateTime());
@@ -212,7 +211,7 @@ public class HistoryMapper {
                             || field.getName().equals(CHANNEL_UPDATE_TIME_FIELD)
                             || field.getName().equals(CHANNEL_MOBILE_TERMINAL_FIELD)
                             || field.getName().equals(CHANNEL_HISTORY_ID)) {
-                            continue;
+                        continue;
                     } else {
                         oldValue = FieldUtils.readDeclaredField(previousChannel, field.getName(), true);
                         newValue = FieldUtils.readDeclaredField(channel, field.getName(), true);
@@ -226,24 +225,24 @@ public class HistoryMapper {
             }
 
             return returnList;
-        }catch (IllegalAccessException e){
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
 
-    private static <T> List<Field> listMembers(Class<T> clazz){
+    private static <T> List<Field> listMembers(Class<T> clazz) {
         List<Field> fields = new ArrayList<>();
         try {
             Field[] declaredFields = clazz.getDeclaredFields();
             for (Field field : declaredFields) {
-                if(!field.getName().contains("this") && !field.isSynthetic() &&
+                if (!field.getName().contains("this") && !field.isSynthetic() &&
                         field.getModifiers() != Modifier.STATIC + Modifier.PUBLIC + Modifier.FINAL
                         && field.getModifiers() != Modifier.STATIC + Modifier.PRIVATE + Modifier.FINAL) {
                     fields.add(field);
                 }
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("Error getting the fields of object: " + clazz, e);
         }
         return fields;

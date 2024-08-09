@@ -37,17 +37,13 @@ import static org.junit.Assert.*;
 public class TerminalDaoBeanIT extends TransactionalTests {
 
     private static final Logger LOG = LoggerFactory.getLogger(TerminalDaoBeanIT.class);
-
-    private Random rnd = new Random();
-
-    @EJB
-    private TerminalDaoBean terminalDaoBean;
-
-    @EJB
-    private MobileTerminalPluginDaoBean testDaoBean;
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+    private Random rnd = new Random();
+    @EJB
+    private TerminalDaoBean terminalDaoBean;
+    @EJB
+    private MobileTerminalPluginDaoBean testDaoBean;
 
     @Test
     @OperateOnDeployment("normal")
@@ -87,7 +83,7 @@ public class TerminalDaoBeanIT extends TransactionalTests {
         try {
             userTransaction.commit();
             fail("There should be a not null constraint on name");
-        }catch (Exception e){
+        } catch (Exception e) {
             assertTrue(true); //should be here
         }
         userTransaction.begin();
@@ -108,7 +104,7 @@ public class TerminalDaoBeanIT extends TransactionalTests {
             terminalDaoBean.createMobileTerminal(mobileTerminal);
             em.flush();
             fail("Should've thrown RuntimeException");
-        } catch(RuntimeException e){
+        } catch (RuntimeException e) {
             Assert.assertTrue(true);
         }
     }
@@ -182,7 +178,7 @@ public class TerminalDaoBeanIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getMobileTerminalByGuid_NON_EXISTING_GUID() {
-        MobileTerminal mt =  terminalDaoBean.getMobileTerminalById(UUID.randomUUID());
+        MobileTerminal mt = terminalDaoBean.getMobileTerminalById(UUID.randomUUID());
         assertNull(mt);
     }
 
@@ -300,16 +296,16 @@ public class TerminalDaoBeanIT extends TransactionalTests {
         MobileTerminalPlugin mtp;
         List<MobileTerminalPlugin> plugs;
 
-            plugs = testDaoBean.getPluginList();
-            mtp = plugs.get(0);
-            mt.setSerialNo(serialNo);
-            mt.setUpdatetime(Instant.now());
-            mt.setUpdateuser("TEST");
-            mt.setSource(TerminalSourceEnum.INTERNAL);
-            mt.setPlugin(mtp);
-            mt.setMobileTerminalType(MobileTerminalTypeEnum.INMARSAT_C);
-            mt.setArchived(false);
-            mt.setActive(true);
+        plugs = testDaoBean.getPluginList();
+        mtp = plugs.get(0);
+        mt.setSerialNo(serialNo);
+        mt.setUpdatetime(Instant.now());
+        mt.setUpdateuser("TEST");
+        mt.setSource(TerminalSourceEnum.INTERNAL);
+        mt.setPlugin(mtp);
+        mt.setMobileTerminalType(MobileTerminalTypeEnum.INMARSAT_C);
+        mt.setArchived(false);
+        mt.setActive(true);
         return mt;
     }
 

@@ -12,7 +12,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.mobileterminal.constants;
 
 public enum MobileTerminalConfigType {
-	POLL_TYPE,
-	TRANSPONDERS,
-	POLL_TIME_SPAN
+    POLL_TYPE,
+    TRANSPONDERS,
+    POLL_TIME_SPAN
 }

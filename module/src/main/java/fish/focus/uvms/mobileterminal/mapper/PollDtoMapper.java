@@ -17,6 +17,7 @@ import fish.focus.schema.mobileterminal.polltypes.v1.PollListResponse;
 import fish.focus.schema.mobileterminal.polltypes.v1.PollResponseType;
 import fish.focus.schema.mobileterminal.types.v1.*;
 import fish.focus.uvms.mobileterminal.dto.*;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,15 +25,15 @@ import java.util.Optional;
 
 public class PollDtoMapper {
 
-    public static List<PollDto> mapPolls(List<PollResponseType> pollResponses){
+    public static List<PollDto> mapPolls(List<PollResponseType> pollResponses) {
         List<PollDto> dtoList = new ArrayList<>();
         for (PollResponseType response : pollResponses) {
             dtoList.add(mapPoll(response));
         }
         return dtoList;
     }
-    
-    public static PollDto mapPoll(PollResponseType response){
+
+    public static PollDto mapPoll(PollResponseType response) {
         checkInputParams(response.getMobileTerminal());
         return createPollDto(response);
     }
@@ -53,7 +54,7 @@ public class PollDtoMapper {
         dto.addValue(PollKey.POLL_ID, response.getPollId().getGuid());
         dto.addValue(PollKey.POLL_TYPE, response.getPollType().name());
         dto.addValue(PollKey.POLL_COMMENT, response.getComment());
-        
+
         String startDate = getPollAttribute(PollAttributeType.START_DATE, attributes);
         if (startDate != null) {
             dto.addValue(PollKey.START_DATE, startDate);
@@ -72,8 +73,8 @@ public class PollDtoMapper {
         }
 
         String creator = getPollAttribute(PollAttributeType.USER, attributes);
-        if(creator != null) {
-        	dto.addValue(PollKey.USER, creator);
+        if (creator != null) {
+            dto.addValue(PollKey.USER, creator);
         }
         return dto;
     }
@@ -92,7 +93,7 @@ public class PollDtoMapper {
 
         PollChannelDto pollChannel = new PollChannelDto();
 
-        if(mobileTerminal.getChannels().get(0) != null) {
+        if (mobileTerminal.getChannels().get(0) != null) {
             pollChannel.setComChannelId(mobileTerminal.getChannels().get(0).getGuid());
         }
         pollChannel.setMobileTerminalId(mobileTerminal.getMobileTerminalId().getGuid());
@@ -100,18 +101,18 @@ public class PollDtoMapper {
         pollChannel.setConnectId(mobileTerminal.getConnectId());
 
         List<AttributeDto> attributes = new ArrayList<>();
-        for(MobileTerminalAttribute attr : mobileTerminal.getAttributes()) {
-        	AttributeDto dto = new AttributeDto();
-        	dto.setType(attr.getType());
-        	dto.setValue(attr.getValue());
-        	attributes.add(dto);
+        for (MobileTerminalAttribute attr : mobileTerminal.getAttributes()) {
+            AttributeDto dto = new AttributeDto();
+            dto.setType(attr.getType());
+            dto.setValue(attr.getValue());
+            attributes.add(dto);
         }
 
-        if(mobileTerminal.getChannels() != null && !mobileTerminal.getChannels().isEmpty()) {
-            for(ComChannelType comChannelType : mobileTerminal.getChannels()) {
-                for(ComChannelCapability capability : comChannelType.getCapabilities()) {
-                    if(capability.getType().equalsIgnoreCase("POLLABLE") && capability.isValue()) {
-                        for(ComChannelAttribute attr : comChannelType.getAttributes()) {
+        if (mobileTerminal.getChannels() != null && !mobileTerminal.getChannels().isEmpty()) {
+            for (ComChannelType comChannelType : mobileTerminal.getChannels()) {
+                for (ComChannelCapability capability : comChannelType.getCapabilities()) {
+                    if (capability.getType().equalsIgnoreCase("POLLABLE") && capability.isValue()) {
+                        for (ComChannelAttribute attr : comChannelType.getAttributes()) {
                             AttributeDto cDto = new AttributeDto();
                             cDto.setType(attr.getType());
                             cDto.setValue(attr.getValue());
@@ -132,7 +133,7 @@ public class PollDtoMapper {
         channelListDto.setTotalNumberOfPages(pollResponse.getTotalNumberOfPages());
 
         ArrayList<PollChannelDto> pollChannelList = new ArrayList<>();
-        for(PollResponseType responseType : pollResponse.getPollList()) {
+        for (PollResponseType responseType : pollResponse.getPollList()) {
             PollChannelDto terminal = mapPollChannel(responseType.getMobileTerminal());
             terminal.setPoll(mapPoll(responseType));
             pollChannelList.add(terminal);

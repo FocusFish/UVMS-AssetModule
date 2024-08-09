@@ -14,6 +14,7 @@ public class AssetRestExceptionMapper implements ExceptionMapper<Exception> {
 
 
     private static final Logger LOG = LoggerFactory.getLogger(AssetRestExceptionMapper.class);
+
     public AssetRestExceptionMapper() {
         super();
     }

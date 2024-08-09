@@ -39,19 +39,19 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
 public class PollTimerTaskTest extends TransactionalTests {
-    
+
     @Inject
     private TestPollHelper pollHelper;
-    
+
     @Inject
     private AssetDao assetDao;
-    
+
     @Inject
     private PollServiceBean pollService;
-    
+
     @Inject
     private PollProgramDaoBean pollDao;
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void runPollTimerTaskPollShouldBeCreated() {
@@ -59,9 +59,9 @@ public class PollTimerTaskTest extends TransactionalTests {
         ProgramPoll pollProgram = pollHelper.createProgramPoll(asset.getId().toString(),
                 Instant.now().minus(1, ChronoUnit.HOURS), Instant.now().plus(1, ChronoUnit.HOURS), null);
         pollDao.createProgramPoll(pollProgram);
-        
+
         new PollTimerTask(pollService).run();
-        
+
         List<PollResponseType> polls = getAllPolls(asset.getId());
         long autoPollCount = polls.stream().filter(p -> p.getPollType().equals(PollType.AUTOMATIC_POLL)).count();
 
@@ -84,7 +84,7 @@ public class PollTimerTaskTest extends TransactionalTests {
 
         assertEquals(0, autoPollCount);
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void runPollTimerTaskTwoPollsShouldBeCreated() {
@@ -92,17 +92,17 @@ public class PollTimerTaskTest extends TransactionalTests {
         ProgramPoll pollProgram = pollHelper.createProgramPoll(asset.getId().toString(),
                 Instant.now().minus(1, ChronoUnit.HOURS), Instant.now().plus(1, ChronoUnit.HOURS), null);
         pollDao.createProgramPoll(pollProgram);
-        
+
         new PollTimerTask(pollService).run();
         pollProgram.setLatestRun(Instant.now().minus(1, ChronoUnit.MINUTES)); // Frequency is 1s
         pollDao.updateProgramPoll(pollProgram);
         new PollTimerTask(pollService).run();
-        
+
         List<PollResponseType> polls = getAllPolls(asset.getId());
         long autoPollCount = polls.stream().filter(p -> p.getPollType().equals(PollType.AUTOMATIC_POLL)).count();
         assertEquals(2, autoPollCount);
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void runPollTimerTaskFutureDateShouldNotCreatePoll() {
@@ -110,15 +110,15 @@ public class PollTimerTaskTest extends TransactionalTests {
         ProgramPoll pollProgram = pollHelper.createProgramPoll(asset.getId().toString(),
                 Instant.now().plus(1, ChronoUnit.HOURS), Instant.now().plus(2, ChronoUnit.HOURS), null);
         pollDao.createProgramPoll(pollProgram);
-        
+
         new PollTimerTask(pollService).run();
-        
+
         List<PollResponseType> polls = getAllPolls(asset.getId());
         long autoPollCount = polls.stream().filter(p -> p.getPollType().equals(PollType.AUTOMATIC_POLL)).count();
 
         assertEquals(0, autoPollCount);
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void runPollTimerTaskLastRunShouldBeSet() {
@@ -126,13 +126,13 @@ public class PollTimerTaskTest extends TransactionalTests {
         ProgramPoll pollProgram = pollHelper.createProgramPoll(asset.getId().toString(),
                 Instant.now().minus(1, ChronoUnit.HOURS), Instant.now().plus(1, ChronoUnit.HOURS), null);
         pollDao.createProgramPoll(pollProgram);
-        
+
         new PollTimerTask(pollService).run();
 
         ProgramPoll fetchedPollProgram = pollDao.getProgramPollByGuid(pollProgram.getId().toString());
         assertThat(fetchedPollProgram.getLatestRun(), CoreMatchers.is(CoreMatchers.notNullValue()));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void runPollTimerTaskOldProgramShouldBeArchived() {
@@ -140,13 +140,13 @@ public class PollTimerTaskTest extends TransactionalTests {
         ProgramPoll pollProgram = pollHelper.createProgramPoll(asset.getId().toString(),
                 Instant.now().minus(2, ChronoUnit.HOURS), Instant.now().minus(1, ChronoUnit.HOURS), null);
         pollDao.createProgramPoll(pollProgram);
-        
+
         new PollTimerTask(pollService).run();
 
         ProgramPoll fetchedPollProgram = pollDao.getProgramPollByGuid(pollProgram.getId().toString());
         assertThat(fetchedPollProgram.getPollState(), CoreMatchers.is(ProgramPollStatus.ARCHIVED));
     }
-    
+
     private List<PollResponseType> getAllPolls(UUID connectId) {
         PollListQuery query = new PollListQuery();
         ListPagination pagination = new ListPagination();

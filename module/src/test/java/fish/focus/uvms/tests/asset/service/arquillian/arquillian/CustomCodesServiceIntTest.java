@@ -58,7 +58,7 @@ public class CustomCodesServiceIntTest extends TransactionalTests {
         CustomCode createdCustomCode1 = service.create(CONSTANT, CODE, fromDate, toDate, CODE + "Description");
         try {
             CustomCode createdCustomCode2 = service.create(CONSTANT, CODE, fromDate, toDate, CODE + "Description");
-        }catch(Throwable e) {
+        } catch (Throwable e) {
             Assert.assertTrue(true);
         }
     }

@@ -20,7 +20,7 @@ public class MobileTerminalConstants {
     public static final String TRUE = "TRUE";
     public static final String FALSE = "FALSE";
 
-	public static final String CAPABILITY_CONFIGURABLE = "CONFIGURABLE";
-	public static final String CAPABILITY_DEFAULT_REPORTING = "DEFAULT_REPORTING";
-	public static final String CAPABILITY_POLLABLE = "POLLABLE";
+    public static final String CAPABILITY_CONFIGURABLE = "CONFIGURABLE";
+    public static final String CAPABILITY_DEFAULT_REPORTING = "DEFAULT_REPORTING";
+    public static final String CAPABILITY_POLLABLE = "POLLABLE";
 }

@@ -49,7 +49,7 @@ public class AssetFilterRestResource {
 
     @Inject
     private AssetFilterServiceBean assetFilterService;
-    
+
     /**
      * @responseMessage 200 Success
      * @responseMessage 500 Error
@@ -60,9 +60,9 @@ public class AssetFilterRestResource {
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
     public Response getAssetFilterListByUser(@QueryParam(value = "user") String user) throws Exception {
         try {
-        	if(user == null) {
-        		user = servletRequest.getRemoteUser();
-        	}
+            if (user == null) {
+                user = servletRequest.getRemoteUser();
+            }
             List<AssetFilter> assetFilterList = assetFilterService.getAssetFilterList(user);
             return Response.ok(assetFilterList).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class AssetFilterRestResource {
             throw e;
         }
     }
-    
+
     /**
      * @responseMessage 200 Success
      * @responseMessage 500 Error
@@ -144,7 +144,7 @@ public class AssetFilterRestResource {
     @Path("/{assetFilterId}/query")
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
     public Response createAssetFilterQuery(@PathParam(value = "assetFilterId") UUID parentAssetFilterId,
-                                          AssetFilterQuery assetFilterQuery) throws Exception {
+                                           AssetFilterQuery assetFilterQuery) throws Exception {
         try {
             AssetFilterQuery createdAssetFilterQuery = assetFilterService.createAssetFilterQuery(parentAssetFilterId, assetFilterQuery);//  createAssetFilterQuery(parentAssetFilterId, assetFilterQuery, user);
             return Response.ok(createdAssetFilterQuery).header("MDC", MDC.get("requestId")).build();
@@ -158,17 +158,17 @@ public class AssetFilterRestResource {
     @Path("/{assetFilterQueryId}/value")
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
     public Response createAssetFilterValue(@PathParam(value = "assetFilterQueryId") UUID parentAssetFilterQueryId,
-                                          AssetFilterValue assetFilterValue) throws Exception {
+                                           AssetFilterValue assetFilterValue) throws Exception {
         try {
             AssetFilterValue createdAssetFilterValue = assetFilterService.createAssetFilterValue(parentAssetFilterQueryId, assetFilterValue);
-            
+
             return Response.ok(createdAssetFilterValue).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
             LOG.error("Error when creating createdAssetFilterValue. ", e);
             throw e;
         }
     }
-    
+
     @PUT
     @Path("/value")
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
@@ -190,7 +190,7 @@ public class AssetFilterRestResource {
     public Response getAssetFilterValue(@PathParam(value = "assetFilterValueId") UUID id) throws Exception {
 
         try {
-        	AssetFilterValue fetchedAssetFilterValue = assetFilterService.getAssetFilterValue(id);
+            AssetFilterValue fetchedAssetFilterValue = assetFilterService.getAssetFilterValue(id);
             return Response.ok(fetchedAssetFilterValue).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
             LOG.error("Error when getting AssetFilterValue. ", e);
@@ -212,7 +212,7 @@ public class AssetFilterRestResource {
             throw e;
         }
     }
-    
+
     /**
      * @responseMessage 200 Success
      * @responseMessage 500 Error
@@ -230,21 +230,21 @@ public class AssetFilterRestResource {
             throw e;
         }
     }
-    
+
     @PUT
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
     public Response updateAssetFilter(AssetFilter mappedAssetFilter) throws Exception {
 
         try {
             String user = servletRequest.getRemoteUser();
-            AssetFilter updatedAssetFilter = assetFilterService.updateAllAssetFilter(mappedAssetFilter, user); 
+            AssetFilter updatedAssetFilter = assetFilterService.updateAllAssetFilter(mappedAssetFilter, user);
             return Response.ok(updatedAssetFilter).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
             LOG.error("Error when updating AssetFilter. ", e);
             throw e;
         }
     }
-    
+
     /**
      * @responseMessage 200 Success
      * @responseMessage 500 Error
@@ -255,12 +255,12 @@ public class AssetFilterRestResource {
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
     public Response getListOfAssetFilterByUser() throws Exception {
         try {
-        	String user = servletRequest.getRemoteUser();
-        	List<AssetFilter> assetFilterList = assetFilterService.getAssetFilterList(user);
-        	AssetFilterList assetFilterListresp = new AssetFilterList();
+            String user = servletRequest.getRemoteUser();
+            List<AssetFilter> assetFilterList = assetFilterService.getAssetFilterList(user);
+            AssetFilterList assetFilterListresp = new AssetFilterList();
             Map<String, AssetFilter> filterMap = assetFilterList.stream().collect(Collectors.toMap(filter -> filter.getId().toString(), Function.identity()));
             assetFilterListresp.setSavedFilters(filterMap);
-            
+
             return Response.ok(assetFilterListresp).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
             LOG.error("Error when retrieving assetFilter list {}", e);

@@ -31,7 +31,8 @@ public class AssetMTEnrichmentResponse implements Serializable {
     private String serialNumber = null;
     private Boolean mobileTerminalIsInactive = null;
 
-    public AssetMTEnrichmentResponse(){}
+    public AssetMTEnrichmentResponse() {
+    }
 
     public String getAssetName() {
         return assetName;
@@ -161,6 +162,7 @@ public class AssetMTEnrichmentResponse implements Serializable {
     public void setImo(String imo) {
         this.imo = imo;
     }
+
     public String getMobileTerminalGuid() {
         return mobileTerminalGuid;
     }

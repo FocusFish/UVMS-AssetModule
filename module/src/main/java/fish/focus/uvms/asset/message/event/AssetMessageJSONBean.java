@@ -39,10 +39,10 @@ public class AssetMessageJSONBean {
     private Jsonb jsonb;
 
     @PostConstruct
-    public void init(){
-        jsonb =  new JsonBConfigurator().getContext(null);
+    public void init() {
+        jsonb = new JsonBConfigurator().getContext(null);
     }
-    
+
     public void upsertAsset(TextMessage message) throws IOException, JMSException {
         AssetBO assetBo = jsonb.fromJson(message.getText(), AssetBO.class);
         try {
@@ -57,8 +57,9 @@ public class AssetMessageJSONBean {
     }
 
     public void assetInformation(TextMessage message) throws IOException, JMSException {
-        List<Asset> assetBos = jsonb.fromJson(message.getText(), new ArrayList<Asset>(){}.getClass().getGenericSuperclass());
-        for(Asset oneAsset : assetBos){
+        List<Asset> assetBos = jsonb.fromJson(message.getText(), new ArrayList<Asset>() {
+        }.getClass().getGenericSuperclass());
+        for (Asset oneAsset : assetBos) {
             assetService.assetInformation(oneAsset, oneAsset.getUpdatedBy() == null ? "UVMS (JMS)" : oneAsset.getUpdatedBy());
         }
         LOG.info("Processed update asset list of size: " + assetBos.size());

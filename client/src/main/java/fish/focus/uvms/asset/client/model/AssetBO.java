@@ -19,34 +19,43 @@ public class AssetBO {
     private List<Note> notes;
     private FishingLicence fishingLicence;
     private AssetIdentifier defaultIdentifier = AssetIdentifier.CFR;
-    
+
     public AssetDTO getAsset() {
         return asset;
     }
+
     public void setAsset(AssetDTO asset) {
         this.asset = asset;
     }
+
     public List<ContactInfo> getContacts() {
         return contacts;
     }
+
     public void setContacts(List<ContactInfo> contacts) {
         this.contacts = contacts;
     }
+
     public List<Note> getNotes() {
         return notes;
     }
+
     public void setNotes(List<Note> notes) {
         this.notes = notes;
     }
+
     public FishingLicence getFishingLicence() {
         return fishingLicence;
     }
+
     public void setFishingLicence(FishingLicence fishingLicence) {
         this.fishingLicence = fishingLicence;
     }
+
     public AssetIdentifier getDefaultIdentifier() {
         return defaultIdentifier;
     }
+
     public void setDefaultIdentifier(AssetIdentifier defaultIdentifier) {
         this.defaultIdentifier = defaultIdentifier;
     }

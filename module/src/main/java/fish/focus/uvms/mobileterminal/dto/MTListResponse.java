@@ -2,6 +2,7 @@ package fish.focus.uvms.mobileterminal.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import fish.focus.uvms.mobileterminal.model.dto.MobileTerminalDto;
 
 public class MTListResponse {

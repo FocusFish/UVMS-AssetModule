@@ -28,13 +28,13 @@ public class AssetRemapTask {
     @UpdatedAssetEvent
     private Event<AssetMergeInfo> updatedAssetEvent;
 
-    public void remap(){
+    public void remap() {
         List<AssetRemapMapping> mappings = assetDao.getAllAssetRemappings();
         List<AssetRemapMapping> deleteMappings = new ArrayList<>();
 
         for (AssetRemapMapping mapping : mappings) {
             int remappedMovements = assetService.remapAssetsInMovement(mapping.getOldAssetId().toString(), mapping.getNewAssetId().toString());
-            if(remappedMovements == 0 && Instant.now().isAfter(mapping.getCreatedDate().plus(3, ChronoUnit.HOURS))){
+            if (remappedMovements == 0 && Instant.now().isAfter(mapping.getCreatedDate().plus(3, ChronoUnit.HOURS))) {
                 deleteMappings.add(mapping);
             }
         }
@@ -42,7 +42,7 @@ public class AssetRemapTask {
             assetService.removeMovementConnectInMovement(mappingToBeDeleted.getOldAssetId().toString());
             assetDao.deleteAssetMapping(mappingToBeDeleted);
             Asset asset = assetDao.getAssetById(mappingToBeDeleted.getOldAssetId());
-            if(asset != null) {
+            if (asset != null) {
                 assetDao.deleteAsset(asset);
                 updatedAssetEvent.fire(new AssetMergeInfo(mappingToBeDeleted.getOldAssetId().toString(), mappingToBeDeleted.getNewAssetId().toString()));
             }
