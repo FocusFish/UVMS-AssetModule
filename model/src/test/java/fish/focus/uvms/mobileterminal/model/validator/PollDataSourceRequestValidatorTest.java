@@ -12,13 +12,12 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.mobileterminal.model.validator;
 
 import fish.focus.schema.mobileterminal.polltypes.v1.*;
-import fish.focus.uvms.mobileterminal.model.validator.PollDataSourceRequestValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
