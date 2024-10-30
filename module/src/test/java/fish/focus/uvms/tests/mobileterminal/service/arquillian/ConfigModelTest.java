@@ -14,34 +14,33 @@ package fish.focus.uvms.tests.mobileterminal.service.arquillian;
 import fish.focus.schema.mobileterminal.config.v1.ConfigList;
 import fish.focus.schema.mobileterminal.config.v1.TerminalSystemType;
 import fish.focus.schema.mobileterminal.types.v1.PluginService;
-import fish.focus.uvms.asset.bean.ConfigServiceBean;
 import fish.focus.uvms.mobileterminal.bean.ConfigServiceBeanMT;
 import fish.focus.uvms.mobileterminal.dao.ChannelDaoBean;
 import fish.focus.uvms.mobileterminal.dao.MobileTerminalPluginDaoBean;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminalPlugin;
 import fish.focus.uvms.mobileterminal.mapper.PluginMapper;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
-@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.*", "com.sun.org.apache.xalan.*"})
-//magic line to fix powermock java 11 issues
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({PluginMapper.class, ConfigServiceBean.class})
+@RunWith(MockitoJUnitRunner.class)
 public class ConfigModelTest {
 
     @Mock
@@ -51,10 +50,10 @@ public class ConfigModelTest {
     private PluginService pluginType;
 
     @Mock
-    private MobileTerminalPlugin siriusone;
+    private MobileTerminalPlugin siriusOne;
 
     @Mock
-    private MobileTerminalPlugin twostage;
+    private MobileTerminalPlugin twoStage;
 
     @Mock
     private ChannelDaoBean channelDao;
@@ -62,11 +61,18 @@ public class ConfigModelTest {
     @InjectMocks
     private ConfigServiceBeanMT testModelBean;
 
+    private AutoCloseable openedMocks;
+
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        when(siriusone.getPluginSatelliteType()).thenReturn("IRIDIUM");
-        when(twostage.getPluginSatelliteType()).thenReturn("INMARSAT_C");
+        openedMocks = MockitoAnnotations.openMocks(this);
+        when(siriusOne.getPluginSatelliteType()).thenReturn("IRIDIUM");
+        when(twoStage.getPluginSatelliteType()).thenReturn("INMARSAT_C");
+    }
+
+    @After
+    public void closeMocks() throws Exception {
+        openedMocks.close();
     }
 
     @Test
@@ -82,8 +88,8 @@ public class ConfigModelTest {
     @Test
     public void testGetAllTerminalSystems() {
         List<MobileTerminalPlugin> pluginList = new ArrayList<>();
-        pluginList.add(siriusone);
-        pluginList.add(twostage);
+        pluginList.add(siriusOne);
+        pluginList.add(twoStage);
         when(mobileTerminalPluginDao.getPluginList()).thenReturn(pluginList);
 
         List<TerminalSystemType> terminalSystems = testModelBean.getAllTerminalSystems();
@@ -117,29 +123,29 @@ public class ConfigModelTest {
     public void testUpdatePluginEquals() {
         String serviceName = "serviceName";
         when(pluginType.getServiceName()).thenReturn(serviceName);
-        when(mobileTerminalPluginDao.getPluginByServiceName(serviceName)).thenReturn(siriusone);
-        mockStatic(PluginMapper.class);
-        when(PluginMapper.equals(siriusone, pluginType)).thenReturn(true);
+        when(mobileTerminalPluginDao.getPluginByServiceName(serviceName)).thenReturn(siriusOne);
+        try (MockedStatic<PluginMapper> pluginMapper = mockStatic(PluginMapper.class)) {
+            pluginMapper.when(() -> PluginMapper.equals(siriusOne, pluginType)).thenReturn(true);
+            MobileTerminalPlugin resEntity = testModelBean.updatePlugin(pluginType);
 
-        MobileTerminalPlugin resEntity = testModelBean.updatePlugin(pluginType);
-
-        assertNotNull(resEntity);
+            assertNotNull(resEntity);
+        }
     }
 
     @Test
     public void testUpdatePluginUpdate() {
         String serviceName = "serviceName";
         when(pluginType.getServiceName()).thenReturn(serviceName);
-        when(mobileTerminalPluginDao.getPluginByServiceName(serviceName)).thenReturn(siriusone);
-        mockStatic(PluginMapper.class);
-        when(PluginMapper.equals(siriusone, pluginType)).thenReturn(false);
-        mockStatic(PluginMapper.class);
-        when(PluginMapper.mapModelToEntity(siriusone, pluginType)).thenReturn(siriusone);
+        when(mobileTerminalPluginDao.getPluginByServiceName(serviceName)).thenReturn(siriusOne);
+        try (MockedStatic<PluginMapper> pluginMapper = mockStatic(PluginMapper.class)) {
+            pluginMapper.when(() -> PluginMapper.equals(siriusOne, pluginType)).thenReturn(false);
+            pluginMapper.when(() -> PluginMapper.mapModelToEntity(siriusOne, pluginType)).thenReturn(siriusOne);
 
-        when(mobileTerminalPluginDao.updateMobileTerminalPlugin(any(MobileTerminalPlugin.class))).thenReturn(siriusone);
+            when(mobileTerminalPluginDao.updateMobileTerminalPlugin(any(MobileTerminalPlugin.class))).thenReturn(siriusOne);
 
-        MobileTerminalPlugin resEntity = testModelBean.updatePlugin(pluginType);
-        assertNotNull(resEntity);
+            MobileTerminalPlugin resEntity = testModelBean.updatePlugin(pluginType);
+            assertNotNull(resEntity);
+        }
     }
 
     @Test
@@ -179,9 +185,9 @@ public class ConfigModelTest {
         String serviceName = "serviceName";
         Map<String, PluginService> map = new HashMap<>();
         List<MobileTerminalPlugin> entityList = new ArrayList<>();
-        when(siriusone.getPluginServiceName()).thenReturn(serviceName);
-        when(siriusone.getPluginInactive()).thenReturn(false);
-        entityList.add(siriusone);
+        when(siriusOne.getPluginServiceName()).thenReturn(serviceName);
+        when(siriusOne.getPluginInactive()).thenReturn(false);
+        entityList.add(siriusOne);
         when(mobileTerminalPluginDao.getPluginList()).thenReturn(entityList);
 
         List<MobileTerminalPlugin> resEntityList = testModelBean.inactivatePlugins(map);
@@ -193,13 +199,12 @@ public class ConfigModelTest {
     }
 
     @Test
-    public void testInactivePluginsExsist() {
+    public void testInactivePluginsExist() {
         String serviceName = "serviceName";
         Map<String, PluginService> map = new HashMap<>();
         List<MobileTerminalPlugin> entityList = new ArrayList<>();
-        when(siriusone.getPluginServiceName()).thenReturn(serviceName);
-        when(siriusone.getPluginInactive()).thenReturn(false);
-        entityList.add(siriusone);
+        when(siriusOne.getPluginServiceName()).thenReturn(serviceName);
+        entityList.add(siriusOne);
         when(mobileTerminalPluginDao.getPluginList()).thenReturn(entityList);
         map.put(serviceName, pluginType);
 
@@ -213,14 +218,13 @@ public class ConfigModelTest {
         String serviceName = "serviceName";
         Map<String, PluginService> map = new HashMap<>();
         List<MobileTerminalPlugin> entityList = new ArrayList<>();
-        when(siriusone.getPluginServiceName()).thenReturn(serviceName);
-        when(siriusone.getPluginInactive()).thenReturn(true);
-        entityList.add(siriusone);
+        when(siriusOne.getPluginServiceName()).thenReturn(serviceName);
+        when(siriusOne.getPluginInactive()).thenReturn(true);
+        entityList.add(siriusOne);
         when(mobileTerminalPluginDao.getPluginList()).thenReturn(entityList);
 
         List<MobileTerminalPlugin> resEntityList = testModelBean.inactivatePlugins(map);
         assertNotNull(resEntityList);
         assertEquals(0, resEntityList.size());
     }
-
 }
