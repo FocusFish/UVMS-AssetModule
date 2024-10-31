@@ -19,6 +19,7 @@ import fish.focus.uvms.rest.mobileterminal.dto.MTResponseDto;
 import fish.focus.uvms.rest.mobileterminal.error.MTResponseCode;
 import fish.focus.uvms.rest.mobileterminal.services.MobileTerminalRestResource;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,25 +33,35 @@ public class ResponseTest {
 
     private static final Integer MOBILE_TERMINAL_ID_INT = 1;
     private static final String MOBILE_TERMINAL_ID = "NKJSDGHKJy9239";
+
     private final MTResponseDto SUCCESS_RESULT_LIST_RESPONSE;
     private final MTResponseDto SUCCESS_RESULT_UPDATE;
     private final MTResponseDto SUCCESS_RESULT_GET_BY_ID;
     private final MobileTerminalType MOBILE_TERMINAL_DTO = MockData.createMobileTerminalDto(MOBILE_TERMINAL_ID_INT);
     private final MTListResponse MOBILE_TERMINAL_LIST_RESPONSE = PollTestHelper.createMTListResponse();
+
     @Mock
     private MobileTerminalServiceBean mobileTerminalServiceBean;
+
     @InjectMocks
     private MobileTerminalRestResource mobileTerminalRestResource;
+
+    private AutoCloseable openedMocks;
+
+    @Before
+    public void setUp() {
+        openedMocks = MockitoAnnotations.openMocks(this);
+    }
+
+    @After
+    public void closeMocks() throws Exception {
+        openedMocks.close();
+    }
 
     public ResponseTest() {
         SUCCESS_RESULT_UPDATE = new MTResponseDto<>(MOBILE_TERMINAL_DTO, MTResponseCode.OK);
         SUCCESS_RESULT_LIST_RESPONSE = new MTResponseDto<>(MOBILE_TERMINAL_LIST_RESPONSE, MTResponseCode.OK);
         SUCCESS_RESULT_GET_BY_ID = new MTResponseDto<>(MOBILE_TERMINAL_DTO, MTResponseCode.OK);
-    }
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
     }
 
     @Test

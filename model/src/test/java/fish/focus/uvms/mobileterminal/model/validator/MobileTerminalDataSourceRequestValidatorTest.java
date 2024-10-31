@@ -12,6 +12,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.mobileterminal.model.validator;
 
 import fish.focus.schema.mobileterminal.types.v1.*;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +32,16 @@ public class MobileTerminalDataSourceRequestValidatorTest {
 
     @Mock
     private MobileTerminalType mobTermType;
+    private AutoCloseable openedMocks;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        openedMocks = MockitoAnnotations.openMocks(this);
+    }
+
+    @After
+    public void closeMocks() throws Exception {
+        openedMocks.close();
     }
 
     @Test
