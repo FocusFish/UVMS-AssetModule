@@ -11,9 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.asset.bean;
 
-import fish.focus.uvms.rest.security.InternalRestTokenHandler;
-import fish.focus.wsdl.asset.types.CarrierSource;
-import fish.focus.wsdl.asset.types.EventCode;
 import fish.focus.uvms.asset.domain.constant.AssetIdentifier;
 import fish.focus.uvms.asset.domain.dao.AssetDao;
 import fish.focus.uvms.asset.domain.dao.ContactInfoDao;
@@ -28,6 +25,9 @@ import fish.focus.uvms.mobileterminal.bean.MobileTerminalServiceBean;
 import fish.focus.uvms.mobileterminal.entity.Channel;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
+import fish.focus.uvms.rest.security.InternalRestTokenHandler;
+import fish.focus.wsdl.asset.types.CarrierSource;
+import fish.focus.wsdl.asset.types.EventCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,26 +56,36 @@ import java.util.stream.Collectors;
 public class AssetServiceBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(AssetServiceBean.class);
-    private static final int MMSI_MAX_LENGHT = 9;
+    private static final int MMSI_MAX_LENGTH = 9;
+
     @Resource(name = "java:global/movement_endpoint")
     private String movementEndpoint;
+
     @Inject
     private AuditServiceBean auditService;
+
     @Inject
     private AssetFilterServiceBean assetFilterService;
+
     @Inject
     private AssetDao assetDao;
+
     @Inject
     private NoteDao noteDao;
+
     @Inject
     private ContactInfoDao contactDao;
+
     @Inject
     private MobileTerminalServiceBean mobileTerminalService;
+
     @Inject
     private InternalRestTokenHandler tokenHandler;
+
     @Inject
     @UpdatedAssetEvent
     private Event<Asset> updatedAssetEvent;
+
     @PersistenceContext
     private EntityManager em;
 
@@ -175,7 +185,7 @@ public class AssetServiceBean {
     private Asset updateAssetInternal(Asset asset, String username, String comment) {
         nullValidation(asset, "No asset to update");
         nullValidation(asset.getId(), "No id on asset to update");
-        checkIdentifierNullValues(asset);
+        setEmptyIdentifierValuesToNull(asset);
 
         asset.setUpdatedBy(username);
         asset.setUpdateTime(Instant.now());
@@ -189,23 +199,35 @@ public class AssetServiceBean {
         return updatedAsset;
     }
 
-    private void checkIdentifierNullValues(Asset asset) {
-        if (asset.getCfr() == null || asset.getCfr().isEmpty())
+    private void setEmptyIdentifierValuesToNull(Asset asset) {
+        if (isNullOrEmpty(asset.getCfr())) {
             asset.setCfr(null);
-        if (asset.getImo() == null || asset.getImo().isEmpty())
+        }
+        if (isNullOrEmpty(asset.getImo())) {
             asset.setImo(null);
-        if (asset.getMmsi() == null || asset.getMmsi().isEmpty())
+        }
+        if (isNullOrEmpty(asset.getMmsi())) {
             asset.setMmsi(null);
-        if (asset.getIrcs() == null || asset.getIrcs().isEmpty())
+        }
+        if (isNullOrEmpty(asset.getIrcs())) {
             asset.setIrcs(null);
-        if (asset.getImo() == null || asset.getImo().isEmpty())
+        }
+        if (isNullOrEmpty(asset.getImo())) {
             asset.setImo(null);
-        if (asset.getGfcm() == null || asset.getGfcm().isEmpty())
+        }
+        if (isNullOrEmpty(asset.getGfcm())) {
             asset.setGfcm(null);
-        if (asset.getIccat() == null || asset.getIccat().isEmpty())
+        }
+        if (isNullOrEmpty(asset.getIccat())) {
             asset.setIccat(null);
-        if (asset.getUvi() == null || asset.getUvi().isEmpty())
+        }
+        if (isNullOrEmpty(asset.getUvi())) {
             asset.setUvi(null);
+        }
+    }
+
+    private static boolean isNullOrEmpty(String toCheck) {
+        return toCheck == null || toCheck.isEmpty();
     }
 
     public Asset upsertAsset(Asset asset, String username) {
@@ -219,24 +241,22 @@ public class AssetServiceBean {
     public AssetBO upsertAssetBO(AssetBO assetBo, String username) {
         nullValidation(assetBo, "No asset business object to upsert");
         Asset asset = assetBo.getAsset();
-        Map<AssetIdentifier, String> assetIds = createAssetId(asset);
-        Asset existingAsset = null;
-        if (assetIds.get(assetBo.getDefaultIdentifier()) != null) {
-            existingAsset = getAssetById(assetBo.getDefaultIdentifier(), assetIds.get(assetBo.getDefaultIdentifier()));
-        }
-        if (existingAsset == null) {
-            existingAsset = getAssetByCfrIrcsOrMmsi(assetIds);
-        }
+        Map<AssetIdentifier, String> assetIds = getAssetIds(asset);
+
+        Asset existingAsset = getExistingAsset(assetBo.getDefaultIdentifier(), assetIds);
         if (existingAsset != null) {
             asset.setId(existingAsset.getId());
 
-            asset.setMmsi(asset.getMmsi() == null ? existingAsset.getMmsi() : asset.getMmsi());                     //to save values we already have and dont get from the external source
+            // to save values we already have and don't get from the external source
+            asset.setMmsi(asset.getMmsi() == null ? existingAsset.getMmsi() : asset.getMmsi());
             asset.setComment(asset.getComment() == null ? existingAsset.getComment() : asset.getComment());
             asset.setParked(asset.getParked() == null ? existingAsset.getParked() : asset.getParked());
         }
+
         if (!AssetComparator.assetEquals(asset, existingAsset)) {
             asset = upsertAsset(asset, username);
         }
+
         // Clear and create new contacts and notes for now
         UUID assetId = asset.getId();
         if (assetBo.getContacts() != null) {
@@ -248,6 +268,20 @@ public class AssetServiceBean {
         }
         addLicenceToAsset(assetId, assetBo.getFishingLicence());
         return assetBo;
+    }
+
+    private Asset getExistingAsset(AssetIdentifier defaultIdentifierField, Map<AssetIdentifier, String> assetIds) {
+        Asset existingAsset = null;
+
+        if (assetIds.get(defaultIdentifierField) != null) {
+            existingAsset = getAssetById(defaultIdentifierField, assetIds.get(defaultIdentifierField));
+        }
+
+        if (existingAsset == null) {
+            existingAsset = getAssetByCfrIrcsOrMmsi(assetIds);
+        }
+
+        return existingAsset;
     }
 
     public Asset getAssetById(AssetIdentifier assetId, String value) {
@@ -268,8 +302,9 @@ public class AssetServiceBean {
             }
         }
         Asset asset = assetDao.getAssetFromAssetIdAtDate(idType, idValue, date);
-        if (asset != null && asset.getMobileTerminals() != null)
+        if (asset != null && asset.getMobileTerminals() != null) {
             asset.getMobileTerminals().size(); // force to load children. FetchType.EAGER didn't work.
+        }
         return asset;
     }
 
@@ -297,8 +332,9 @@ public class AssetServiceBean {
 
     public Asset getAssetRevisionForRevisionId(UUID historyId) {
         Asset revision = assetDao.getAssetRevisionForHistoryId(historyId);
-        if (revision.getMobileTerminals() != null)
+        if (revision.getMobileTerminals() != null) {
             revision.getMobileTerminals().size(); // force to load children. FetchType.EAGER didn't work.
+        }
         return revision;
     }
 
@@ -306,8 +342,9 @@ public class AssetServiceBean {
         List<Asset> revisions = assetDao.getRevisionsForAsset(id);
         // force to load children. FetchType.EAGER didn't work.
         revisions.forEach(asset -> {
-            if (asset.getMobileTerminals() != null)
+            if (asset.getMobileTerminals() != null) {
                 asset.getMobileTerminals().size();
+            }
         });
         revisions.sort(Comparator.comparing(Asset::getUpdateTime));
         if (revisions.size() > maxNbr) {
@@ -389,14 +426,13 @@ public class AssetServiceBean {
     }
 
     public AssetMTEnrichmentResponse collectAssetMT(AssetMTEnrichmentRequest request) {
-
         // Get Mobile Terminal if it exists
         MobileTerminal terminal = mobileTerminalService.getMobileTerminalByAssetMTEnrichmentRequest(request);
 
         Asset asset = terminal == null ? null : terminal.getAsset();
 
         if (asset == null) {
-            asset = getAssetByCfrIrcsOrMmsi(createAssetId(request));
+            asset = getAssetByCfrIrcsOrMmsi(getAssetIds(request));
         }
 
         MobileTerminalTypeEnum transponderType = getTransponderType(request);
@@ -414,30 +450,32 @@ public class AssetServiceBean {
 
     private boolean shouldANewShipBeCreated(AssetMTEnrichmentRequest request, Asset asset, MobileTerminalTypeEnum transponderType) {
         return asset == null &&
-                (request.getMmsiValue() == null || request.getMmsiValue().length() <= MMSI_MAX_LENGHT) &&
+                (request.getMmsiValue() == null || request.getMmsiValue().length() <= MMSI_MAX_LENGTH) &&
                 transponderType == null;
     }
 
     private void enrichAssetAndMobileTerminal(AssetMTEnrichmentRequest request,
                                               AssetMTEnrichmentResponse assetMTEnrichmentResponse, MobileTerminal terminal, Asset asset) {
         if (asset != null) {
-            enrichmentHelper(assetMTEnrichmentResponse, asset);
+            enrichResponseWithAssetInfo(assetMTEnrichmentResponse, asset);
         }
         if (terminal != null) {
-            enrichmentHelper(request, assetMTEnrichmentResponse, terminal);
+            enrichResponseWithMobileTerminalAndChannelInfo(request, assetMTEnrichmentResponse, terminal);
         }
     }
 
     private void enrichAssetFilter(AssetMTEnrichmentResponse assetMTEnrichmentResponse, Asset asset) {
-        if (asset != null) {
-            List<String> assetGroupList = new ArrayList<>();
-            List<AssetFilter> assetFilters = assetFilterService.getAssetFilterListByAssetId(asset.getId());
-            for (AssetFilter filter : assetFilters) {
-                UUID assetFilterId = filter.getId();
-                assetGroupList.add(assetFilterId.toString());
-            }
-            assetMTEnrichmentResponse.setAssetFilterList(assetGroupList);
+        if (asset == null) {
+            return;
         }
+
+        List<String> assetGroupList = new ArrayList<>();
+        List<AssetFilter> assetFilters = assetFilterService.getAssetFilterListByAssetId(asset.getId());
+        for (AssetFilter filter : assetFilters) {
+            UUID assetFilterId = filter.getId();
+            assetGroupList.add(assetFilterId.toString());
+        }
+        assetMTEnrichmentResponse.setAssetFilterList(assetGroupList);
     }
 
     private MobileTerminalTypeEnum getTransponderType(AssetMTEnrichmentRequest request) {
@@ -448,7 +486,7 @@ public class AssetServiceBean {
         }
     }
 
-    private AssetMTEnrichmentResponse enrichmentHelper(AssetMTEnrichmentResponse resp, Asset asset) {
+    private void enrichResponseWithAssetInfo(AssetMTEnrichmentResponse resp, Asset asset) {
         resp.setAssetUUID(asset.getId() == null ? null : asset.getId().toString());
         resp.setAssetName(asset.getName());
         resp.setAssetHistoryId(asset.getHistoryId() == null ? null : asset.getHistoryId().toString());
@@ -460,13 +498,11 @@ public class AssetServiceBean {
         resp.setMmsi(asset.getMmsi());
         resp.setImo(asset.getImo());
         resp.setVesselType(asset.getVesselType());
-        resp.setParked(asset.getParked() != null ? asset.getParked() : false);
-        return resp;
+        resp.setParked(asset.getParked() != null && asset.getParked());
     }
 
-    private AssetMTEnrichmentResponse enrichmentHelper(AssetMTEnrichmentRequest req, AssetMTEnrichmentResponse resp, MobileTerminal mobTerm) {
-
-        // here we put into response data about mobiletreminal / channels etc etc
+    private void enrichResponseWithMobileTerminalAndChannelInfo(AssetMTEnrichmentRequest req, AssetMTEnrichmentResponse resp, MobileTerminal mobTerm) {
+        // here we put into response data about mobile terminal / channels etc etc
         String channelGuid = getChannelGuid(mobTerm, req);
         resp.setChannelGuid(channelGuid);
         resp.setSerialNumber(mobTerm.getSerialNo());
@@ -477,35 +513,35 @@ public class AssetServiceBean {
         }
         resp.setMobileTerminalIsInactive(!mobTerm.getActive());
 
-        if (mobTerm.getChannels() != null) {
-            Set<Channel> channels = mobTerm.getChannels();
-            for (Channel channel : channels) {
-                if (!channel.getId().toString().equals(channelGuid)) {
-                    continue;
-                }
-
-                resp.setDNID(String.valueOf(channel.getDnid()));
-                resp.setMemberNumber(String.valueOf(channel.getMemberNumber()));
-            }
+        if (mobTerm.getChannels() == null) {
+            return;
         }
-        return resp;
+        Set<Channel> channels = mobTerm.getChannels();
+        for (Channel channel : channels) {
+            if (!channel.getId().toString().equals(channelGuid)) {
+                continue;
+            }
+
+            resp.setDNID(String.valueOf(channel.getDnid()));
+            resp.setMemberNumber(String.valueOf(channel.getMemberNumber()));
+        }
     }
 
     private String getChannelGuid(MobileTerminal mobileTerminal, AssetMTEnrichmentRequest request) {
-        String dnid = "";
-        String memberNumber = "";
         String channelGuid = "";
 
-        dnid = request.getDnidValue();
-        memberNumber = request.getMemberNumberValue();
+        if (isNullOrEmpty(request.getDnidValue()) || isNullOrEmpty(request.getMemberNumberValue())) {
+            return "";
+        }
+
+        Integer dnid = Integer.valueOf(request.getDnidValue());
+        Integer memberNumber = Integer.valueOf(request.getMemberNumberValue());
 
         // Get the channel guid
-        boolean correctDnid = false;
-        boolean correctMemberNumber = false;
         Set<Channel> channels = mobileTerminal.getChannels();
         for (Channel channel : channels) {
-            correctDnid = channel.getDnid().equals(dnid);
-            correctMemberNumber = channel.getMemberNumber().equals(memberNumber);
+            boolean correctDnid = channel.getDnid().equals(dnid);
+            boolean correctMemberNumber = channel.getMemberNumber().equals(memberNumber);
 
             if (correctDnid && correctMemberNumber) {
                 channelGuid = channel.getId().toString();
@@ -514,74 +550,74 @@ public class AssetServiceBean {
         return channelGuid;
     }
 
-    private Map<AssetIdentifier, String> createAssetId(Asset asset) {
-        Map<AssetIdentifier, String> assetId = new HashMap<>();
+    private Map<AssetIdentifier, String> getAssetIds(Asset asset) {
+        Map<AssetIdentifier, String> assetId = new EnumMap<>(AssetIdentifier.class);
 
-        if (asset.getCfr() != null && asset.getCfr().length() > 0) {
+        if (!isNullOrEmpty(asset.getCfr())) {
             assetId.put(AssetIdentifier.CFR, asset.getCfr());
         }
         if (asset.getId() != null) {
             assetId.put(AssetIdentifier.GUID, asset.getId().toString());
         }
-        if (asset.getImo() != null && asset.getImo().length() > 0) {
+        if (!isNullOrEmpty(asset.getImo())) {
             assetId.put(AssetIdentifier.IMO, asset.getImo());
         }
-        if (asset.getIrcs() != null && asset.getIrcs().length() > 0) {
+        if (!isNullOrEmpty(asset.getIrcs())) {
             assetId.put(AssetIdentifier.IRCS, asset.getIrcs());
         }
-        if (asset.getMmsi() != null && asset.getMmsi().length() > 0) {
+        if (!isNullOrEmpty(asset.getMmsi())) {
             assetId.put(AssetIdentifier.MMSI, asset.getMmsi());
         }
-        if (asset.getGfcm() != null && asset.getGfcm().length() > 0) {
+        if (!isNullOrEmpty(asset.getGfcm())) {
             assetId.put(AssetIdentifier.GFCM, asset.getGfcm());
         }
-        if (asset.getUvi() != null && asset.getUvi().length() > 0) {
+        if (!isNullOrEmpty(asset.getUvi())) {
             assetId.put(AssetIdentifier.UVI, asset.getUvi());
         }
-        if (asset.getIccat() != null && asset.getIccat().length() > 0) {
+        if (!isNullOrEmpty(asset.getIccat())) {
             assetId.put(AssetIdentifier.ICCAT, asset.getIccat());
         }
         if (asset.getNationalId() != null) {
             assetId.put(AssetIdentifier.NATIONAL, asset.getNationalId().toString());
         }
+
         return assetId;
     }
 
-    private Map<AssetIdentifier, String> createAssetId(AssetMTEnrichmentRequest request) {
-        Map<AssetIdentifier, String> assetId = new HashMap<>();
+    private Map<AssetIdentifier, String> getAssetIds(AssetMTEnrichmentRequest request) {
+        Map<AssetIdentifier, String> assetId = new EnumMap<>(AssetIdentifier.class);
 
-        if (request.getCfrValue() != null && request.getCfrValue().length() > 0) {
+        if (!isNullOrEmpty(request.getCfrValue())) {
             assetId.put(AssetIdentifier.CFR, request.getCfrValue());
         }
         if (request.getIdValue() != null) {
             assetId.put(AssetIdentifier.GUID, request.getIdValue().toString());
         }
-        if (request.getImoValue() != null && request.getImoValue().length() > 0) {
+        if (!isNullOrEmpty(request.getImoValue())) {
             assetId.put(AssetIdentifier.IMO, request.getImoValue());
         }
-        if (request.getIrcsValue() != null && request.getIrcsValue().length() > 0) {
+        if (!isNullOrEmpty(request.getIrcsValue())) {
             assetId.put(AssetIdentifier.IRCS, request.getIrcsValue());
         }
-        if (request.getMmsiValue() != null && request.getMmsiValue().length() > 0) {
+        if (!isNullOrEmpty(request.getMmsiValue())) {
             assetId.put(AssetIdentifier.MMSI, request.getMmsiValue());
         }
-        if (request.getGfcmValue() != null && request.getGfcmValue().length() > 0) {
+        if (!isNullOrEmpty(request.getGfcmValue())) {
             assetId.put(AssetIdentifier.GFCM, request.getGfcmValue());
         }
-        if (request.getUviValue() != null && request.getUviValue().length() > 0) {
+        if (!isNullOrEmpty(request.getUviValue())) {
             assetId.put(AssetIdentifier.UVI, request.getUviValue());
         }
-        if (request.getIccatValue() != null && request.getIccatValue().length() > 0) {
+        if (!isNullOrEmpty(request.getIccatValue())) {
             assetId.put(AssetIdentifier.ICCAT, request.getIccatValue());
         }
+
         return assetId;
     }
 
     private Asset getAssetByCfrIrcsOrMmsi(Map<AssetIdentifier, String> assetId) {
-        Asset asset = null;
-
         // If no asset information exists, don't look for one
-        if (assetId == null || assetId.size() < 1) {
+        if (assetId == null || assetId.isEmpty()) {
             LOG.warn("No asset information exists!");
             return null;
         }
@@ -591,6 +627,7 @@ public class AssetServiceBean {
         String ircs = assetId.getOrDefault(AssetIdentifier.IRCS, null);
         String mmsi = assetId.getOrDefault(AssetIdentifier.MMSI, null);
 
+        Asset asset = null;
 
         if (cfr != null) {
             asset = getAssetById(AssetIdentifier.CFR, cfr);
@@ -609,46 +646,50 @@ public class AssetServiceBean {
 
     // if more than 1 hit put data from ais into fartyg2record
     // remove the duplicate
-    private Asset normalizeAssetOnMMSI_IRCS(String mmsi, String ircs, String updatedBy) {
-
+    private Asset normalizeAssetOnMmsiIrcs(String mmsi, String ircs, String updatedBy) {
         List<Asset> assets = assetDao.getAssetByMmsiOrIrcs(mmsi, ircs);
 
         int assetsSize = assets.size();
         if (assetsSize == 0) {
             return null;
-        } else if (assetsSize == 1) {
+        }
+        if (assetsSize == 1) {
             return assets.get(0);
-        } else {
-            Asset fartyg2Asset = null;
-            Asset nonFartyg2Asset = null;
-            // find the fartyg2 record
+        }
 
-            for (Asset asset : assets) {
-                if ((asset.getSource() != null) && (asset.getSource().equals(CarrierSource.NATIONAL.toString()))) {
-                    fartyg2Asset = asset;
-                } else {
-                    nonFartyg2Asset = asset;
-                }
-            }
-            if ((fartyg2Asset != null) && (nonFartyg2Asset != null)) {
-                String nonFartyg2AssetMmsi = mmsi;
-                nonFartyg2Asset.setMmsi(null);
-                nonFartyg2Asset.setActive(false);
-                String comment = "Found to be a duplicate of another asset with IRCS: " + ircs + " " + (nonFartyg2Asset.getComment() != null ? nonFartyg2Asset.getComment() : "");
-                nonFartyg2Asset.setComment((comment.length() > 255 ? comment.substring(0, 255) : comment));
-                // flush is necessary to avoid dumps on MMSI
-                em.flush();
-                fartyg2Asset.setMmsi(nonFartyg2AssetMmsi);
-                fartyg2Asset.setUpdateTime(Instant.now());
-                fartyg2Asset.setUpdatedBy(updatedBy);
-                em.merge(fartyg2Asset);
-                assetDao.createAssetRemapMapping(createAssetRemapMapping(nonFartyg2Asset.getId(), fartyg2Asset.getId()));
-                remapAssetsInMovement(nonFartyg2Asset.getId().toString(), fartyg2Asset.getId().toString());
-                updatedAssetEvent.fire(fartyg2Asset);
-                return fartyg2Asset;
+        Asset fartyg2Asset = null;
+        Asset nonFartyg2Asset = null;
+
+        // find the fartyg2 record
+        for (Asset asset : assets) {
+            if ((asset.getSource() != null) && (asset.getSource().equals(CarrierSource.NATIONAL.toString()))) {
+                fartyg2Asset = asset;
+            } else {
+                nonFartyg2Asset = asset;
             }
         }
-        return null;
+        if (fartyg2Asset == null || nonFartyg2Asset == null) {
+            return null;
+        }
+
+        nonFartyg2Asset.setMmsi(null);
+        nonFartyg2Asset.setActive(false);
+        String comment = "Found to be a duplicate of another asset with IRCS: " + ircs + " " + (nonFartyg2Asset.getComment() != null ? nonFartyg2Asset.getComment() : "");
+        nonFartyg2Asset.setComment((comment.length() > 255 ? comment.substring(0, 255) : comment));
+        // flush is necessary to avoid dumps on MMSI
+        em.flush();
+
+        fartyg2Asset.setMmsi(mmsi);
+        fartyg2Asset.setUpdateTime(Instant.now());
+        fartyg2Asset.setUpdatedBy(updatedBy);
+        em.merge(fartyg2Asset);
+
+        assetDao.createAssetRemapMapping(createAssetRemapMapping(nonFartyg2Asset.getId(), fartyg2Asset.getId()));
+        remapAssetsInMovement(nonFartyg2Asset.getId().toString(), fartyg2Asset.getId().toString());
+
+        updatedAssetEvent.fire(fartyg2Asset);
+
+        return fartyg2Asset;
     }
 
     private AssetRemapMapping createAssetRemapMapping(UUID oldAssetId, UUID newAssetId) {
@@ -700,46 +741,51 @@ public class AssetServiceBean {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void assetInformation(Asset assetFromAIS, String user) {
-
         if (assetFromAIS == null) {
             return;
         }
 
-        Asset assetFromDB = normalizeAssetOnMMSI_IRCS(assetFromAIS.getMmsi(), assetFromAIS.getIrcs(), user);
+        Asset assetFromDB = normalizeAssetOnMmsiIrcs(assetFromAIS.getMmsi(), assetFromAIS.getIrcs(), user);
 
-        boolean shouldUpdate = false;
-
-        if (assetFromDB == null || CarrierSource.NATIONAL.toString().equals(assetFromDB.getSource())) {    //if we have data from fartyg 2 then we should not update with data from ais
+        // if we have data from fartyg2 then we should not update with data from AIS
+        if (assetFromDB == null || CarrierSource.NATIONAL.toString().equals(assetFromDB.getSource())) {
             return;
         }
 
-        if ((assetFromDB.getMmsi() == null || !assetFromDB.getMmsi().equals(assetFromAIS.getMmsi())) && (assetFromAIS.getMmsi() != null)) {
+        boolean shouldUpdate = false;
+        if ((assetFromDB.getMmsi() == null || !assetFromDB.getMmsi().equals(assetFromAIS.getMmsi()))
+                && assetFromAIS.getMmsi() != null) {
             shouldUpdate = true;
             assetFromDB.setMmsi(assetFromAIS.getMmsi());
         }
-        if (assetFromAIS.getIrcs() != null && (assetFromDB.getIrcs() == null || !assetFromDB.getIrcs().equals(assetFromAIS.getIrcs().replace(" ", "")))) {
+        if (assetFromAIS.getIrcs() != null
+                && (assetFromDB.getIrcs() == null || !assetFromDB.getIrcs().equals(assetFromAIS.getIrcs().replace(" ", "")))) {
             shouldUpdate = true;
             assetFromDB.setIrcs(assetFromAIS.getIrcs().replace(" ", ""));
         }
-        if ((assetFromDB.getVesselType() == null || !assetFromDB.getVesselType().equals(assetFromAIS.getVesselType())) && (assetFromAIS.getVesselType() != null)) {
+        if ((assetFromDB.getVesselType() == null || !assetFromDB.getVesselType().equals(assetFromAIS.getVesselType()))
+                && assetFromAIS.getVesselType() != null) {
             shouldUpdate = true;
             assetFromDB.setVesselType(assetFromAIS.getVesselType());
         }
-        if ((assetFromDB.getImo() == null || !assetFromDB.getImo().equals(assetFromAIS.getImo())) && (assetFromAIS.getImo() != null)) {
+        if ((assetFromDB.getImo() == null || !assetFromDB.getImo().equals(assetFromAIS.getImo()))
+                && assetFromAIS.getImo() != null) {
             shouldUpdate = true;
             assetFromDB.setImo(assetFromAIS.getImo());
         }
 
-        if ((assetFromDB.getName() == null || assetFromDB.getName().startsWith("Unknown") || !assetFromDB.getName().equals(assetFromAIS.getName())) && (assetFromAIS.getName() != null)) {
-            if (!assetFromAIS.getName().isEmpty()) {
-                shouldUpdate = true;
-                assetFromDB.setName(assetFromAIS.getName());
-            }
+        if ((assetFromDB.getName() == null || assetFromDB.getName().startsWith("Unknown") || !assetFromDB.getName().equals(assetFromAIS.getName()))
+                && assetFromAIS.getName() != null && !assetFromAIS.getName().isEmpty()) {
+            shouldUpdate = true;
+            assetFromDB.setName(assetFromAIS.getName());
         }
-        if ((assetFromDB.getFlagStateCode() == null || assetFromDB.getFlagStateCode().startsWith("UNK") || !assetFromDB.getFlagStateCode().equals(assetFromAIS.getFlagStateCode())) && (assetFromAIS.getFlagStateCode() != null)) {
+
+        if ((assetFromDB.getFlagStateCode() == null || assetFromDB.getFlagStateCode().startsWith("UNK") || !assetFromDB.getFlagStateCode().equals(assetFromAIS.getFlagStateCode()))
+                && assetFromAIS.getFlagStateCode() != null) {
             shouldUpdate = true;
             assetFromDB.setFlagStateCode(assetFromAIS.getFlagStateCode());
         }
+
         if (shouldUpdate) {
             assetFromDB.setUpdatedBy(user);
             assetFromDB.setUpdateTime(Instant.now());
@@ -751,8 +797,7 @@ public class AssetServiceBean {
 
     public Note getNoteById(UUID id) {
         nullValidation(id, "Cant search for noteId: " + id);
-        Note note = noteDao.findNote(id);
-        return note;
+        return noteDao.findNote(id);
     }
 
     public void addLicenceToAsset(UUID assetId, FishingLicence fishingLicence) {
@@ -798,6 +843,8 @@ public class AssetServiceBean {
     }
 
     private void nullValidation(Object obj, String message) {
-        if (obj == null) throw new IllegalArgumentException(message);
+        if (obj == null) {
+            throw new IllegalArgumentException(message);
+        }
     }
 }
