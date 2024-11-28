@@ -29,24 +29,25 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import javax.jms.Message;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
 public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Inject
     AssetModelMapper assetModelMapper;
+
     @Inject
     AssetServiceBean assetServiceBean;
-    private JMSHelper jmsHelper = new JMSHelper();
+
+    private final JMSHelper jmsHelper = new JMSHelper();
 
     @Test
     @OperateOnDeployment("normal")
@@ -64,15 +65,17 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
     public void getAssetByCFRTest() throws Exception {
         Asset asset = AssetTestHelper.createBasicAsset();
         jmsHelper.upsertAsset(asset);
-        // TODO Find better solution, this is needed due to async jms call
-        Thread.sleep(2000);
-        Asset assetById = jmsHelper.getAssetById(asset.getCfr(), AssetIdType.CFR);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset assetById = jmsHelper.getAssetById(asset.getCfr(), AssetIdType.CFR);
 
-        assertThat(assetById, is(notNullValue()));
-        assertThat(assetById.getCfr(), is(asset.getCfr()));
-        assertThat(assetById.getName(), is(asset.getName()));
-        assertThat(assetById.getExternalMarking(), is(asset.getExternalMarking()));
-        assertThat(assetById.getIrcs(), is(asset.getIrcs()));
+                    assertThat(assetById, is(notNullValue()));
+                    assertThat(assetById.getCfr(), is(asset.getCfr()));
+                    assertThat(assetById.getName(), is(asset.getName()));
+                    assertThat(assetById.getExternalMarking(), is(asset.getExternalMarking()));
+                    assertThat(assetById.getIrcs(), is(asset.getIrcs()));
+                });
     }
 
     @Test
@@ -80,17 +83,20 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
     public void getAssetByIRCSTest() throws Exception {
         Asset asset = AssetTestHelper.createBasicAsset();
         jmsHelper.upsertAsset(asset);
-        Thread.sleep(2000);
-        Asset assetById = jmsHelper.getAssetById(asset.getIrcs(), AssetIdType.IRCS);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset assetById = jmsHelper.getAssetById(asset.getIrcs(), AssetIdType.IRCS);
 
-        assertThat(assetById, is(notNullValue()));
-        assertThat(assetById.getCfr(), is(asset.getCfr()));
-        assertThat(assetById.getName(), is(asset.getName()));
-        assertThat(assetById.getExternalMarking(), is(asset.getExternalMarking()));
-        assertThat(assetById.getIrcs(), is(asset.getIrcs()));
+                    assertThat(assetById, is(notNullValue()));
+                    assertThat(assetById.getCfr(), is(asset.getCfr()));
+                    assertThat(assetById.getName(), is(asset.getName()));
+                    assertThat(assetById.getExternalMarking(), is(asset.getExternalMarking()));
+                    assertThat(assetById.getIrcs(), is(asset.getIrcs()));
 
-        assertEquals(AssetIdType.GUID, assetById.getAssetId().getType());
-        assertEquals(assetById.getAssetId().getGuid(), assetById.getAssetId().getValue()); //since guid and value are supposed t obe the same
+                    assertEquals(AssetIdType.GUID, assetById.getAssetId().getType());
+                    assertEquals(assetById.getAssetId().getGuid(), assetById.getAssetId().getValue()); //since guid and value are supposed t obe the same
+                });
     }
 
     @Test
@@ -98,14 +104,17 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
     public void getAssetByMMSITest() throws Exception {
         Asset asset = AssetTestHelper.createBasicAsset();
         jmsHelper.upsertAsset(asset);
-        Thread.sleep(2000);
-        Asset assetById = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset assetById = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
 
-        assertThat(assetById, is(notNullValue()));
-        assertThat(assetById.getCfr(), is(asset.getCfr()));
-        assertThat(assetById.getName(), is(asset.getName()));
-        assertThat(assetById.getExternalMarking(), is(asset.getExternalMarking()));
-        assertThat(assetById.getIrcs(), is(asset.getIrcs()));
+                    assertThat(assetById, is(notNullValue()));
+                    assertThat(assetById.getCfr(), is(asset.getCfr()));
+                    assertThat(assetById.getName(), is(asset.getName()));
+                    assertThat(assetById.getExternalMarking(), is(asset.getExternalMarking()));
+                    assertThat(assetById.getIrcs(), is(asset.getIrcs()));
+                });
     }
 
     @Test
@@ -113,20 +122,29 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
     public void upsertAssetTest() throws Exception {
         Asset asset = AssetTestHelper.createBasicAsset();
         jmsHelper.upsertAsset(asset);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset assetById = jmsHelper.getAssetById(asset.getCfr(), AssetIdType.CFR);
+
+                    assertThat(assetById, is(notNullValue()));
+                    assertThat(assetById.getCfr(), is(asset.getCfr()));
+                });
 
         String newName = "Name upserted";
         asset.setName(newName);
         jmsHelper.upsertAsset(asset);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset assetById = jmsHelper.getAssetById(asset.getCfr(), AssetIdType.CFR);
 
-        Asset assetById = jmsHelper.getAssetById(asset.getCfr(), AssetIdType.CFR);
-
-        assertThat(assetById, is(notNullValue()));
-        assertThat(assetById.getCfr(), is(asset.getCfr()));
-        assertThat(assetById.getName(), is(newName));
-        assertThat(assetById.getExternalMarking(), is(asset.getExternalMarking()));
-        assertThat(assetById.getIrcs(), is(asset.getIrcs()));
+                    assertThat(assetById, is(notNullValue()));
+                    assertThat(assetById.getCfr(), is(asset.getCfr()));
+                    assertThat(assetById.getName(), is(newName));
+                    assertThat(assetById.getExternalMarking(), is(asset.getExternalMarking()));
+                    assertThat(assetById.getIrcs(), is(asset.getIrcs()));
+                });
     }
 
     @Test
@@ -135,10 +153,12 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         Asset asset = AssetTestHelper.createBasicAsset();
         asset.setSource(CarrierSource.INTERNAL);
         jmsHelper.upsertAsset(asset);
-        Thread.sleep(2000);
-
-        Asset fetchedAsset = jmsHelper.getAssetById(asset.getCfr(), AssetIdType.CFR);
-        assertThat(fetchedAsset.getSource(), is(asset.getSource()));
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(asset.getCfr(), AssetIdType.CFR);
+                    assertThat(fetchedAsset.getSource(), is(asset.getSource()));
+                });
     }
 
     @Test
@@ -147,32 +167,41 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         Asset asset = AssetTestHelper.createBasicAsset();
         asset.setName(null);
         jmsHelper.upsertAsset(asset);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset assetById = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
+                    assertNull(assetById.getName());
+                });
 
-        Asset assetById = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
-        assertTrue(assetById.getName() == null);
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
         newAsset.setMmsi(asset.getMmsiNo());
         newAsset.setName("namebyassetinfo");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
-        assetById = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
-        assertTrue(assetById.getName() != null);
-        assertTrue(assetById.getName().equals("namebyassetinfo"));
-
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset assetById = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(assetById.getName());
+                    assertEquals("namebyassetinfo", assetById.getName());
+                });
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void assetInformationTest2() throws Exception {
-
         Asset assetWithsMMSI = AssetTestHelper.createBasicAsset();
         assetWithsMMSI.setIrcs(null);
         assetWithsMMSI.setName("ShouldNotBeThis");
         jmsHelper.upsertAsset(assetWithsMMSI);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsMMSI.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                });
 
 
         Asset assetWithsIRCS = AssetTestHelper.createBasicAsset();
@@ -180,7 +209,12 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         assetWithsIRCS.setName("namnetestfall2");
         assetWithsIRCS.setSource(CarrierSource.NATIONAL);
         jmsHelper.upsertAsset(assetWithsIRCS);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsIRCS.getIrcs(), AssetIdType.IRCS);
+                    assertNotNull(fetchedAsset);
+                });
 
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
@@ -190,20 +224,21 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
-
-        Asset fetchedAsset = jmsHelper.getAssetById(assetWithsMMSI.getMmsiNo(), AssetIdType.MMSI);
-        assertTrue(fetchedAsset != null);
-        assertTrue(fetchedAsset.getName() != null);
-        assertTrue(fetchedAsset.getName(), fetchedAsset.getName().equals(assetWithsIRCS.getName()));
-        assertTrue(fetchedAsset.getMmsiNo() != null);
-        assertTrue(fetchedAsset.getIrcs() != null);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsMMSI.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                    assertNotNull(fetchedAsset.getName());
+                    assertThat(fetchedAsset.getName(), is(equalTo(assetWithsIRCS.getName())));
+                    assertNotNull(fetchedAsset.getMmsiNo());
+                    assertNotNull(fetchedAsset.getIrcs());
+                });
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void NationalAssetWithCorrectIrcsAndMmsiAndInternalAssetWithCorrectButFaultyFormatedIrcs() throws Exception {
-
         String correctIrcs = "SFC-" + AssetTestsHelper.getRandomIntegers(4);
         String correctMmsi = AssetTestsHelper.getRandomIntegers(9);
 
@@ -212,8 +247,12 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         internalAsset.setMmsiNo(null);
         internalAsset.setName("ShouldNotBeThis");
         jmsHelper.upsertAsset(internalAsset);
-        Thread.sleep(2000);
-
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(internalAsset.getIrcs(), AssetIdType.IRCS);
+                    assertNotNull(fetchedAsset);
+                });
 
         Asset nationalAsset = AssetTestHelper.createBasicAsset();
         nationalAsset.setMmsiNo(correctMmsi);
@@ -221,8 +260,12 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         nationalAsset.setName("namnetestfall2");
         nationalAsset.setSource(CarrierSource.NATIONAL);
         jmsHelper.upsertAsset(nationalAsset);
-        Thread.sleep(2000);
-
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(nationalAsset.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                });
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
         newAsset.setMmsi(correctMmsi);
@@ -231,16 +274,18 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
-
-        Asset fetchedAsset = jmsHelper.getAssetById(nationalAsset.getMmsiNo(), AssetIdType.MMSI);
-        assertTrue(fetchedAsset != null);
-        assertTrue(fetchedAsset.getName() != null);
-        assertTrue(fetchedAsset.getName(), fetchedAsset.getName().equals(nationalAsset.getName()));
-        assertTrue(fetchedAsset.getMmsiNo() != null);
-        assertEquals(fetchedAsset.getMmsiNo(), correctMmsi);
-        assertTrue(fetchedAsset.getIrcs() != null);
-        assertEquals(fetchedAsset.getIrcs(), correctIrcs);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(nationalAsset.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                    assertNotNull(fetchedAsset.getName());
+                    assertThat(fetchedAsset.getName(), is(equalTo(nationalAsset.getName())));
+                    assertNotNull(fetchedAsset.getMmsiNo());
+                    assertEquals(fetchedAsset.getMmsiNo(), correctMmsi);
+                    assertNotNull(fetchedAsset.getIrcs());
+                    assertEquals(fetchedAsset.getIrcs(), correctIrcs);
+                });
     }
 
 
@@ -254,7 +299,12 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         assetWithsIRCS.setName(null);
         assetWithsIRCS.setSource(CarrierSource.NATIONAL);
         jmsHelper.upsertAsset(assetWithsIRCS);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsIRCS.getIrcs(), AssetIdType.IRCS);
+                    assertNotNull(fetchedAsset);
+                });
 
         // an ais with a "random" mmsi
         String mmsi = UUID.randomUUID().toString().substring(0, 10);
@@ -265,25 +315,29 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
-
-        Asset fetchedAsset = jmsHelper.getAssetById(mmsi, AssetIdType.MMSI);
-        assertTrue(fetchedAsset == null);
-
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(mmsi, AssetIdType.MMSI);
+                    assertNull(fetchedAsset);
+                });
     }
 
 
     @Test
     @OperateOnDeployment("normal")
     public void assetInformationTest4() throws Exception {
-
-
         Asset assetWithsIRCS = AssetTestHelper.createBasicAsset();
         assetWithsIRCS.setMmsiNo(null);
         assetWithsIRCS.setName("namnetestfall4");
         assetWithsIRCS.setSource(CarrierSource.NATIONAL);
         jmsHelper.upsertAsset(assetWithsIRCS);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsIRCS.getIrcs(), AssetIdType.IRCS);
+                    assertNotNull(fetchedAsset);
+                });
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
         newAsset.setIrcs(assetWithsIRCS.getIrcs());
@@ -291,28 +345,32 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
-
-        Asset fetchedAsset = jmsHelper.getAssetById(assetWithsIRCS.getIrcs(), AssetIdType.IRCS);
-        assertTrue(fetchedAsset != null);
-        assertTrue(fetchedAsset.getName() != null);
-        assertTrue(fetchedAsset.getName().equals(assetWithsIRCS.getName()));
-        assertTrue(fetchedAsset.getIrcs() != null);
-        assertTrue(fetchedAsset.getIrcs().equals(assetWithsIRCS.getIrcs()));
-
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsIRCS.getIrcs(), AssetIdType.IRCS);
+                    assertNotNull(fetchedAsset);
+                    assertNotNull(fetchedAsset.getName());
+                    assertEquals(fetchedAsset.getName(), assetWithsIRCS.getName());
+                    assertNotNull(fetchedAsset.getIrcs());
+                    assertEquals(fetchedAsset.getIrcs(), assetWithsIRCS.getIrcs());
+                });
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void assetInformationTest5() throws Exception {
-
-
         Asset assetWithsMMSI = AssetTestHelper.createBasicAsset();
         assetWithsMMSI.setIrcs(null);
         assetWithsMMSI.setName(null);
         assetWithsMMSI.setSource(CarrierSource.NATIONAL);
         jmsHelper.upsertAsset(assetWithsMMSI);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsMMSI.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                });
 
         // an ais with a "random" ircs
         String ircs = UUID.randomUUID().toString().substring(0, 9);
@@ -323,24 +381,28 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
-
-        Asset fetchedAsset = jmsHelper.getAssetById(ircs, AssetIdType.IRCS);
-        assertTrue(fetchedAsset == null);
-
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(ircs, AssetIdType.IRCS);
+                    assertNull(fetchedAsset);
+                });
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void assetInformationTest6() throws Exception {
-
-
         Asset assetWithsMMSI = AssetTestHelper.createBasicAsset();
         assetWithsMMSI.setIrcs(null);
         assetWithsMMSI.setName(null);
         assetWithsMMSI.setSource(CarrierSource.NATIONAL);
         jmsHelper.upsertAsset(assetWithsMMSI);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsMMSI.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                });
 
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
@@ -349,28 +411,31 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
-
-        Asset fetchedAsset = jmsHelper.getAssetById(assetWithsMMSI.getMmsiNo(), AssetIdType.MMSI);
-        assertTrue(fetchedAsset != null);
-        assertTrue(fetchedAsset.getName() == null);
-        assertTrue(fetchedAsset.getMmsiNo() != null);
-        assertTrue(fetchedAsset.getMmsiNo().equals(assetWithsMMSI.getMmsiNo()));
-
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsMMSI.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                    assertNull(fetchedAsset.getName());
+                    assertNotNull(fetchedAsset.getMmsiNo());
+                    assertEquals(fetchedAsset.getMmsiNo(), assetWithsMMSI.getMmsiNo());
+                });
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void assetInformationTest6XEUSource() throws Exception {
-
-
         Asset assetWithsMMSI = AssetTestHelper.createBasicAsset();
         assetWithsMMSI.setIrcs(null);
         assetWithsMMSI.setName(null);
         assetWithsMMSI.setSource(CarrierSource.XEU);
         jmsHelper.upsertAsset(assetWithsMMSI);
-        Thread.sleep(2000);
-
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsMMSI.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                });
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
         newAsset.setMmsi(assetWithsMMSI.getMmsiNo());
@@ -378,28 +443,32 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
-
-        Asset fetchedAsset = jmsHelper.getAssetById(assetWithsMMSI.getMmsiNo(), AssetIdType.MMSI);
-        assertTrue(fetchedAsset != null);
-        assertTrue(fetchedAsset.getName() != null);
-        assertTrue(fetchedAsset.getName().equals(newAsset.getName()));
-        assertTrue(fetchedAsset.getMmsiNo() != null);
-        assertTrue(fetchedAsset.getMmsiNo().equals(assetWithsMMSI.getMmsiNo()));
-
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsMMSI.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                    assertNotNull(fetchedAsset.getName());
+                    assertEquals(fetchedAsset.getName(), newAsset.getName());
+                    assertNotNull(fetchedAsset.getMmsiNo());
+                    assertEquals(fetchedAsset.getMmsiNo(), assetWithsMMSI.getMmsiNo());
+                });
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void assetInformationTest7() throws Exception {
-
-
         Asset assetWithsIRCS = AssetTestHelper.createBasicAsset();
         assetWithsIRCS.setMmsiNo(null);
         assetWithsIRCS.setName(null);
         assetWithsIRCS.setSource(CarrierSource.NATIONAL);
         jmsHelper.upsertAsset(assetWithsIRCS);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsIRCS.getIrcs(), AssetIdType.IRCS);
+                    assertNotNull(fetchedAsset);
+                });
 
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
@@ -408,27 +477,31 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
-
-        Asset fetchedAsset = jmsHelper.getAssetById(assetWithsIRCS.getIrcs(), AssetIdType.IRCS);
-        assertTrue(fetchedAsset != null);
-        assertTrue(fetchedAsset.getName() == null);
-        assertTrue(fetchedAsset.getIrcs() != null);
-        assertTrue(fetchedAsset.getIrcs().equals(assetWithsIRCS.getIrcs()));
-
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsIRCS.getIrcs(), AssetIdType.IRCS);
+                    assertNotNull(fetchedAsset);
+                    assertNull(fetchedAsset.getName());
+                    assertNotNull(fetchedAsset.getIrcs());
+                    assertEquals(fetchedAsset.getIrcs(), assetWithsIRCS.getIrcs());
+                });
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void assetInformationTest7ThirdCountrySource() throws Exception {
-
-
         Asset assetWithsIRCS = AssetTestHelper.createBasicAsset();
         assetWithsIRCS.setMmsiNo(null);
         assetWithsIRCS.setName(null);
         assetWithsIRCS.setSource(CarrierSource.THIRD_COUNTRY);
         jmsHelper.upsertAsset(assetWithsIRCS);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsIRCS.getIrcs(), AssetIdType.IRCS);
+                    assertNotNull(fetchedAsset);
+                });
 
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
@@ -437,15 +510,16 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
-
-        Asset fetchedAsset = jmsHelper.getAssetById(assetWithsIRCS.getIrcs(), AssetIdType.IRCS);
-        assertTrue(fetchedAsset != null);
-        assertTrue(fetchedAsset.getName() != null);
-        assertTrue(fetchedAsset.getName().equals(newAsset.getName()));
-        assertTrue(fetchedAsset.getIrcs() != null);
-        assertTrue(fetchedAsset.getIrcs().equals(assetWithsIRCS.getIrcs()));
-
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(assetWithsIRCS.getIrcs(), AssetIdType.IRCS);
+                    assertNotNull(fetchedAsset);
+                    assertNotNull(fetchedAsset.getName());
+                    assertEquals(fetchedAsset.getName(), newAsset.getName());
+                    assertNotNull(fetchedAsset.getIrcs());
+                    assertEquals(fetchedAsset.getIrcs(), assetWithsIRCS.getIrcs());
+                });
     }
 
     @Test
@@ -458,20 +532,26 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         asset.setMmsiNo(null);
         asset.setIrcs(ircs);
         jmsHelper.upsertAsset(asset);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset assetById = jmsHelper.getAssetById(asset.getIrcs(), AssetIdType.IRCS);
+                    assertNull(assetById.getMmsiNo());
+                });
 
-        Asset assetById = jmsHelper.getAssetById(asset.getIrcs(), AssetIdType.IRCS);
-        assertTrue(assetById.getMmsiNo() == null);
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
         newAsset.setMmsi(AssetTestsHelper.getRandomIntegers(9));
         newAsset.setIrcs(testIrcs);
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
-        assetById = jmsHelper.getAssetById(asset.getIrcs(), AssetIdType.IRCS);
-        assertTrue(assetById.getMmsiNo() != null);
-        assertTrue(assetById.getMmsiNo().equals(newAsset.getMmsi()));
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset assetById = jmsHelper.getAssetById(asset.getIrcs(), AssetIdType.IRCS);
+                    assertNotNull(assetById.getMmsiNo());
+                    assertEquals(assetById.getMmsiNo(), newAsset.getMmsi());
+                });
     }
 
     @Test
@@ -480,41 +560,59 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         String randomSuffix = AssetTestsHelper.getRandomIntegers(6);
         String ircs = "I" + randomSuffix;
         String testIrcs = "I " + randomSuffix;
+
         Asset asset = AssetTestHelper.createBasicAsset();
         asset.setSource(CarrierSource.NATIONAL);
         asset.setMmsiNo(null);
         asset.setIrcs(ircs);
         jmsHelper.upsertAsset(asset);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(asset.getIrcs(), AssetIdType.IRCS);
+                    assertNotNull(fetchedAsset);
+                });
 
         Asset asset2 = AssetTestHelper.createBasicAsset();
         String mmsi = AssetTestsHelper.getRandomIntegers(9);
         asset2.setMmsiNo(mmsi);
         asset2.setIrcs(null);
         jmsHelper.upsertAsset(asset2);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(asset2.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                });
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
         newAsset.setMmsi(mmsi);
         newAsset.setIrcs(testIrcs);
-        jmsHelper.assetInfo(Arrays.asList(newAsset));
-        Thread.sleep(2000);
-        Asset assetById = jmsHelper.getAssetById(asset.getIrcs(), AssetIdType.IRCS);
-        assertTrue(assetById.getMmsiNo() != null);
-        assertTrue(assetById.getMmsiNo().equals(newAsset.getMmsi()));
-        Asset assetByMmsi = jmsHelper.getAssetById(mmsi, AssetIdType.MMSI);
-        assertEquals(assetByMmsi.getAssetId().getGuid(), assetById.getAssetId().getGuid());
+        jmsHelper.assetInfo(List.of(newAsset));
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset assetById = jmsHelper.getAssetById(asset.getIrcs(), AssetIdType.IRCS);
+                    assertNotNull(assetById.getMmsiNo());
+                    assertEquals(assetById.getMmsiNo(), newAsset.getMmsi());
+                    Asset assetByMmsi = jmsHelper.getAssetById(mmsi, AssetIdType.MMSI);
+                    assertEquals(assetByMmsi.getAssetId().getGuid(), assetById.getAssetId().getGuid());
+                });
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void updateAssetWithEmptyStringIRCS() throws Exception {
-
         Asset asset = AssetTestHelper.createBasicAsset();
         asset.setIrcs("");
         asset.setName("updateAssetWithEmptyStringIRCS");
         jmsHelper.upsertAsset(asset);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                });
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
 
@@ -524,21 +622,22 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
-
-        Asset fetchedAsset = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
-        assertTrue(fetchedAsset != null);
-        assertTrue(fetchedAsset.getName() != null);
-        assertTrue(fetchedAsset.getName(), fetchedAsset.getName().equals(asset.getName()));
-        assertTrue(fetchedAsset.getMmsiNo() != null);
-        assertTrue(fetchedAsset.getIrcs() == null);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                    assertNotNull(fetchedAsset.getName());
+                    assertThat(fetchedAsset.getName(), is(equalTo(asset.getName())));
+                    assertNotNull(fetchedAsset.getMmsiNo());
+                    assertNull(fetchedAsset.getIrcs());
+                });
     }
 
 
     @Test
     @OperateOnDeployment("normal")
     public void createSeveralAssetsWithEmptyStringIRCSAndUpdateOneOfThemTest() throws Exception {
-
         Asset asset = AssetTestHelper.createBasicAsset();
         asset.setIrcs("");
         asset.setName("createAssetWithEmptyStringIRCS");
@@ -548,7 +647,12 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         asset2.setIrcs("");
         asset2.setName("createAssetWithEmptyStringIRCS2");
         jmsHelper.upsertAsset(asset2);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAsset = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAsset);
+                });
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
 
@@ -558,21 +662,23 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
         jmsHelper.assetInfo(assetList);
-        Thread.sleep(2000);
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    Asset fetchedAssetNotUpdated = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAssetNotUpdated);
+                    assertNotNull(fetchedAssetNotUpdated.getName());
+                    assertThat(fetchedAssetNotUpdated.getName(), is(equalTo(asset.getName())));
+                    assertNotNull(fetchedAssetNotUpdated.getMmsiNo());
+                    assertNull(fetchedAssetNotUpdated.getIrcs());
 
-        Asset fetchedAssetNotUpdated = jmsHelper.getAssetById(asset.getMmsiNo(), AssetIdType.MMSI);
-        assertTrue(fetchedAssetNotUpdated != null);
-        assertTrue(fetchedAssetNotUpdated.getName() != null);
-        assertTrue(fetchedAssetNotUpdated.getName(), fetchedAssetNotUpdated.getName().equals(asset.getName()));
-        assertTrue(fetchedAssetNotUpdated.getMmsiNo() != null);
-        assertTrue(fetchedAssetNotUpdated.getIrcs() == null);
-
-        Asset fetchedAssetUpdated = jmsHelper.getAssetById(asset2.getMmsiNo(), AssetIdType.MMSI);
-        assertTrue(fetchedAssetUpdated != null);
-        assertTrue(fetchedAssetUpdated.getName() != null);
-        assertTrue(fetchedAssetUpdated.getName(), fetchedAssetUpdated.getName().equals(newAsset.getName()));
-        assertTrue(fetchedAssetUpdated.getMmsiNo() != null);
-        assertTrue(fetchedAssetUpdated.getIrcs() == null);
+                    Asset fetchedAssetUpdated = jmsHelper.getAssetById(asset2.getMmsiNo(), AssetIdType.MMSI);
+                    assertNotNull(fetchedAssetUpdated);
+                    assertNotNull(fetchedAssetUpdated.getName());
+                    assertThat(fetchedAssetUpdated.getName(), is(equalTo(newAsset.getName())));
+                    assertNotNull(fetchedAssetUpdated.getMmsiNo());
+                    assertNull(fetchedAssetUpdated.getIrcs());
+                });
     }
 
     @Test
@@ -585,13 +691,12 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         asset.setNationalId(nationalId);
 
         jmsHelper.upsertAssetUsingMethod(asset);
-        Thread.sleep(1000);
-
-        fish.focus.uvms.asset.domain.entity.Asset assetById = assetServiceBean.getAssetById(AssetIdentifier.NATIONAL, nationalId.toString());
-        assertEquals(nationalId, assetById.getNationalId());
-        assertEquals(asset.getName(), assetById.getName());
-
+        await()
+                .atMost(2, SECONDS)
+                .untilAsserted(() -> {
+                    fish.focus.uvms.asset.domain.entity.Asset assetById = assetServiceBean.getAssetById(AssetIdentifier.NATIONAL, nationalId.toString());
+                    assertEquals(nationalId, assetById.getNationalId());
+                    assertEquals(asset.getName(), assetById.getName());
+                });
     }
-
-
 }
