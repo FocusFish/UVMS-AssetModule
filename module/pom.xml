@@ -20,7 +20,7 @@
         <docker.liquibase.changeLogFile>../LIQUIBASE/changelog/db-changelog-master.xml</docker.liquibase.changeLogFile>
 
         <wildfly.maven.plugin.version>2.0.2.Final</wildfly.maven.plugin.version>
-        <jersey.version>2.38</jersey.version>
+        <jersey.version>3.1.10</jersey.version>
     </properties>
 
     <dependencies>
