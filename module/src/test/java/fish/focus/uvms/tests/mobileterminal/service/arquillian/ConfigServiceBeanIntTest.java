@@ -64,7 +64,7 @@ public class ConfigServiceBeanIntTest extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void testAddPluginUpdate()  {
+    public void testAddPluginUpdate() {
         PluginService pluginService = createPluginService();
         MobileTerminalPlugin plugin = configService.upsertPlugin(pluginService);
         assertNotNull(plugin);
@@ -87,8 +87,7 @@ public class ConfigServiceBeanIntTest extends TransactionalTests {
             pluginService.setServiceName("");
             configService.upsertPlugin(pluginService);
             Assert.fail();  // error if we come here
-        }
-        catch(Throwable t){
+        } catch (Throwable t) {
             Assert.assertTrue(true);
         }
     }
@@ -97,10 +96,10 @@ public class ConfigServiceBeanIntTest extends TransactionalTests {
     @OperateOnDeployment("normal")
     public void testUpsertPluginsBadLabelName() {
         try {
-        PluginService pluginService = createPluginService();
-        pluginService.setLabelName("");
+            PluginService pluginService = createPluginService();
+            pluginService.setLabelName("");
 
-        configService.upsertPlugin(pluginService);
+            configService.upsertPlugin(pluginService);
             Assert.fail();
         } catch (Throwable t) {
             Assert.assertTrue(true);

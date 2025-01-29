@@ -21,6 +21,7 @@ import fish.focus.schema.mobileterminal.types.v1.*;
 import fish.focus.uvms.mobileterminal.bean.MobileTerminalServiceBean;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import fish.focus.uvms.mobileterminal.entity.types.OceanRegionEnum;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.ArrayList;
@@ -32,16 +33,6 @@ public class PollToCommandRequestMapper {
 
     @Inject
     private MobileTerminalServiceBean terminalServiceBean;
-
-    public enum PollReceiverInmarsatC {
-        MOBILE_TERMINAL_ID, CONNECT_ID, SERIAL_NUMBER, DNID, MEMBER_NUMBER,
-        LES_NAME, LES_SERVICE_NAME, SATELLITE_NUMBER, OCEAN_REGION
-    }
-
-    public enum PollReceiverIridium {
-        MOBILE_TERMINAL_ID, CONNECT_ID,
-        SERIAL_NUMBER, OCEAN_REGION
-    }
 
     public PollType mapToPollType(PollResponseType pollResponse) {
         PollType pollType = new PollType();
@@ -121,7 +112,7 @@ public class PollToCommandRequestMapper {
     }
 
     private void addOceanRegions(PollType pollType, String mobileTerminalId) {
-        if(mobileTerminalId != null) {
+        if (mobileTerminalId != null) {
             List<String> oceanRegionList = getOceanRegions(mobileTerminalId);
             oceanRegionList.forEach(code -> pollType.getPollReceiver()
                     .add(mapReceiverToKeyValue(PollReceiverInmarsatC.OCEAN_REGION, code)));
@@ -131,13 +122,13 @@ public class PollToCommandRequestMapper {
     private List<String> getOceanRegions(String mobileTerminalId) {
         MobileTerminal entity = terminalServiceBean.getMobileTerminalEntityById(UUID.fromString(mobileTerminalId));
         List<String> oceanRegions = new ArrayList<>();
-        if(entity.getWestAtlanticOceanRegion())
+        if (entity.getWestAtlanticOceanRegion())
             oceanRegions.add(String.valueOf(OceanRegionEnum.AOR_W.getCode()));
-        if(entity.getEastAtlanticOceanRegion())
+        if (entity.getEastAtlanticOceanRegion())
             oceanRegions.add(String.valueOf(OceanRegionEnum.AOR_E.getCode()));
-        if(entity.getPacificOceanRegion())
+        if (entity.getPacificOceanRegion())
             oceanRegions.add(String.valueOf(OceanRegionEnum.POR.getCode()));
-        if(entity.getIndianOceanRegion())
+        if (entity.getIndianOceanRegion())
             oceanRegions.add(String.valueOf(OceanRegionEnum.IOR.getCode()));
         return oceanRegions;
     }
@@ -186,5 +177,15 @@ public class PollToCommandRequestMapper {
         keyValue.setKey(key.name());
         keyValue.setValue(value);
         return keyValue;
+    }
+
+    public enum PollReceiverInmarsatC {
+        MOBILE_TERMINAL_ID, CONNECT_ID, SERIAL_NUMBER, DNID, MEMBER_NUMBER,
+        LES_NAME, LES_SERVICE_NAME, SATELLITE_NUMBER, OCEAN_REGION
+    }
+
+    public enum PollReceiverIridium {
+        MOBILE_TERMINAL_ID, CONNECT_ID,
+        SERIAL_NUMBER, OCEAN_REGION
     }
 }

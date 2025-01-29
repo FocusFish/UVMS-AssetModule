@@ -13,6 +13,7 @@ import fish.focus.uvms.mobileterminal.entity.MobileTerminalPlugin;
 import fish.focus.uvms.mobileterminal.mapper.MobileTerminalDtoMapper;
 import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
 import fish.focus.uvms.mobileterminal.model.constants.TerminalSourceEnum;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
@@ -36,7 +37,7 @@ public class PollTestHelper {
         return response;
     }
 
-    private static MobileTerminal createMobileTerminal()  {
+    private static MobileTerminal createMobileTerminal() {
         String serialNo = UUID.randomUUID().toString();
         MobileTerminal mt = new MobileTerminal();
         mt.setSerialNo(serialNo);
@@ -93,7 +94,7 @@ public class PollTestHelper {
         return listCriteria;
     }
 
-    public static PollRequestType createProgramPoll(MobileTerminal mobileTerminal){
+    public static PollRequestType createProgramPoll(MobileTerminal mobileTerminal) {
         PollRequestType pollRequestType = createPollRequestType(PollType.PROGRAM_POLL);
         constructPollMobileTerminalAndAddToRequest(pollRequestType, mobileTerminal);
 
@@ -137,10 +138,10 @@ public class PollTestHelper {
 
     public static MobileTerminal createMobileTerminal(MobileTerminal mt, WebTarget webTarget, String token) {
         return webTarget
-            .path("mobileterminal")
-            .request(MediaType.APPLICATION_JSON)
-            .header(HttpHeaders.AUTHORIZATION, token)
-            .post(Entity.json(mt), MobileTerminal.class);
+                .path("mobileterminal")
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, token)
+                .post(Entity.json(mt), MobileTerminal.class);
     }
 
     public static void createPollAttributesForRequest(PollRequestType pollRequest) {

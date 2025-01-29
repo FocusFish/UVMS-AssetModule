@@ -26,7 +26,7 @@ public class ChangeHistoryRow {
     public ChangeHistoryRow() {
     }
 
-    public void addNewItem(String field, Object oldValue, Object newValue){
+    public void addNewItem(String field, Object oldValue, Object newValue) {
         changes.add(new ChangeHistoryItem(field, oldValue, newValue));
     }
 
@@ -94,11 +94,11 @@ public class ChangeHistoryRow {
     public void setChangeType(ChangeType changeType) {
         this.changeType = changeType;
     }
-    
+
     public String getAssetName() {
         return assetName;
     }
-    
+
     public void setAssetName(String assetName) {
         this.assetName = assetName;
     }

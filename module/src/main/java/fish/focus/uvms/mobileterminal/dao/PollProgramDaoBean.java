@@ -16,7 +16,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+
 import fish.focus.uvms.mobileterminal.entity.ProgramPoll;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -29,7 +31,7 @@ public class PollProgramDaoBean {
     @PersistenceContext
     private EntityManager em;
 
-    public void removeProgramPollAfterTests(String id){
+    public void removeProgramPollAfterTests(String id) {
         ProgramPoll pollProgram = getProgramPollById(UUID.fromString(id));
         em.remove(em.contains(pollProgram) ? pollProgram : em.merge(pollProgram));
     }
@@ -43,13 +45,13 @@ public class PollProgramDaoBean {
         return pollProgram;
     }
 
-    public List<ProgramPoll> getProgramPollsAlive()  {
+    public List<ProgramPoll> getProgramPollsAlive() {
         TypedQuery<ProgramPoll> query = em.createNamedQuery(ProgramPoll.PROGRAM_FIND_ALIVE, ProgramPoll.class);
         query.setParameter("currentDate", Instant.now());
         return query.getResultList();
     }
 
-    public List<ProgramPoll> getProgramPollRunningAndStarted()  {
+    public List<ProgramPoll> getProgramPollRunningAndStarted() {
         TypedQuery<ProgramPoll> query = em.createNamedQuery(ProgramPoll.PROGRAM_FIND_RUNNING_AND_STARTED, ProgramPoll.class);
         query.setParameter("currentDate", Instant.now());
         return query.getResultList();

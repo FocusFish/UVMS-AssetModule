@@ -1,26 +1,31 @@
-<definitions name="MobileTerminalDataSource"
-             targetNamespace="urn:msg.mobileterminal.schema.focus.fish:v1"
-             xmlns:msg="urn:msg.mobileterminal.schema.focus.fish:v1"
+<definitions xmlns:msg="urn:msg.mobileterminal.schema.focus.fish:v1"
              xmlns:source="urn:source.mobileterminal.schema.focus.fish:v1"
              xmlns:mobterm="urn:types.mobileterminal.schema.focus.fish:v1"
              xmlns:poll="urn:polltypes.mobileterminal.schema.focus.fish:v1"
              xmlns:config="urn:config.mobileterminal.schema.focus.fish:v1"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             name="MobileTerminalDataSource"
+             targetNamespace="urn:msg.mobileterminal.schema.focus.fish:v1"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
     <types>
-        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:msg.mobileterminal.schema.fisheries.ec.europa.eu:v1">
-            
-            <xsd:import namespace="urn:source.mobileterminal.schema.focus.fish:v1" schemaLocation="MobileTerminalDataSource.xsd"/>
-            <xsd:import namespace="urn:types.mobileterminal.schema.focus.fish:v1" schemaLocation="MobileTerminalElement.xsd"/>
-            <xsd:import namespace="urn:polltypes.mobileterminal.schema.focus.fish:v1" schemaLocation="MobileTerminalPoll.xsd"/>
-            <xsd:import namespace="urn:config.mobileterminal.schema.focus.fish:v1" schemaLocation="MobileTerminalConfig.xsd"/>
-                        
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                    targetNamespace="urn:msg.mobileterminal.schema.fisheries.ec.europa.eu:v1">
+
+            <xsd:import namespace="urn:source.mobileterminal.schema.focus.fish:v1"
+                        schemaLocation="MobileTerminalDataSource.xsd"/>
+            <xsd:import namespace="urn:types.mobileterminal.schema.focus.fish:v1"
+                        schemaLocation="MobileTerminalElement.xsd"/>
+            <xsd:import namespace="urn:polltypes.mobileterminal.schema.focus.fish:v1"
+                        schemaLocation="MobileTerminalPoll.xsd"/>
+            <xsd:import namespace="urn:config.mobileterminal.schema.focus.fish:v1"
+                        schemaLocation="MobileTerminalConfig.xsd"/>
+
         </xsd:schema>
-        
+
     </types>
-    
+
     <message name="MobileTerminalFault">
         <part name="body" element="mobterm:mobileTerminalFault"/>
     </message>
@@ -28,11 +33,11 @@
     <message name="GetMobileTerminalRequest">
         <part name="body" element="source:getMobileTerminalRequest"/>
     </message>
-    
+
     <message name="GetMobileTerminalResponse">
         <part name="body" element="source:mobileTerminalResponse"/>
     </message>
-    
+
     <message name="CreateMobileTerminalRequest">
         <part name="body" element="source:createMobileTerminalRequest"/>
     </message>
@@ -44,31 +49,31 @@
     <message name="UpdateMobileTerminalRequest">
         <part name="body" element="source:updateMobileTerminalRequest"/>
     </message>
-    
+
     <message name="UpdateMobileTerminalResponse">
         <part name="body" element="source:mobileTerminalResponse"/>
     </message>
-        
+
     <message name="UpsertMobileTerminalRequest">
         <part name="body" element="source:upsertMobileTerminalRequest"/>
     </message>
-    
+
     <message name="UpsertMobileTerminalResponse">
         <part name="body" element="source:upsertMobileTerminalRequest"/>
     </message>
-        
+
     <message name="AssignMobileTerminalRequest">
         <part name="body" element="source:mobileTerminalAssignRequest"/>
     </message>
-    
+
     <message name="AssignMobileTerminalResponse">
         <part name="body" element="source:mobileTerminalResponse"/>
     </message>
-    
+
     <message name="UnAssignMobileTerminalRequest">
         <part name="body" element="source:mobileTerminalUnAssignRequest"/>
     </message>
-    
+
     <message name="UnAssignMobileTerminalResponse">
         <part name="body" element="source:mobileTerminalResponse"/>
     </message>
@@ -88,20 +93,20 @@
     <message name="SetStatusMobileTerminalResponse">
         <part name="body" element="source:mobileTerminalResponse"/>
     </message>
-    
+
     <message name="HistoryMobileTerminalListRequest">
         <part name="body" element="source:historyMobileTerminalListRequest"/>
     </message>
-    
+
     <!-- config -->
     <message name="UpdatedDNIDListRequest">
         <part name="body" element="config:updatedDNIDListRequest"/>
     </message>
-    
+
     <message name="UpdatedDNIDListResponse">
         <part name="body" element="config:updatedDNIDListResponse"/>
     </message>
-    
+
     <message name="TerminalSystemListRequest">
         <part name="body" element="config:terminalSystemListRequest"/>
     </message>
@@ -109,36 +114,36 @@
     <message name="TerminalSystemListResponse">
         <part name="body" element="config:terminalSystemListResponse"/>
     </message>
-    
+
     <message name="ChannelNameRequest">
         <part name="body" element="config:comchannelNameRequest"/>
     </message>
-    
+
     <message name="ChannelNameResponse">
         <part name="body" element="config:comchannelNameResponse"/>
     </message>
-    
+
     <message name="ConfigRequest">
         <part name="body" element="config:configRequest"/>
     </message>
-    
+
     <message name="ConfigResponse">
         <part name="body" element="config:configResponse"/>
     </message>
-    
+
     <message name="UpsertPluginListRequest">
         <part name="body" element="config:upsertPluginListRequest"/>
     </message>
-    
+
     <message name="UpsertPluginListResponse">
         <part name="body" element="config:upsertPluginListResponse"/>
     </message>
-    
+
     <!-- poll -->
     <message name="CreatePollRequest">
         <part name="body" element="poll:createPollRequest"/>
     </message>
-    
+
     <message name="CreatePollResponse">
         <part name="body" element="poll:createPollResponse"/>
     </message>
@@ -166,22 +171,22 @@
     <message name="PollListResponse">
         <part name="body" element="poll:pollListResponse"/>
     </message>
-    
+
     <message name="PollableRequest">
         <part name="body" element="poll:getPollableRequest"/>
     </message>
-    
+
     <message name="PollableResponse">
         <part name="body" element="source:mobileTerminalListResponse"/>
     </message>
 
-	<message name="PingRequest">
-		<part name="body" element="source:pingRequest"/>
-	</message>
+    <message name="PingRequest">
+        <part name="body" element="source:pingRequest"/>
+    </message>
 
-	<message name="PingResponse">
-		<part name="body" element="source:pingResponse"/>
-	</message>
+    <message name="PingResponse">
+        <part name="body" element="source:pingResponse"/>
+    </message>
 
     <portType name="MobileTerminalDataSourcePortType">
         <operation name="GetMobileTerminal">
@@ -274,11 +279,11 @@
             <output message="msg:PollableResponse"/>
             <fault name="MobileTerminalFault" message="msg:MobileTerminalFault"/>
         </operation>
-		<operation name="Ping">
-			<input message="msg:PingRequest"/>
-			<output message="msg:PingResponse"/>
-		</operation>
-	</portType>
+        <operation name="Ping">
+            <input message="msg:PingRequest"/>
+            <output message="msg:PingResponse"/>
+        </operation>
+    </portType>
 
     <binding name="MobileTerminalDataSourceSoapBinding" type="msg:MobileTerminalDataSourcePortType">
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -481,13 +486,13 @@
             </fault>
         </operation>
         <operation name="Ping">
-			<input>
-				<soap:body use="literal"/>
-			</input>
-			<output>
-				<soap:body use="literal"/>
-			</output>
-		</operation>  
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
     </binding>
 
     <service name="MobileTerminalDataSourceService">

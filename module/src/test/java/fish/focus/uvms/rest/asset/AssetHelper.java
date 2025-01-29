@@ -8,6 +8,7 @@ import fish.focus.uvms.asset.domain.entity.AssetFilterValue;
 import fish.focus.uvms.asset.domain.entity.ContactInfo;
 import fish.focus.uvms.asset.domain.entity.Note;
 import fish.focus.uvms.asset.model.constants.UnitTonnage;
+
 import java.time.Instant;
 import java.util.Random;
 
@@ -27,14 +28,14 @@ public abstract class AssetHelper {
         assetEntity.setCfr("CRF" + getRandomIntegers(9));
         assetEntity.setIrcs("F" + getRandomIntegers(7));
         assetEntity.setImo(getRandomIntegers(7));
-        assetEntity.setMmsi("M" + getRandomIntegers(8)); 
+        assetEntity.setMmsi("M" + getRandomIntegers(8));
         assetEntity.setIccat("ICCAT" + getRandomIntegers(20));
         assetEntity.setUvi("UVI" + getRandomIntegers(20));
         assetEntity.setGfcm("GFCM" + getRandomIntegers(20));
-        
+
         assetEntity.setGrossTonnage(10d);
         assetEntity.setPowerOfMainEngine(10d);
-        
+
         assetEntity.setGearFishingType("Demersal");
 
         assetEntity.setOwnerName("Foo Bar");
@@ -42,7 +43,7 @@ public abstract class AssetHelper {
 
         assetEntity.setProdOrgCode("ORGCODE");
         assetEntity.setProdOrgName("ORGNAME");
-        
+
         assetEntity.setUpdateTime(Instant.now());
         assetEntity.setUpdatedBy("TEST");
 
@@ -52,7 +53,7 @@ public abstract class AssetHelper {
     public static Asset createBiggerAsset() {
 
         Asset assetEntity = new Asset();
-        Instant  now =  Instant.now();
+        Instant now = Instant.now();
 
         assetEntity.setName("Test asset");
         assetEntity.setActive(true);
@@ -129,34 +130,34 @@ public abstract class AssetHelper {
         contactInfo.setPhoneNumber("+46737112233");
         return contactInfo;
     }
-    
+
 
     public static AssetFilter createBasicAssetFilter(String name) {
-    	AssetFilter assetFilter = new AssetFilter();
-    	assetFilter.setName(name);
-    	assetFilter.setOwner(name);
+        AssetFilter assetFilter = new AssetFilter();
+        assetFilter.setName(name);
+        assetFilter.setOwner(name);
         return assetFilter;
     }
-    
+
     public static AssetFilterQuery createBasicAssetFilterQuery(AssetFilter assetFilter) {
-    	AssetFilterQuery assetFilterQuery = new AssetFilterQuery();
-    	assetFilterQuery.setValueType(AssetFilterValueType.NUMBER);
-    	assetFilterQuery.setType("TEST_TYPE");
-    	assetFilterQuery.setAssetFilter(assetFilter);
+        AssetFilterQuery assetFilterQuery = new AssetFilterQuery();
+        assetFilterQuery.setValueType(AssetFilterValueType.NUMBER);
+        assetFilterQuery.setType("TEST_TYPE");
+        assetFilterQuery.setAssetFilter(assetFilter);
         return assetFilterQuery;
     }
 
     public static AssetFilterValue createBasicAssetFilterValue(AssetFilterQuery assetFilterQuery) {
-    	AssetFilterValue assetFilterValue = new AssetFilterValue();
-    	assetFilterValue.setOperator("greater then");
-    	assetFilterValue.setValueNumber((double) 42);
-    	assetFilterValue.setAssetFilterQuery(assetFilterQuery);
+        AssetFilterValue assetFilterValue = new AssetFilterValue();
+        assetFilterValue.setOperator("greater then");
+        assetFilterValue.setValueNumber((double) 42);
+        assetFilterValue.setAssetFilterQuery(assetFilterQuery);
         return assetFilterValue;
     }
 
     public static String getRandomIntegers(int length) {
         return new Random()
-                .ints(0,9)
+                .ints(0, 9)
                 .mapToObj(i -> String.valueOf(i))
                 .limit(length)
                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)

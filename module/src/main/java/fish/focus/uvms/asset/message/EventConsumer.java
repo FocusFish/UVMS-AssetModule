@@ -20,6 +20,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 import javax.json.bind.Jsonb;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fish.focus.schema.exchange.plugin.types.v1.PluginType;
@@ -36,7 +37,7 @@ import fish.focus.uvms.mobileterminal.mapper.ServiceToPluginMapper;
         @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = "asset"),
         @ActivationConfigProperty(propertyName = "clientId", propertyValue = "asset"),
         @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "event='Service Registered' OR event='Service Unregistered'")
-    })
+})
 public class EventConsumer implements MessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(EventConsumer.class);

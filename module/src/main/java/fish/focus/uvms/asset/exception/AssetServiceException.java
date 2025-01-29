@@ -12,13 +12,13 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.asset.exception;
 
 public class AssetServiceException extends Exception {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public AssetServiceException(String message) {
+    public AssetServiceException(String message) {
         super(message);
     }
-	
-	public AssetServiceException(String message, Throwable cause) {
+
+    public AssetServiceException(String message, Throwable cause) {
         super(message, cause);
     }
 

@@ -18,6 +18,7 @@ import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminalPlugin;
 import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
 import fish.focus.uvms.mobileterminal.model.constants.TerminalSourceEnum;
+
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
@@ -58,7 +59,7 @@ public class MobileTerminalTestHelper {
         return mobileTerminal;
     }
 
-    public static Channel createBasicChannel(){
+    public static Channel createBasicChannel() {
         Channel channel = new Channel();
         channel.setName("VMS");
         channel.setFrequencyGracePeriod(Duration.ofSeconds(54000));
@@ -115,7 +116,7 @@ public class MobileTerminalTestHelper {
 
     public static MobileTerminal createRestMobileTerminal(WebTarget webTarget, Asset asset, String token) {
         MobileTerminal mt = createBasicMobileTerminal();
-        if(asset != null)
+        if (asset != null)
             mt.setAsset(asset);
 
         return webTarget
@@ -125,7 +126,7 @@ public class MobileTerminalTestHelper {
                 .post(Entity.json(mt), MobileTerminal.class);
     }
 
-    public static MobileTerminal restMobileTerminalUpdate(WebTarget webTarget, MobileTerminal mt, String token){
+    public static MobileTerminal restMobileTerminalUpdate(WebTarget webTarget, MobileTerminal mt, String token) {
         return webTarget
                 .path("mobileterminal")
                 .queryParam("comment", mt.getComment())

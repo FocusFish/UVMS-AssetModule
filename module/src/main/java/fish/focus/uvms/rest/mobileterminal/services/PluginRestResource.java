@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import fish.focus.uvms.mobileterminal.bean.ConfigServiceBeanMT;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminalPlugin;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;

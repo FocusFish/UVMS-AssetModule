@@ -41,20 +41,20 @@ public class EnumMapper {
     public static PollTypeEnum getPollTypeFromModel(PollType model) {
         if (model != null) {
             switch (model) {
-            case MANUAL_POLL:
-                return PollTypeEnum.MANUAL_POLL;
-            case PROGRAM_POLL:
-                return PollTypeEnum.PROGRAM_POLL;
-            case SAMPLING_POLL:
-                return PollTypeEnum.SAMPLING_POLL;
-            case CONFIGURATION_POLL:
-                return PollTypeEnum.CONFIGURATION_POLL;
-            case AUTOMATIC_POLL:
-                return PollTypeEnum.AUTOMATIC_POLL;
+                case MANUAL_POLL:
+                    return PollTypeEnum.MANUAL_POLL;
+                case PROGRAM_POLL:
+                    return PollTypeEnum.PROGRAM_POLL;
+                case SAMPLING_POLL:
+                    return PollTypeEnum.SAMPLING_POLL;
+                case CONFIGURATION_POLL:
+                    return PollTypeEnum.CONFIGURATION_POLL;
+                case AUTOMATIC_POLL:
+                    return PollTypeEnum.AUTOMATIC_POLL;
                 case BASE_POLL:
-                return PollTypeEnum.BASE_POLL;
-            default:
-                throw new IllegalArgumentException("Couldn't map enum (from model) in " + PollTypeEnum.class.getName());
+                    return PollTypeEnum.BASE_POLL;
+                default:
+                    throw new IllegalArgumentException("Couldn't map enum (from model) in " + PollTypeEnum.class.getName());
             }
         }
         throw new NullPointerException("PollType parameter is null");

@@ -16,23 +16,23 @@ import java.util.List;
 
 public class PollSearchKeyValue {
 
-	private PollSearchField searchField;
-	private List<String> values = new ArrayList<>();
-	
-	public PollSearchField getSearchField() {
-		return searchField;
-	}
+    private PollSearchField searchField;
+    private List<String> values = new ArrayList<>();
 
-	public void setSearchField(PollSearchField searchField) {
-		this.searchField = searchField;
-	}
+    public PollSearchField getSearchField() {
+        return searchField;
+    }
 
-	public List<String> getValues() {
-		if(values == null) values = new ArrayList<>();
-		return values;
-	}
+    public void setSearchField(PollSearchField searchField) {
+        this.searchField = searchField;
+    }
 
-	public void setValues(List<String> values) {
-		this.values = values;
-	}
+    public List<String> getValues() {
+        if (values == null) values = new ArrayList<>();
+        return values;
+    }
+
+    public void setValues(List<String> values) {
+        this.values = values;
+    }
 }

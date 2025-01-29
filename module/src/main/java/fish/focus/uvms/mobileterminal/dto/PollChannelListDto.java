@@ -16,28 +16,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PollChannelListDto implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
-	private Integer currentPage;
-	private Integer totalNumberOfPages;
-	private ArrayList<PollChannelDto> pollableChannels;
-	
-	public Integer getCurrentPage() {
-		return currentPage;
-	}
-	public void setCurrentPage(Integer currentPage) {
-		this.currentPage = currentPage;
-	}
-	public Integer getTotalNumberOfPages() {
-		return totalNumberOfPages;
-	}
-	public void setTotalNumberOfPages(Integer totalNumberOfPages) {
-		this.totalNumberOfPages = totalNumberOfPages;
-	}
-	public List<PollChannelDto> getPollableChannels() {
-		return pollableChannels;
-	}
-	public void setPollableChannels(ArrayList<PollChannelDto> pollableChannels) {
-		this.pollableChannels = pollableChannels;
-	}
+    private static final long serialVersionUID = 1L;
+
+    private Integer currentPage;
+    private Integer totalNumberOfPages;
+    private ArrayList<PollChannelDto> pollableChannels;
+
+    public Integer getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(Integer currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public Integer getTotalNumberOfPages() {
+        return totalNumberOfPages;
+    }
+
+    public void setTotalNumberOfPages(Integer totalNumberOfPages) {
+        this.totalNumberOfPages = totalNumberOfPages;
+    }
+
+    public List<PollChannelDto> getPollableChannels() {
+        return pollableChannels;
+    }
+
+    public void setPollableChannels(ArrayList<PollChannelDto> pollableChannels) {
+        this.pollableChannels = pollableChannels;
+    }
 }

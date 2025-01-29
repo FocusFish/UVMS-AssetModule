@@ -12,21 +12,21 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.mobileterminal.entity.types;
 
 public enum EventCodeEnum {
-	CREATE(1),
-	MODIFY(2),
-	ACTIVATE(3),
-	INACTIVATE(4),
-	ARCHIVE(5),
-	LINK(6),
-	UNLINK(7);
+    CREATE(1),
+    MODIFY(2),
+    ACTIVATE(3),
+    INACTIVATE(4),
+    ARCHIVE(5),
+    LINK(6),
+    UNLINK(7);
 
-	private final int id;
-	
-	EventCodeEnum(int id) {
-		this.id = id;
-	}
-	
-	public Integer getId() {
-		return id;
-	}
+    private final int id;
+
+    EventCodeEnum(int id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
 }

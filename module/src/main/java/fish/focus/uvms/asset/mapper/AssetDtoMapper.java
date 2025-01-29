@@ -2,12 +2,13 @@ package fish.focus.uvms.asset.mapper;
 
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.remote.dto.AssetDto;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class AssetDtoMapper {
 
-    public static List<AssetDto> mapToAssetDtos(List<Asset> assets){
+    public static List<AssetDto> mapToAssetDtos(List<Asset> assets) {
         List<AssetDto> dtos = new ArrayList<>(assets.size());
         for (Asset asset : assets) {
             dtos.add(mapToAssetDto(asset));
@@ -15,7 +16,7 @@ public class AssetDtoMapper {
         return dtos;
     }
 
-    public static AssetDto mapToAssetDto(Asset asset){
+    public static AssetDto mapToAssetDto(Asset asset) {
         AssetDto dto = new AssetDto();
 
         dto.setActive(asset.getActive());

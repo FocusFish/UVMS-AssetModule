@@ -9,12 +9,12 @@ import java.time.ZoneOffset;
 import java.util.Objects;
 
 @Embeddable
-public class CustomCodesPK  implements Serializable {
+public class CustomCodesPK implements Serializable {
 
     @Transient
     public static final Instant STANDARD_START_DATE = Instant.EPOCH;
     @Transient
-    public static final Instant STANDARD_END_DATE = OffsetDateTime.of(3070,01,01,01,1,1,1, ZoneOffset.UTC).toInstant();
+    public static final Instant STANDARD_END_DATE = OffsetDateTime.of(3070, 01, 01, 01, 1, 1, 1, ZoneOffset.UTC).toInstant();
 
     private String constant;
     private String code;
@@ -23,18 +23,18 @@ public class CustomCodesPK  implements Serializable {
 
     private Instant validToDate = STANDARD_END_DATE;
 
-    public CustomCodesPK(){
+    public CustomCodesPK() {
         // intentionally required by JPA
     }
 
-    public CustomCodesPK(String constant, String code, Instant validFromDate, Instant validToDate){
+    public CustomCodesPK(String constant, String code, Instant validFromDate, Instant validToDate) {
         this.constant = constant;
         this.code = code;
         this.validFromDate = validFromDate;
         this.validToDate = validToDate;
     }
 
-    public CustomCodesPK(String constant, String code){
+    public CustomCodesPK(String constant, String code) {
         this.constant = constant;
         this.code = code;
     }

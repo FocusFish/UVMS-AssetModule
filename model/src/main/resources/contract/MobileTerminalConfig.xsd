@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            xmlns="urn:config.mobileterminal.schema.focus.fish:v1"
             xmlns:config="urn:config.mobileterminal.schema.focus.fish:v1"
-            targetNamespace="urn:config.mobileterminal.schema.focus.fish:v1"
             xmlns:mobterm="urn:types.mobileterminal.schema.focus.fish:v1"
+            xmlns="urn:config.mobileterminal.schema.focus.fish:v1"
+            targetNamespace="urn:config.mobileterminal.schema.focus.fish:v1"
             elementFormDefault="qualified"
-            attributeFormDefault="unqualified" 
+            attributeFormDefault="unqualified"
             version="1.0">
-            
+
     <xsd:import namespace="urn:types.mobileterminal.schema.focus.fish:v1" schemaLocation="MobileTerminalElement.xsd"/>
-    
+
     <!-- Terminal System -->
     <xsd:element name="terminalSystemListRequest">
         <xsd:complexType>
@@ -18,15 +18,16 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:element name="terminalSystemListResponse">
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element name="terminalSystem" type="config:TerminalSystemType" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element name="terminalSystem" type="config:TerminalSystemType" minOccurs="0"
+                             maxOccurs="unbounded"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:complexType name="TerminalSystemType">
         <xsd:sequence>
             <xsd:element name="type" type="xsd:string" minOccurs="1" maxOccurs="1"/>
@@ -35,31 +36,31 @@
             <xsd:element name="capabilityConfiguration" type="config:CapabilityConfiguration"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="CapabilityConfiguration">
         <xsd:sequence>
             <xsd:element name="capability" type="config:Capability" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="Capability">
         <xsd:sequence>
             <xsd:element name="name" type="xsd:string"/>
             <xsd:element name="options" type="config:CapabilityOption" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="CapabilityOption" abstract="true">
         <xsd:sequence>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="TerminalSystemConfiguration">
         <xsd:sequence>
             <xsd:element name="attribute" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <!-- LandEarthStation -->
     <xsd:complexType name="LandEarthStationType">
         <xsd:complexContent>
@@ -71,7 +72,7 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    
+
     <!-- Ocean regions -->
     <xsd:complexType name="OceanRegions">
         <xsd:sequence>
@@ -79,7 +80,7 @@
             <xsd:element name="oceanRegion" type="OceanRegionType" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <xsd:complexType name="OceanRegionType">
         <xsd:complexContent>
             <xsd:extension base="config:CapabilityOption">
@@ -90,7 +91,7 @@
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    
+
     <!-- ComchannelName -->
     <xsd:element name="comchannelNameRequest">
         <xsd:complexType>
@@ -103,7 +104,7 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:element name="comchannelNameResponse">
         <xsd:complexType>
             <xsd:sequence>
@@ -111,7 +112,7 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    
+
     <!-- Overall config -->
     <xsd:element name="configRequest">
         <xsd:complexType>
@@ -121,7 +122,7 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:element name="configResponse">
         <xsd:complexType>
             <xsd:sequence>
@@ -129,14 +130,14 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:complexType name="configList">
         <xsd:sequence>
             <xsd:element name="name" type="xsd:string"/>
             <xsd:element name="value" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
-    
+
     <!-- plugin -->
     <xsd:element name="upsertPluginListRequest">
         <xsd:complexType>
@@ -149,7 +150,7 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:element name="upsertPluginListResponse">
         <xsd:complexType>
             <xsd:sequence>
@@ -157,7 +158,7 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:element name="updatedDNIDListRequest">
         <xsd:complexType>
             <xsd:complexContent>
@@ -169,7 +170,7 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
-    
+
     <xsd:element name="updatedDNIDListResponse">
         <xsd:complexType>
             <xsd:sequence>
@@ -177,5 +178,5 @@
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
-    
+
 </xsd:schema>

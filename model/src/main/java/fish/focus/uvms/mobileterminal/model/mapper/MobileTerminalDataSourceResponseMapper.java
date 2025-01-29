@@ -25,7 +25,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+
 import static fish.focus.uvms.mobileterminal.exception.ErrorCode.UNMARSHALLING_ERROR;
+
 import java.util.List;
 
 public class MobileTerminalDataSourceResponseMapper {
@@ -61,19 +63,19 @@ public class MobileTerminalDataSourceResponseMapper {
             return unmarshalledResponse.getMobilTerminal();
         } catch (AssetException | JMSException e) {
             LOG.error("[ Error when mapping response to mobile terminal. ] " + e);
-            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + MobileTerminalResponse.class.getName() , e, UNMARSHALLING_ERROR.getCode());
+            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + MobileTerminalResponse.class.getName(), e, UNMARSHALLING_ERROR.getCode());
         }
 
     }
 
     public static boolean mapDNIDUpdatedMobileTerminalResponse(TextMessage response, String messageId) throws AssetException {
-    	try {
+        try {
             validateResponse(response, messageId);
             MobileTerminalResponse unmarshalledResponse = JAXBMarshaller.unmarshallTextMessage(response, MobileTerminalResponse.class);
             return unmarshalledResponse.isDnidListUpdated();
         } catch (AssetException | JMSException e) {
             LOG.error("[ Error when mapping response to mobile terminal. DNIDList updated] " + e);
-            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + MobileTerminalResponse.class.getName() , e, UNMARSHALLING_ERROR.getCode());
+            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + MobileTerminalResponse.class.getName(), e, UNMARSHALLING_ERROR.getCode());
         }
     }
 
@@ -83,7 +85,7 @@ public class MobileTerminalDataSourceResponseMapper {
             return JAXBMarshaller.unmarshallTextMessage(response, MobileTerminalListResponse.class);
         } catch (AssetException | JMSException e) {
             LOG.error("[ Error when mapping response to mobile terminal list. ] {}", e);
-            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + MobileTerminalListResponse.class.getName() , e, UNMARSHALLING_ERROR.getCode());
+            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + MobileTerminalListResponse.class.getName(), e, UNMARSHALLING_ERROR.getCode());
         }
     }
 
@@ -94,50 +96,50 @@ public class MobileTerminalDataSourceResponseMapper {
             return mappedResponse.getTerminalSystem();
         } catch (AssetException | JMSException e) {
             LOG.error("[ Error when mapping response to terminal system list. ] {}", e);
-            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + TerminalSystemListResponse.class.getName() , e, UNMARSHALLING_ERROR.getCode());
+            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + TerminalSystemListResponse.class.getName(), e, UNMARSHALLING_ERROR.getCode());
         }
     }
 
-	public static List<String> mapToChannelNames(TextMessage response, String correlationId) throws AssetException {
-		try {
+    public static List<String> mapToChannelNames(TextMessage response, String correlationId) throws AssetException {
+        try {
             validateResponse(response, correlationId);
             ComchannelNameResponse mappedResponse = JAXBMarshaller.unmarshallTextMessage(response, ComchannelNameResponse.class);
             return mappedResponse.getComchannelName();
         } catch (AssetException | JMSException e) {
             LOG.error("[ Error when mapping response to comchannel list. ] {}", e);
-            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + ComchannelNameResponse.class.getName() , e, UNMARSHALLING_ERROR.getCode());
+            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + ComchannelNameResponse.class.getName(), e, UNMARSHALLING_ERROR.getCode());
         }
-	}
+    }
 
     public static List<ConfigList> mapToConfigList(TextMessage response, String correlationId) throws AssetException {
-    	try {
-    		validateResponse(response, correlationId);
-    		ConfigResponse mappedResponse = JAXBMarshaller.unmarshallTextMessage(response, ConfigResponse.class);
-    		return mappedResponse.getConfig();
-    	} catch (AssetException| JMSException e) {
-    		LOG.error("[ Error when mapping response to config list. ] {}", e);
-            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + ConfigResponse.class.getName() , e, UNMARSHALLING_ERROR.getCode());
-    	}
-	}
-    
+        try {
+            validateResponse(response, correlationId);
+            ConfigResponse mappedResponse = JAXBMarshaller.unmarshallTextMessage(response, ConfigResponse.class);
+            return mappedResponse.getConfig();
+        } catch (AssetException | JMSException e) {
+            LOG.error("[ Error when mapping response to config list. ] {}", e);
+            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + ConfigResponse.class.getName(), e, UNMARSHALLING_ERROR.getCode());
+        }
+    }
+
     public static List<Plugin> mapToPluginList(TextMessage response, String correlationId) throws AssetException {
-    	try {
+        try {
             validateResponse(response, correlationId);
             UpsertPluginListResponse mappedResponse = JAXBMarshaller.unmarshallTextMessage(response, UpsertPluginListResponse.class);
             return mappedResponse.getPlugin();
         } catch (AssetException | JMSException e) {
             LOG.error("[ Error when mapping response to plugin list. ] ");
-            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + UpsertPluginListResponse.class.getName() , e, UNMARSHALLING_ERROR.getCode());
+            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + UpsertPluginListResponse.class.getName(), e, UNMARSHALLING_ERROR.getCode());
         }
-	}
-    
+    }
+
     public static UpdatedDNIDListResponse mapToUpdatedDNIDList(TextMessage response, String correlationId) throws AssetException {
-    	try {
+        try {
             validateResponse(response, correlationId);
             return JAXBMarshaller.unmarshallTextMessage(response, UpdatedDNIDListResponse.class);
         } catch (AssetException | JMSException e) {
             LOG.error("[ Error when mapping response to updated DNID list response. ] ");
-            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + UpdatedDNIDListResponse.class.getName() , e, UNMARSHALLING_ERROR.getCode());
+            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + UpdatedDNIDListResponse.class.getName(), e, UNMARSHALLING_ERROR.getCode());
         }
     }
 
@@ -161,8 +163,8 @@ public class MobileTerminalDataSourceResponseMapper {
     }
 
     public static String createPingResponse(String responseMessage) throws AssetException {
-		PingResponse pingResponse = new PingResponse();
-		pingResponse.setResponse(responseMessage);
-		return JAXBMarshaller.marshallJaxBObjectToString(pingResponse);
+        PingResponse pingResponse = new PingResponse();
+        pingResponse.setResponse(responseMessage);
+        return JAXBMarshaller.marshallJaxBObjectToString(pingResponse);
     }
 }

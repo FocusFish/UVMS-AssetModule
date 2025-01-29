@@ -23,11 +23,12 @@ import java.util.Map;
 
 public class MTMobileTerminalConfig {
 
-    private MTMobileTerminalConfig() {}
+    private MTMobileTerminalConfig() {
+    }
 
     public static List<MTMobileTerminalDeviceConfig> mapConfigTransponders(List<TerminalSystemType> list) {
         List<MTMobileTerminalDeviceConfig> transponders = new ArrayList<>();
-      
+
         for (TerminalSystemType system : list) {
 
             MTMobileTerminalDeviceConfig transponder = new MTMobileTerminalDeviceConfig();

@@ -17,6 +17,7 @@ import fish.focus.uvms.asset.client.model.*;
 import fish.focus.uvms.asset.client.model.mt.MobileTerminal;
 import fish.focus.uvms.asset.client.model.mt.VmsBillingDto;
 import fish.focus.uvms.asset.client.model.search.SearchBranch;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.enterprise.context.RequestScoped;
@@ -49,7 +50,7 @@ public class AssetClient {
 
     @Inject
     private JMSContext context;
-    
+
     @Resource(mappedName = "java:/jms/queue/UVMSAssetEvent")
     private Destination destination;
 
@@ -78,7 +79,7 @@ public class AssetClient {
         checkForErrorResponse(response);
         return response.readEntity(AssetDTO.class);
     }
-    
+
     public List<AssetDTO> getAssetList(SearchBranch query) {
         Response response = webTarget
                 .path("query")
@@ -117,23 +118,24 @@ public class AssetClient {
                 .post(Entity.json(query), Response.class);
 
         checkForErrorResponse(response);
-        return response.readEntity(new GenericType<List<String>>() {});
+        return response.readEntity(new GenericType<List<String>>() {
+        });
     }
-    
+
     public List<AssetDTO> getAssetList(SearchBranch query, int page, int size) {
         Response response = webTarget
-                    .path("query")
-                    .queryParam("page", page)
-                    .queryParam("size", size)
-                    .request(MediaType.APPLICATION_JSON)
+                .path("query")
+                .queryParam("page", page)
+                .queryParam("size", size)
+                .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, tokenHandler.createAndFetchToken("user"))
-                    .post(Entity.json(query), Response.class);
+                .post(Entity.json(query), Response.class);
 
         checkForErrorResponse(response);
         AssetListResponse assetResponse = response.readEntity(AssetListResponse.class);
         return assetResponse.getAssetList();
     }
-    
+
     public List<AssetDTO> getAssetHistoryListByAssetId(UUID id) {
         Response response = webTarget
                 .path("history/asset")
@@ -143,9 +145,10 @@ public class AssetClient {
                 .get(Response.class);
 
         checkForErrorResponse(response);
-        return response.readEntity(new GenericType<List<AssetDTO>>() {});
+        return response.readEntity(new GenericType<List<AssetDTO>>() {
+        });
     }
-    
+
     public AssetDTO getAssetFromAssetIdAndDate(AssetIdentifier type, String value, Instant date) {
         String formattedDate = DateUtils.dateToEpochMilliseconds(date);
         Response response = webTarget
@@ -171,7 +174,8 @@ public class AssetClient {
                 .post(Entity.json(assetIdList), Response.class);
 
         checkForErrorResponse(response);
-        return response.readEntity(new GenericType<List<AssetDTO>>() {});
+        return response.readEntity(new GenericType<List<AssetDTO>>() {
+        });
     }
 
     public AssetDTO getAssetHistoryByAssetHistGuid(UUID historyId) {
@@ -185,7 +189,7 @@ public class AssetClient {
         checkForErrorResponse(response);
         return response.readEntity(AssetDTO.class);
     }
-    
+
     public AssetBO upsertAsset(AssetBO asset) {
         Response response = webTarget
                 .path("asset")
@@ -213,9 +217,9 @@ public class AssetClient {
         checkForErrorResponse(response);
         CreatePollResultDto createdPollResponse = response.readEntity(CreatePollResultDto.class);
 
-        if(createdPollResponse.isUnsentPoll()){
+        if (createdPollResponse.isUnsentPoll()) {
             return createdPollResponse.getUnsentPolls().get(0);
-        }else{
+        } else {
             return createdPollResponse.getSentPolls().get(0);
         }
     }
@@ -258,8 +262,9 @@ public class AssetClient {
                 .get(Response.class);
 
         checkForErrorResponse(response);
-        return response.readEntity(new GenericType<List<String>>() {});
-        
+        return response.readEntity(new GenericType<List<String>>() {
+        });
+
     }
 
     public List<CustomCode> getCodesForConstant(String constant) {
@@ -271,10 +276,11 @@ public class AssetClient {
                 .get(Response.class);
 
         checkForErrorResponse(response);
-        return response.readEntity(new GenericType<List<CustomCode>>() {});
+        return response.readEntity(new GenericType<List<CustomCode>>() {
+        });
     }
 
-    public Boolean isCodeValid(String constant, String code, Instant date){
+    public Boolean isCodeValid(String constant, String code, Instant date) {
         String theDate = DateUtils.dateToEpochMilliseconds(date);
         Response response = webTarget
                 .path(constant)
@@ -302,7 +308,8 @@ public class AssetClient {
                 .get(Response.class);
 
         checkForErrorResponse(response);
-        return response.readEntity(new GenericType<List<CustomCode>>() {});
+        return response.readEntity(new GenericType<List<CustomCode>>() {
+        });
     }
 
     public CustomCode replace(CustomCode customCode) {
@@ -327,8 +334,8 @@ public class AssetClient {
         checkForErrorResponse(response);
         return response.readEntity(AssetMTEnrichmentResponse.class);
     }
-    
-    public String getAssetList(List<String> assetIdList){
+
+    public String getAssetList(List<String> assetIdList) {
         Response response = webTarget
                 .path("assetList")
                 .request(MediaType.APPLICATION_JSON)
@@ -340,7 +347,7 @@ public class AssetClient {
         return response.readEntity(String.class);
     }
 
-    public List<SanePollDto> getPollsForAssetInTheLastDay(UUID assetId){
+    public List<SanePollDto> getPollsForAssetInTheLastDay(UUID assetId) {
         Response response = webTarget
                 .path("pollListForAsset")
                 .path(assetId.toString())
@@ -350,10 +357,11 @@ public class AssetClient {
                 .get(Response.class);
 
         checkForErrorResponse(response);
-        return response.readEntity(new GenericType<List<SanePollDto>>() {});
+        return response.readEntity(new GenericType<List<SanePollDto>>() {
+        });
     }
 
-    public SanePollDto getPollInfo(UUID pollId){
+    public SanePollDto getPollInfo(UUID pollId) {
         Response response = webTarget
                 .path("pollInfo")
                 .path(pollId.toString())
@@ -377,10 +385,11 @@ public class AssetClient {
                 .get(Response.class);
 
         checkForErrorResponse(response);
-        return response.readEntity(new GenericType<List<MobileTerminal>>() {});
+        return response.readEntity(new GenericType<List<MobileTerminal>>() {
+        });
     }
 
-    public MobileTerminal getMtAtDate(UUID mtId, Instant date){
+    public MobileTerminal getMtAtDate(UUID mtId, Instant date) {
         Response response = webTarget
                 .path("mobileTerminalAtDate")
                 .path(mtId.toString())
@@ -393,8 +402,8 @@ public class AssetClient {
         checkForErrorResponse(response);
         return response.readEntity(MobileTerminal.class);
     }
-    
-    public MobileTerminal getMtFromMemberNumberAndDnidAtDate(Integer membernumber,Integer dnid, Instant date){
+
+    public MobileTerminal getMtFromMemberNumberAndDnidAtDate(Integer membernumber, Integer dnid, Instant date) {
         Response response = webTarget
                 .path("revision")
                 .queryParam("memberNumber", "" + membernumber)
@@ -408,8 +417,8 @@ public class AssetClient {
         checkForErrorResponse(response);
         return response.readEntity(MobileTerminal.class);
     }
-    
-    public List<VmsBillingDto> getVmsBillingList(){
+
+    public List<VmsBillingDto> getVmsBillingList() {
         Response response = webTarget
                 .path("vmsBilling")
                 .request(MediaType.APPLICATION_JSON)
@@ -418,11 +427,12 @@ public class AssetClient {
                 .get(Response.class);
 
         checkForErrorResponse(response);
-        return response.readEntity(new GenericType<List<VmsBillingDto>>() {});
+        return response.readEntity(new GenericType<List<VmsBillingDto>>() {
+        });
     }
 
-    private void checkForErrorResponse(Response response){
-        if(response.getStatus() != 200){
+    private void checkForErrorResponse(Response response) {
+        if (response.getStatus() != 200) {
             throw new RuntimeException("Statuscode from asset was: " + response.getStatus() + " with payload " + response.readEntity(String.class));
         }
     }

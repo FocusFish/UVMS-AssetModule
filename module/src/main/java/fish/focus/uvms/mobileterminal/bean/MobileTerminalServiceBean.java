@@ -72,7 +72,7 @@ public class MobileTerminalServiceBean {
         }
         Set<Channel> channels = mobileTerminal.getChannels();
         channels.forEach(channel -> channel.setMobileTerminal(mobileTerminal));
-        
+
         mobileTerminal.setUpdateuser(username);
         MobileTerminal createdMobileTerminal = terminalDao.createMobileTerminal(mobileTerminal);
         sortChannels(createdMobileTerminal);
@@ -112,14 +112,14 @@ public class MobileTerminalServiceBean {
         if (updatedPlugin == null) {
             updatedPlugin = oldTerminal.getPlugin();
         }
-        
+
         Set<Channel> channels = mobileTerminal.getChannels();
         Set<Channel> oldChannels = oldTerminal.getChannels();
-        
+
         // if channel is removed
         oldChannels.stream()
                 .filter(oldChannel -> !channels.contains(oldChannel))
-                .forEach( filteredOldChannel -> {
+                .forEach(filteredOldChannel -> {
                     if (filteredOldChannel.getEndDate() == null) {
                         filteredOldChannel.setEndDate(Instant.now());
                         filteredOldChannel.setMobileTerminal(oldTerminal);
@@ -129,30 +129,30 @@ public class MobileTerminalServiceBean {
         // if channel is added
         channels.stream()
                 .filter(channel -> !oldChannels.contains(channel))
-                .forEach( channel -> {
+                .forEach(channel -> {
                     if (channel.getStartDate() == null) {
                         channel.setStartDate(Instant.now());
                         channel.setEndDate(null);
                     }
                 });
         // if mobilterminal is changed to "Active = false"
-        if(mobileTerminal.getActive() == false && oldTerminal.getActive() == true) {
+        if (mobileTerminal.getActive() == false && oldTerminal.getActive() == true) {
             channels.stream()
-            .forEach( channel -> {
-                if (channel.getEndDate() == null) {
-                    channel.setEndDate(Instant.now());
-                }
-            });
+                    .forEach(channel -> {
+                        if (channel.getEndDate() == null) {
+                            channel.setEndDate(Instant.now());
+                        }
+                    });
         }
         // if mobilterminal is changed to "Active = true"
-        if(mobileTerminal.getActive() == true && oldTerminal.getActive() == false) {
+        if (mobileTerminal.getActive() == true && oldTerminal.getActive() == false) {
             channels.stream()
-            .forEach( channel -> {
-                if (channel.getStartDate() == null) {
-                    channel.setStartDate(Instant.now());
-                    channel.setEndDate(null);
-                }
-            });
+                    .forEach(channel -> {
+                        if (channel.getStartDate() == null) {
+                            channel.setStartDate(Instant.now());
+                            channel.setEndDate(null);
+                        }
+                    });
         }
 
         mobileTerminal.setUpdateuser(username);
@@ -510,10 +510,10 @@ public class MobileTerminalServiceBean {
                         .map(MobileTerminal::getAsset)
                         .collect(Collectors.toList()));
     }
-    
-    public MobileTerminal getMobileTerminalAtDateWithMemberNumberAndDnid(Integer memberNumber,Integer dnid, Instant date){
-        if(memberNumber == null || dnid == null || date == null ) {
-            LOG.error("Null value in getTerminalAtDateWithMemberNumberAndDnid  \n memberNumber: " + memberNumber + " dnid: " + dnid+ " date: " + date);
+
+    public MobileTerminal getMobileTerminalAtDateWithMemberNumberAndDnid(Integer memberNumber, Integer dnid, Instant date) {
+        if (memberNumber == null || dnid == null || date == null) {
+            LOG.error("Null value in getTerminalAtDateWithMemberNumberAndDnid  \n memberNumber: " + memberNumber + " dnid: " + dnid + " date: " + date);
             return null;
         }
         return terminalDao.getMobileTerminalAtDateWithMemberNumberAndDnid(memberNumber, dnid, date);

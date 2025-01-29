@@ -24,12 +24,11 @@ import static org.junit.Assert.fail;
 @RunWith(Arquillian.class)
 public class PluginServiceBeanIntTest extends TransactionalTests {
 
+    private final String USERNAME = "TEST_USERNAME";
     @EJB
     private PluginServiceBean pluginService;
     @EJB
     private TestPollHelper testPollHelper;
-
-    private final String USERNAME = "TEST_USERNAME";
 
     @Test
     @OperateOnDeployment("normal")
@@ -49,7 +48,7 @@ public class PluginServiceBeanIntTest extends TransactionalTests {
 
     private PollResponseType createPollResponseType() {
 
-        PollId pollId  = new PollId();
+        PollId pollId = new PollId();
         pollId.setGuid(UUID.randomUUID().toString());
 
         MobileTerminal mobileTerminal = testPollHelper.createAndPersistMobileTerminal(null);

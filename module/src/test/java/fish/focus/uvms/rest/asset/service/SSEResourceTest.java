@@ -18,6 +18,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.sse.InboundSseEvent;
 import javax.ws.rs.sse.SseEventSource;
+
 import fish.focus.uvms.asset.domain.dao.AssetDao;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.domain.entity.AssetRemapMapping;
@@ -36,32 +37,42 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.*;
 
 /**
- *
  * @author Jem
  */
 @RunWith(Arquillian.class)
 //@RunAsClient
 public class SSEResourceTest extends AbstractAssetRestTest {
     private final static Logger LOG = LoggerFactory.getLogger(SSEResourceTest.class);
-    
+
     private static String dataString = "";
     private static String errorString = "";
-
+    private static Consumer<InboundSseEvent> onEvent = (inboundSseEvent) -> {
+        String data = inboundSseEvent.readData();
+        dataString = dataString.concat(data);
+    };
+    //Error
+    private static Consumer<Throwable> onError = (throwable) -> {
+        LOG.error("Error while testing sse: ", throwable);
+        errorString = throwable.getMessage();
+    };
+    //Connection close and there is nothing to receive
+    private static Runnable onComplete = () -> {
+        System.out.println("Done!");
+    };
     @Inject
     private AssetDao assetDao;
-
     @Inject
     private AssetRemapTask assetRemapTask;
 
     @Before
-    public void clearStrings(){
+    public void clearStrings() {
         dataString = "";
         errorString = "";
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void SSEBroadcastTest() throws Exception{
+    public void SSEBroadcastTest() throws Exception {
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target("http://localhost:8080/test/rest/sse/subscribe");
         AuthorizationHeaderWebTarget jwtTarget = new AuthorizationHeaderWebTarget(target, getTokenInternal());
@@ -84,8 +95,8 @@ public class SSEResourceTest extends AbstractAssetRestTest {
 
             Thread.sleep(1000);
             assertTrue(source.isOpen());
-            assertTrue(errorString,errorString.isEmpty());
-            assertEquals(dataString,4 ,dataString.split("\\}\\{").length);
+            assertTrue(errorString, errorString.isEmpty());
+            assertEquals(dataString, 4, dataString.split("\\}\\{").length);
             assertTrue(dataString, dataString.contains("new test name"));
             assertTrue(dataString, dataString.contains("UNK"));
             assertTrue(dataString, dataString.contains("42"));
@@ -94,7 +105,7 @@ public class SSEResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void checkThatMergeMessageComesOnSSEStreamTest() throws Exception{
+    public void checkThatMergeMessageComesOnSSEStreamTest() throws Exception {
         Asset oldAsset = createAndRestBasicAsset();
         Asset newAsset = createAndRestBasicAsset();
         AssetRemapMapping assetRemapMapping = new AssetRemapMapping();
@@ -119,29 +130,13 @@ public class SSEResourceTest extends AbstractAssetRestTest {
 
             Thread.sleep(1000);
             assertTrue(source.isOpen());
-            assertTrue(errorString,errorString.isEmpty());
+            assertTrue(errorString, errorString.isEmpty());
             assertTrue(dataString, dataString.contains(assetRemapMapping.getOldAssetId().toString()));
             assertTrue(dataString, dataString.contains(assetRemapMapping.getNewAssetId().toString()));
         }
     }
 
-    private static Consumer<InboundSseEvent> onEvent = (inboundSseEvent) -> {
-        String data = inboundSseEvent.readData();
-        dataString = dataString.concat(data);
-    };
-
-    //Error
-    private static Consumer<Throwable> onError = (throwable) -> {
-        LOG.error("Error while testing sse: ", throwable);
-        errorString = throwable.getMessage();
-    };
-
-    //Connection close and there is nothing to receive
-    private static Runnable onComplete = () -> {
-        System.out.println("Done!");
-    };
-
-    private Asset createAndRestBasicAsset(){
+    private Asset createAndRestBasicAsset() {
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = getWebTargetInternal()
                 .path("asset")
@@ -153,12 +148,12 @@ public class SSEResourceTest extends AbstractAssetRestTest {
         return createdAsset;
     }
 
-    private Asset updateAsset(Asset asset){
+    private Asset updateAsset(Asset asset) {
         return getWebTargetInternal()
                 .path("asset")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .put(Entity.json(asset), Asset.class);
     }
-    
+
 }

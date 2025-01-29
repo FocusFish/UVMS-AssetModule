@@ -22,17 +22,18 @@ public class AuditModuleRequestMapper {
     private static final String ARCHIVE = "Archive";
     private static final String UNARCHIVE = "Unarchive";
 
-    private AuditModuleRequestMapper() {}
-    
-    public static String mapAuditLogAssetCreated(String guid, String username)  {
+    private AuditModuleRequestMapper() {
+    }
+
+    public static String mapAuditLogAssetCreated(String guid, String username) {
         return mapToAuditLog(ASSET, CREATE, guid, username);
     }
 
-    public static String mapAuditLogAssetUpdated(String guid, String comment, String username)  {
+    public static String mapAuditLogAssetUpdated(String guid, String comment, String username) {
         return AuditLogModelMapper.mapToAuditLog(ASSET, UPDATE, guid, comment, username);
     }
 
-    public static String mapAuditLogAssetArchived(String guid, String comment, String username)  {
+    public static String mapAuditLogAssetArchived(String guid, String comment, String username) {
         return AuditLogModelMapper.mapToAuditLog(ASSET, ARCHIVE, guid, comment, username);
     }
 
@@ -40,22 +41,23 @@ public class AuditModuleRequestMapper {
         return AuditLogModelMapper.mapToAuditLog(ASSET, UNARCHIVE, guid, comment, username);
     }
 
-    public static String mapAuditLogAssetGroupCreated(String guid, String username,String name)  {
+    public static String mapAuditLogAssetGroupCreated(String guid, String username, String name) {
         return mapToAuditLog(ASSET_GROUP, CREATE, guid, username, name);
     }
 
-    public static String mapAuditLogAssetGroupUpdated(String guid, String username, String name)  {
-        return mapToAuditLog(ASSET_GROUP, UPDATE, guid, username,name);
+    public static String mapAuditLogAssetGroupUpdated(String guid, String username, String name) {
+        return mapToAuditLog(ASSET_GROUP, UPDATE, guid, username, name);
     }
 
-    public static String mapAuditLogAssetGroupDeleted(String guid, String username, String name)  {
+    public static String mapAuditLogAssetGroupDeleted(String guid, String username, String name) {
         return mapToAuditLog(ASSET_GROUP, ARCHIVE, guid, username, name);
     }
 
-    private static String mapToAuditLog(String objectType, String operation, String affectedObject, String username)  {
+    private static String mapToAuditLog(String objectType, String operation, String affectedObject, String username) {
         return AuditLogModelMapper.mapToAuditLog(objectType, operation, affectedObject, username);
     }
-    private static String mapToAuditLog(String objectType, String operation, String affectedObject, String username,String name) {
+
+    private static String mapToAuditLog(String objectType, String operation, String affectedObject, String username, String name) {
         return AuditLogModelMapper.mapToAuditLog(objectType, operation, affectedObject, name, username);
     }
 }

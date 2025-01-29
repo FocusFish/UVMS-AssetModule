@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+
 import fish.focus.uvms.asset.client.model.*;
 
 public abstract class AssetHelper {
@@ -28,10 +29,10 @@ public abstract class AssetHelper {
         assetEntity.setIccat("ICCAT" + getRandomIntegers(20));
         assetEntity.setUvi("UVI" + getRandomIntegers(20));
         assetEntity.setGfcm("GFCM" + getRandomIntegers(20));
-        
+
         assetEntity.setGrossTonnage(10d);
         assetEntity.setPowerOfMainEngine(10d);
-        
+
         assetEntity.setGearFishingType("Demersal");
 
         assetEntity.setOwnerName("Foo Bar");
@@ -45,12 +46,10 @@ public abstract class AssetHelper {
     }
 
 
-
-
     public static AssetDTO createBiggerAsset() {
 
         AssetDTO assetEntity = new AssetDTO();
-        Instant  now =  Instant.now();
+        Instant now = Instant.now();
 
 
         assetEntity.setName("Test asset");
@@ -111,13 +110,10 @@ public abstract class AssetHelper {
         assetEntity.setSource("INTERNAL");
 
 
-
-
         List<ContactInfo> contacts = new ArrayList<>();
         ContactInfo ci = new ContactInfo();
         ci.setSource("INTERNAL");
         contacts.add(ci);
-
 
 
         return assetEntity;
@@ -130,10 +126,10 @@ public abstract class AssetHelper {
         note.setCreatedOn(Instant.now());
         return note;
     }
-    
+
     public static String getRandomIntegers(int length) {
         return new Random()
-                .ints(0,9)
+                .ints(0, 9)
                 .mapToObj(i -> String.valueOf(i))
                 .limit(length)
                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
@@ -145,7 +141,7 @@ public abstract class AssetHelper {
         CustomCode cc = new CustomCode();
         Instant validFrom = Instant.now();
         Instant validTo = validFrom.plus(30, ChronoUnit.DAYS);
-        CustomCodesPK pk = new CustomCodesPK(constant, "TEST_Code_" + UUID.randomUUID().toString(),validFrom, validTo);
+        CustomCodesPK pk = new CustomCodesPK(constant, "TEST_Code_" + UUID.randomUUID().toString(), validFrom, validTo);
         cc.setPrimaryKey(pk);
         cc.setDescription("This is a description");
         return cc;

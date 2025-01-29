@@ -23,7 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
+
 import static fish.focus.uvms.mobileterminal.exception.ErrorCode.*;
+
 import java.util.List;
 
 public class PollDataSourceResponseMapper {
@@ -59,7 +61,7 @@ public class PollDataSourceResponseMapper {
             return unmarshalledResponse.getPollList();
         } catch (AssetException | JMSException e) {
             LOG.error("[ Error when unmarshalling poll create responses. ] {}", e);
-            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + CreatePollResponse.class.getName() , e, UNMARSHALLING_ERROR.getCode());
+            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + CreatePollResponse.class.getName(), e, UNMARSHALLING_ERROR.getCode());
         }
     }
 
@@ -70,7 +72,7 @@ public class PollDataSourceResponseMapper {
             return unmarshalledResponse.getPollList();
         } catch (AssetException | JMSException e) {
             LOG.error("[ Error when unmarshalling poll list responses. ] {}", e);
-            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + PollListResponse.class.getName() , e, UNMARSHALLING_ERROR.getCode());
+            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + PollListResponse.class.getName(), e, UNMARSHALLING_ERROR.getCode());
         }
     }
 
@@ -80,10 +82,10 @@ public class PollDataSourceResponseMapper {
             return JAXBMarshaller.unmarshallTextMessage(response, PollListResponse.class);
         } catch (AssetException | JMSException e) {
             LOG.error("[ Error when unmarshalling poll list responses. ] {}", e);
-            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + PollListResponse.class.getName() , e, UNMARSHALLING_ERROR.getCode());
+            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + PollListResponse.class.getName(), e, UNMARSHALLING_ERROR.getCode());
         }
-	}
-    
+    }
+
     public static PollResponseType mapPollResponse(TextMessage response, String messageId) throws AssetException {
         try {
             validateResponse(response, messageId);
@@ -91,7 +93,7 @@ public class PollDataSourceResponseMapper {
             return unmarshalledResponse.getPoll();
         } catch (AssetException | JMSException e) {
             LOG.error("[ Error when unmarshalling single poll responses. ] {}", e);
-            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + SinglePollResponse.class.getName() , e, UNMARSHALLING_ERROR.getCode());
+            throw new AssetException(UNMARSHALLING_ERROR.getMessage() + SinglePollResponse.class.getName(), e, UNMARSHALLING_ERROR.getCode());
         }
     }
 }

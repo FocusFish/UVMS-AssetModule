@@ -50,21 +50,17 @@ import java.util.UUID;
 
 @Path("/mobileterminal")
 @Stateless
-@Consumes(value = { MediaType.APPLICATION_JSON })
-@Produces(value = { MediaType.APPLICATION_JSON })
+@Consumes(value = {MediaType.APPLICATION_JSON})
+@Produces(value = {MediaType.APPLICATION_JSON})
 public class MobileTerminalRestResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(MobileTerminalRestResource.class);
-
-    @EJB
-    private MobileTerminalServiceBean mobileTerminalService;
-
-    @Inject
-    private MobileTerminalPluginDaoBean pluginDao;
-
     @Inject
     ChannelDaoBean channelDao;
-
+    @EJB
+    private MobileTerminalServiceBean mobileTerminalService;
+    @Inject
+    private MobileTerminalPluginDaoBean pluginDao;
     @Context
     private HttpServletRequest request;
 
@@ -83,7 +79,7 @@ public class MobileTerminalRestResource {
         LOG.info("Create mobile terminal invoked in rest layer.");
         LOG.info("MobileTerminalType: SHORT_PREFIX_STYLE {}", terminal.toString());
         try {
-            if(terminal.getId() != null) {
+            if (terminal.getId() != null) {
                 return Response.status(Response.Status.BAD_REQUEST).entity("Given MobileTerminal is already persisted in DB.").build();
             }
 
@@ -179,7 +175,7 @@ public class MobileTerminalRestResource {
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
     public Response checkIfSerialNumberExistsInDB(@PathParam("serialNr") String serialNbr,
                                                   @DefaultValue("false") @QueryParam("returnWholeObject") Boolean returnWholeObject) {
-        try{
+        try {
             MTQuery query = new MTQuery();
             query.setSerialNumbers(Arrays.asList(serialNbr));
             List<MTSearchKeyValue> searchFields = SearchFieldMapper.createSearchFields(query);
@@ -197,9 +193,9 @@ public class MobileTerminalRestResource {
     @Path("checkIfExists/memberNbr/dnid/{memberNbr}/{dnid}")
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
     public Response checkIfMemberNumberDnidComboExistsInDB(@PathParam("memberNbr") Integer memberNbr,
-                                                  @PathParam("dnid") Integer dnid,
-                                                  @DefaultValue("false") @QueryParam("returnWholeObject") Boolean returnWholeObject) {
-        try{
+                                                           @PathParam("dnid") Integer dnid,
+                                                           @DefaultValue("false") @QueryParam("returnWholeObject") Boolean returnWholeObject) {
+        try {
             MTQuery query = new MTQuery();
             query.setMemberNumbers(Arrays.asList(memberNbr));
             query.setDnids(Arrays.asList(dnid));
@@ -284,7 +280,7 @@ public class MobileTerminalRestResource {
     @Path("/history/getMtHistoryForAsset/{assetId}")
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
     public Response getMobileTerminalHistoryByAssetId(@PathParam("assetId") UUID assetId,
-                                                      @DefaultValue("100") @QueryParam("maxNbr") Integer maxNbr)  {
+                                                      @DefaultValue("100") @QueryParam("maxNbr") Integer maxNbr) {
         try {
             Map<String, ChangeHistoryRow> mobileTerminalRevisionMap =
                     mobileTerminalService.getMobileTerminalRevisionsByAssetId(assetId, maxNbr);
@@ -301,7 +297,7 @@ public class MobileTerminalRestResource {
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
     public Response getAssetRevisionByMobileTerminalId(@PathParam("mobileTerminalId") UUID mobileTerminalId,
                                                        @DefaultValue("100") @QueryParam("maxNbr") Integer maxNbr) {
-        try{
+        try {
             List<AssetDto> assetRevisions = mobileTerminalService.getAssetRevisionsByMobileTerminalId(mobileTerminalId);
             String returnString = jsonb.toJson(assetRevisions);
             return Response.ok(returnString).header("MDC", MDC.get("requestId")).build();
@@ -315,8 +311,8 @@ public class MobileTerminalRestResource {
     @Path("/{mtId}/changeHistory/")
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
     public Response getMobileTerminalHistoryChangesListByMobileTerminalId(@PathParam("mtId") UUID id,
-                                                                   @DefaultValue("100")
-                                                                   @QueryParam("maxNbr") Integer maxNbr) {
+                                                                          @DefaultValue("100")
+                                                                          @QueryParam("maxNbr") Integer maxNbr) {
         LOG.info("Get mobile terminal history by mobile terminal id invoked in rest layer.");
         try {
             List<MobileTerminal> mobileTerminalRevisions = mobileTerminalService.getMobileTerminalRevisions(id, maxNbr);
@@ -332,7 +328,7 @@ public class MobileTerminalRestResource {
     @GET
     @Path("/lowestFreeMemberNumberForDnid/{dnid}/")
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
-    public Response getLowestFreeMemberNumberForDnid(@PathParam("dnid") Integer dnid){
+    public Response getLowestFreeMemberNumberForDnid(@PathParam("dnid") Integer dnid) {
         try {
             Integer lowestFreeMemberNumberForDnid = channelDao.getLowestFreeMemberNumberForDnid(dnid);
             return Response.ok(lowestFreeMemberNumberForDnid).header("MDC", MDC.get("requestId")).build();

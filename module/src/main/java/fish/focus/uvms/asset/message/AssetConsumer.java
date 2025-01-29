@@ -17,6 +17,7 @@ import javax.ejb.Stateless;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Queue;
+
 import fish.focus.uvms.commons.message.api.MessageConstants;
 import fish.focus.uvms.commons.message.impl.AbstractConsumer;
 import fish.focus.uvms.config.exception.ConfigMessageException;
@@ -35,7 +36,7 @@ public class AssetConsumer extends AbstractConsumer implements ConfigMessageCons
     public Destination getDestination() {
         return destination;
     }
-    
+
     @Override
     public <T> T getConfigMessage(String correlationId, Class<T> type) throws ConfigMessageException {
         try {

@@ -28,11 +28,11 @@ public class MTRequestFilterTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .get();
-        
+
         String requestId = response.getHeaderString("requestId");
         assertThat(requestId, CoreMatchers.is(CoreMatchers.notNullValue()));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void checkMDCHeaderSetTest() {
@@ -44,7 +44,7 @@ public class MTRequestFilterTest extends AbstractAssetRestTest {
                 .header("requestId", requestId)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .get();
-        
+
         String returnedRequestId = response.getHeaderString("requestId");
         assertThat(returnedRequestId, CoreMatchers.is(requestId));
     }

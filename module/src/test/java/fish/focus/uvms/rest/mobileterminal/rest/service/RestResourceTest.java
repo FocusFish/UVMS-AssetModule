@@ -17,6 +17,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import fish.focus.uvms.rest.asset.AbstractAssetRestTest;
+
 import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
@@ -25,7 +26,7 @@ public class RestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void worldsBestAndMostUsefulRestTest(){
+    public void worldsBestAndMostUsefulRestTest() {
         assertTrue(true);
     }
 }

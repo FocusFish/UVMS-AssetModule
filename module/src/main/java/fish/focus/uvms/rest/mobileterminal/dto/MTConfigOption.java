@@ -15,22 +15,22 @@ import java.util.List;
 
 public class MTConfigOption<T> {
 
-	private String name;
-	private List<T> data;
+    private String name;
+    private List<T> data;
 
-	public List<T> getData() {
-		return data;
-	}
+    public List<T> getData() {
+        return data;
+    }
 
-	public void setData(List<T> data) {
-		this.data = data;
-	}
+    public void setData(List<T> data) {
+        this.data = data;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 }

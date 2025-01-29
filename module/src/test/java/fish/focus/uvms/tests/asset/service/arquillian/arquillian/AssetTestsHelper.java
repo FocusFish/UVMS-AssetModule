@@ -4,6 +4,7 @@ import fish.focus.uvms.asset.domain.constant.AssetFilterValueType;
 import fish.focus.uvms.asset.domain.constant.AssetIdentifier;
 import fish.focus.uvms.asset.domain.entity.*;
 import fish.focus.uvms.asset.model.constants.UnitTonnage;
+
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class AssetTestsHelper {
 
     public static Asset createBasicAsset() {
         Asset assetEntity = new Asset();
-        
+
         assetEntity.setName("Test asset");
         assetEntity.setActive(true);
         assetEntity.setExternalMarking("EXT123");
@@ -31,26 +32,26 @@ public class AssetTestsHelper {
         assetEntity.setIccat("ICCAT" + getRandomIntegers(20));
         assetEntity.setUvi("UVI" + getRandomIntegers(20));
         assetEntity.setGfcm("GFCM" + getRandomIntegers(20));
-        
+
         assetEntity.setGrossTonnage(10D);
         assetEntity.setPowerOfMainEngine(10D);
-        
+
         assetEntity.setOwnerName("Foo Bar");
         assetEntity.setOwnerAddress("Hacker st. 1337");
-        
+
         assetEntity.setProdOrgCode("ORGCODE");
         assetEntity.setProdOrgName("ORGNAME");
-        
+
         assetEntity.setUpdateTime(Instant.now());
         assetEntity.setUpdatedBy("TEST");
-        
+
         return assetEntity;
     }
 
     public static Asset createBiggerAsset() {
 
         Asset assetEntity = new Asset();
-        Instant  now =  Instant.now();
+        Instant now = Instant.now();
 
 
         assetEntity.setName("Test asset");
@@ -137,11 +138,32 @@ public class AssetTestsHelper {
 
     public static String getRandomIntegers(int length) {
         return new Random()
-                .ints(0,9)
+                .ints(0, 9)
                 .mapToObj(i -> String.valueOf(i))
                 .limit(length)
                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
                 .toString();
+    }
+
+    static AssetFilterQuery createAssetFilterQuery(AssetFilter assetFilterEntity) {
+        AssetFilterQuery afq = new AssetFilterQuery();
+        afq.setAssetFilter(assetFilterEntity);
+        afq.setType("GUID");
+        afq.setValueType(AssetFilterValueType.NUMBER);
+        afq.setInverse(true);
+        return afq;
+    }
+
+    public static FishingLicence createFishingLicence() {
+        FishingLicence licence = new FishingLicence();
+        licence.setLicenceNumber(rnd.nextLong());
+        licence.setCivicNumber(getRandomIntegers(10));
+        licence.setName(getRandomIntegers(20));
+        licence.setDecisionDate(Instant.now().minus(1, ChronoUnit.DAYS));
+        licence.setFromDate(Instant.now().minus(1, ChronoUnit.DAYS));
+        licence.setToDate(Instant.now().plus(1, ChronoUnit.DAYS));
+        licence.setConstraints("Test");
+        return licence;
     }
 
     public Asset createAssetHelper(AssetIdentifier key, String value) {
@@ -180,26 +202,5 @@ public class AssetTestsHelper {
                 break;
         }
         return assetEntity;
-    }
-
-    static AssetFilterQuery createAssetFilterQuery(AssetFilter assetFilterEntity) {
-    	AssetFilterQuery afq = new AssetFilterQuery();
-    	afq.setAssetFilter(assetFilterEntity);
-    	afq.setType("GUID");
-    	afq.setValueType(AssetFilterValueType.NUMBER);
-    	afq.setInverse(true);
-        return afq;
-    }
-
-    public static FishingLicence createFishingLicence() {
-        FishingLicence licence = new FishingLicence();
-        licence.setLicenceNumber(rnd.nextLong());
-        licence.setCivicNumber(getRandomIntegers(10));
-        licence.setName(getRandomIntegers(20));
-        licence.setDecisionDate(Instant.now().minus(1,ChronoUnit.DAYS));
-        licence.setFromDate(Instant.now().minus(1,ChronoUnit.DAYS));
-        licence.setToDate(Instant.now().plus(1,ChronoUnit.DAYS));
-        licence.setConstraints("Test");
-        return licence;
     }
 }

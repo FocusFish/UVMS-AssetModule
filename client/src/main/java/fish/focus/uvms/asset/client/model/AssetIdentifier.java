@@ -21,5 +21,5 @@ public enum AssetIdentifier {
     UVI,
     GFCM,
     NATIONAL;
-    
+
 }

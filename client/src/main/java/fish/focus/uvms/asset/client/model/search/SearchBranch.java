@@ -10,23 +10,22 @@ public class SearchBranch implements AssetSearchInterface {
 
     List<AssetSearchInterface> fields = new ArrayList<>();
 
+    public SearchBranch() {
+    }
+
+    public SearchBranch(boolean logicalAnd) {
+        this.logicalAnd = logicalAnd;
+    }
+
     @Override
     @JsonbTransient
     public boolean isLeaf() {
         return false;
     }
 
-    public SearchBranch() {
-    }
-
-    public void addNewSearchLeaf(SearchFields searchField, String value){
+    public void addNewSearchLeaf(SearchFields searchField, String value) {
         SearchLeaf leaf = new SearchLeaf(searchField, value);
         fields.add(leaf);
-    }
-
-
-    public SearchBranch(boolean logicalAnd) {
-        this.logicalAnd = logicalAnd;
     }
 
     public boolean isLogicalAnd() {

@@ -12,11 +12,11 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.mobileterminal.entity.types;
 
 public enum TerminalCapability {
-	SUPPORT_MULTIPLE_CHANNEL,
-	IS_POLLABLE,
-	IS_CONFIGURABLE,
-	SUPPORT_SINGLE_OCEAN,
-	SUPPORT_MULTIPLE_OCEAN,
-	SUPPORT_SAMPLING,
-	PLUGIN
+    SUPPORT_MULTIPLE_CHANNEL,
+    IS_POLLABLE,
+    IS_CONFIGURABLE,
+    SUPPORT_SINGLE_OCEAN,
+    SUPPORT_MULTIPLE_OCEAN,
+    SUPPORT_SAMPLING,
+    PLUGIN
 }

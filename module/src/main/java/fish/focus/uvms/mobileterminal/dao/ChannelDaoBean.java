@@ -17,35 +17,37 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+
 import fish.focus.uvms.mobileterminal.entity.Channel;
 import fish.focus.uvms.mobileterminal.search.poll.PollSearchMapper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Stateless
-public class ChannelDaoBean  {
+public class ChannelDaoBean {
 
     @PersistenceContext
     private EntityManager em;
 
     public List<Channel> getPollableListSearch(List<String> idList) {
-        if(idList == null){
+        if (idList == null) {
             return new ArrayList<>();
         }
         String sql = PollSearchMapper.createPollableSearchSql(idList);
         List<UUID> uuidList = new ArrayList<>();
-        for (String s: idList) {
+        for (String s : idList) {
             uuidList.add(UUID.fromString(s));
         }
         TypedQuery<Channel> query = em.createQuery(sql, Channel.class);
-        if(!idList.isEmpty()) {
+        if (!idList.isEmpty()) {
             query.setParameter("idList", uuidList);
         }
         return query.getResultList();
     }
 
-    public Integer getLowestFreeMemberNumberForDnid(Integer dnid){
+    public Integer getLowestFreeMemberNumberForDnid(Integer dnid) {
         Query q = em.createNamedQuery(Channel.LOWEST_UNUSED_MEMBER_NUMBER_FOR_DNID_NATIV_SQL);
         q.setParameter("dnid", dnid);
         return (Integer) q.getSingleResult();

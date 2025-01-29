@@ -12,7 +12,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.asset.model.constants;
 
 public enum FaultCode {
-	ASSET_DOMAIN(1800),
+    ASSET_DOMAIN(1800),
     ASSET_DOMAIN_MODEL(1810),
     ASSET_DOMAIN_MODEL_GROUP(1811),
     ASSET_DOMAIN_MESSAGE(1820),
@@ -24,16 +24,16 @@ public enum FaultCode {
     ASSET_DOMAIN_DAO_GROUP(1842),
     ASSET_MESSAGE(1700),
     ASSET_DOMAIN_INPUT_ERROR(1801);
-	
-	//VesselModelException (parameterDao)
-	
-	private final int code;
-	
-	private FaultCode(int code) {
-		this.code = code;
-	}
-	
-	public int getCode() {
-		return code;
-	}
+
+    //VesselModelException (parameterDao)
+
+    private final int code;
+
+    private FaultCode(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
 }

@@ -44,9 +44,9 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "note", indexes = { @Index(columnList = "asset_Id", name = "Note_asset_FK_INX10", unique = false),})
+@Table(name = "note", indexes = {@Index(columnList = "asset_Id", name = "Note_asset_FK_INX10", unique = false),})
 @NamedQueries({
-    @NamedQuery(name = Note.FIND_BY_ASSET, query = "SELECT n FROM Note n WHERE n.assetId = :assetId"),
+        @NamedQuery(name = Note.FIND_BY_ASSET, query = "SELECT n FROM Note n WHERE n.assetId = :assetId"),
 })
 public class Note implements Serializable {
 
@@ -73,7 +73,8 @@ public class Note implements Serializable {
     @Column(name = "created_by")
     private String createdBy;
 
-    public Note() {}
+    public Note() {
+    }
 
     public UUID getId() {
         return id;

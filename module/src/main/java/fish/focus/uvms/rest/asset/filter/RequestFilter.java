@@ -16,7 +16,9 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import fish.focus.uvms.rest.asset.Constant;
+
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +48,7 @@ public class RequestFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String origin = httpServletRequest.getHeader("ORIGIN");
 
-        if(origin != null && validateHost(origin)) {
+        if (origin != null && validateHost(origin)) {
             HttpServletResponse response = (HttpServletResponse) res;
             response.setHeader(Constant.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
             response.setHeader(Constant.ACCESS_CONTROL_ALLOW_METHODS, Constant.ACCESS_CONTROL_ALLOWED_METHODS);

@@ -12,11 +12,11 @@ public enum SearchKey {
     ANTENNA,
     MOBILETERMINAL_ID;
 
-    public String value() {
-        return name();
-    }
-
     public static SearchKey fromValue(String v) {
         return valueOf(v);
+    }
+
+    public String value() {
+        return name();
     }
 }

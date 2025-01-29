@@ -12,5 +12,5 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.asset.domain.constant;
 
 public enum UnitLength {
-	LOA, LBP;
+    LOA, LBP;
 }

@@ -29,7 +29,7 @@ public class MobileTerminalEntityToModelMapper {
             throw new RuntimeException(e);
         }
 
-        if(entity.getAsset() != null){
+        if (entity.getAsset() != null) {
             model.setConnectId(entity.getAsset().getId().toString());
         }
 
@@ -44,7 +44,7 @@ public class MobileTerminalEntityToModelMapper {
         serialNumber.setType(PollReceiverInmarsatC.SERIAL_NUMBER.toString());
         serialNumber.setValue(entity.getSerialNo());
         model.getAttributes().add(serialNumber);
-        
+
         MobileTerminalAttribute satelliteNumber = new MobileTerminalAttribute();
         serialNumber.setType(PollReceiverInmarsatC.SATELLITE_NUMBER.toString());
         serialNumber.setValue(entity.getSatelliteNumber());
@@ -53,7 +53,7 @@ public class MobileTerminalEntityToModelMapper {
         model.setInstalledOn(DateUtils.dateToEpochMilliseconds(entity.getInstallDate()));
         model.setUninstalledOn(DateUtils.dateToEpochMilliseconds(entity.getUninstallDate()));
         model.setInstalledBy(entity.getInstalledBy());
-        
+
         return model;
     }
 

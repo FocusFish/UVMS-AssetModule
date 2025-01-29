@@ -12,22 +12,22 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.rest.mobileterminal.error;
 
 public enum MTResponseCode {
-	OK(200),
-	UNDEFINED_ERROR(500),
-	MOBILE_TERMINAL_ERROR(501),
-	INPUT_ERROR(511),
-	MAPPING_ERROR(512),
-	SERVICE_ERROR(521),
-	MODEL_ERROR(522),
-	DOMAIN_ERROR(523);
-	
-	private int code;
-	
-	MTResponseCode(int code) {
-		this.code = code;
-	}
-	
-	public int getCode() {
-		return code;
-	}
+    OK(200),
+    UNDEFINED_ERROR(500),
+    MOBILE_TERMINAL_ERROR(501),
+    INPUT_ERROR(511),
+    MAPPING_ERROR(512),
+    SERVICE_ERROR(521),
+    MODEL_ERROR(522),
+    DOMAIN_ERROR(523);
+
+    private int code;
+
+    MTResponseCode(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
 }

@@ -22,12 +22,11 @@ import java.util.UUID;
 
 /**
  * The persistent class for the landearthstation database table.
- *
  */
 @Entity
-@Table(name = "plugin_capability", indexes = { @Index(columnList = "plugin_id", name = "plugin_capability_plugin_FK_INX10", unique = false),})
+@Table(name = "plugin_capability", indexes = {@Index(columnList = "plugin_id", name = "plugin_capability_plugin_FK_INX10", unique = false),})
 @NamedQueries({
-	@NamedQuery(name = "PluginCapability.findAll", query = "SELECT p FROM MobileTerminalPluginCapability p"),
+        @NamedQuery(name = "PluginCapability.findAll", query = "SELECT p FROM MobileTerminalPluginCapability p"),
 })
 public class MobileTerminalPluginCapability implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -55,7 +54,7 @@ public class MobileTerminalPluginCapability implements Serializable {
 
     @Column(name = "plugin_id")
     private UUID plugin;
-    
+
     public MobileTerminalPluginCapability() {
     }
 

@@ -34,14 +34,14 @@ import java.util.UUID;
 
 @Audited
 @Entity
-@Table(name = "ContactInfo", indexes = { @Index(columnList = "assetId", name = "ContactInfo_asset_FK_INX10")})
+@Table(name = "ContactInfo", indexes = {@Index(columnList = "assetId", name = "ContactInfo_asset_FK_INX10")})
 @NamedQueries({
-    @NamedQuery(name = ContactInfo.FIND_BY_ASSET, query = "SELECT n FROM ContactInfo n WHERE n.assetId = :assetId"),
+        @NamedQuery(name = ContactInfo.FIND_BY_ASSET, query = "SELECT n FROM ContactInfo n WHERE n.assetId = :assetId"),
 })
 public class ContactInfo implements Serializable {
 
     public static final String FIND_BY_ASSET = "ContactInfo.findByAsset";
-    
+
     private static final long serialVersionUID = -4021324921105230508L;
 
     @Id
@@ -94,7 +94,7 @@ public class ContactInfo implements Serializable {
     @Size(max = 100)
     @Column(name = "zipcode")
     private String zipCode;
-    
+
     @Size(max = 100)
     @Column(name = "cityname")
     private String cityName;

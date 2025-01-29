@@ -16,9 +16,9 @@ import javax.json.bind.annotation.JsonbTransient;
 
 public class SearchLeaf implements AssetSearchInterface {
 
-	private SearchFields searchField;
-	private String searchValue;
-	private String operator;
+    private SearchFields searchField;
+    private String searchValue;
+    private String operator;
 
     public SearchLeaf() {
         super();
@@ -29,46 +29,46 @@ public class SearchLeaf implements AssetSearchInterface {
         this.searchValue = searchValue;
         this.operator = "";
     }
-    
+
     public SearchLeaf(SearchFields searchField, String searchValue, String operator) {
         this.searchField = searchField;
         this.searchValue = searchValue;
-        if(operator != null) {
-        	this.operator = operator;
-        }else {
-        	this.operator = "=";
+        if (operator != null) {
+            this.operator = operator;
+        } else {
+            this.operator = "=";
         }
     }
 
-	@Override
-	@JsonbTransient
-	public boolean isLeaf() {
-		return true;
-	}
+    @Override
+    @JsonbTransient
+    public boolean isLeaf() {
+        return true;
+    }
 
     public SearchFields getSearchField() {
-		return searchField;
-	}
-    
-	public void setSearchField(SearchFields searchField) {
-		this.searchField = searchField;
-	}
+        return searchField;
+    }
 
-	public String getSearchValue() {
-		return searchValue;
-	}
+    public void setSearchField(SearchFields searchField) {
+        this.searchField = searchField;
+    }
 
-	public void setSearchValue(String searchValue) {
-		this.searchValue = searchValue;
-	}
+    public String getSearchValue() {
+        return searchValue;
+    }
 
-	public String getOperator() {
-		return operator;
-	}
+    public void setSearchValue(String searchValue) {
+        this.searchValue = searchValue;
+    }
 
-	public void setOperator(String operator) {
-		this.operator = operator;
-	}
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
 
 
 }

@@ -59,7 +59,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void createAssetGroup() {
-    	AssetFilter createdAssetGroupEntity1 = createAndStoreAssetFilterEntity("TEST");
+        AssetFilter createdAssetGroupEntity1 = createAndStoreAssetFilterEntity("TEST");
         assertNotNull(createdAssetGroupEntity1);
     }
 
@@ -93,7 +93,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
     @OperateOnDeployment("normal")
     public void getAssetFilterByGuid() {
 
-    	AssetFilter createdAssetFilterEntity = createAndStoreAssetFilterEntity("TEST");
+        AssetFilter createdAssetFilterEntity = createAndStoreAssetFilterEntity("TEST");
         UUID guid = createdAssetFilterEntity.getId();
         assertNotNull(guid);
 
@@ -109,7 +109,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
         List<UUID> fetchedList = new ArrayList<>();
         List<AssetFilter> fetchedEntityList;
         for (int i = 0; i < 5; i++) {
-        	AssetFilter createdAssetGroupEntity = createAndStoreAssetFilterEntity("TEST");
+            AssetFilter createdAssetGroupEntity = createAndStoreAssetFilterEntity("TEST");
             createdList.add(createdAssetGroupEntity.getId());
         }
 
@@ -132,7 +132,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void deleteAssetFilter() {
-    	AssetFilter assetFilterEntity = createAndStoreAssetFilterEntity("TEST");
+        AssetFilter assetFilterEntity = createAndStoreAssetFilterEntity("TEST");
         UUID uuid = assetFilterEntity.getId();
         assetFilterDao.deleteAssetFilter(assetFilterEntity);
 
@@ -143,7 +143,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void updateAssetGroup() throws Exception {
-    	AssetFilter assetFilterEntity = createAndStoreAssetFilterEntity("TEST");
+        AssetFilter assetFilterEntity = createAndStoreAssetFilterEntity("TEST");
         UUID uuid = assetFilterEntity.getId();
 
         assetFilterEntity.setOwner("NEW OWNER");
@@ -158,13 +158,13 @@ public class AssetFilterTestsIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void updateAssetFilterAndValues() {
-    	AssetFilter assetFilter = createAndStoreAssetFilterEntity("TEST");
+        AssetFilter assetFilter = createAndStoreAssetFilterEntity("TEST");
         UUID uuid = assetFilter.getId();
 
         assetFilter.setOwner("NEW OWNER");
-       // List<AssetFilterValue> newLines = createAssetFilterValue( assetFilter,  assetFilter.getUpdateTime(), assetFilter.getOwner(), 17);
+        // List<AssetFilterValue> newLines = createAssetFilterValue( assetFilter,  assetFilter.getUpdateTime(), assetFilter.getOwner(), 17);
         List<AssetFilterQuery> filterQueryss = createAssetFilterQuery(assetFilter, 17);
-        
+
         assetFilterDao.updateAssetFilter(assetFilter);
         em.flush();
 
@@ -174,15 +174,15 @@ public class AssetFilterTestsIT extends TransactionalTests {
 
     private AssetFilter createAndStoreAssetFilterEntity(String user) {
 
-    	AssetFilter assetFilterEntity = createAssetFilterEntity(user);
-    	AssetFilter createAssetFilterEntity = assetFilterDao.createAssetFilter(assetFilterEntity);
+        AssetFilter assetFilterEntity = createAssetFilterEntity(user);
+        AssetFilter createAssetFilterEntity = assetFilterDao.createAssetFilter(assetFilterEntity);
         return createAssetFilterEntity;
     }
 
     private AssetFilter createAssetFilterEntity(String user) {
-    	AssetFilter af = new AssetFilter();
+        AssetFilter af = new AssetFilter();
         Instant date = Instant.now();
-        
+
         af.setUpdatedBy("test");
         af.setUpdateTime(date);
         af.setName("The Name");
@@ -191,7 +191,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
         return af;
     }
 
-    private  List<AssetFilterQuery> createAssetFilterQuery(AssetFilter assetFilterEntity, int n) {
+    private List<AssetFilterQuery> createAssetFilterQuery(AssetFilter assetFilterEntity, int n) {
         List<AssetFilterQuery> assetFilterQueryList = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             AssetFilterQuery field = AssetTestsHelper.createAssetFilterQuery(assetFilterEntity);
@@ -199,7 +199,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
         }
         return assetFilterQueryList;
     }
-    
+
     private void commit() throws Exception {
         userTransaction.commit();
         userTransaction.begin();

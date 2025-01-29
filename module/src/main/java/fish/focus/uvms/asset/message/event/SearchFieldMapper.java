@@ -15,14 +15,16 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
 import fish.focus.wsdl.asset.types.AssetListCriteriaPair;
 import fish.focus.wsdl.asset.types.ConfigSearchField;
 import fish.focus.uvms.asset.domain.mapper.SearchKeyValue;
 import fish.focus.uvms.asset.remote.dto.search.SearchFields;
 
 public class SearchFieldMapper {
-    
-    private SearchFieldMapper() {}
+
+    private SearchFieldMapper() {
+    }
 
     private static SearchKeyValue getSearchKeyValue(SearchFields field, Map<SearchFields, SearchKeyValue> searchKeys) {
         SearchKeyValue searchKeyValue = searchKeys.get(field);
@@ -62,7 +64,7 @@ public class SearchFieldMapper {
             case GUID:
                 return SearchFields.GUID;
             case HIST_GUID:
-            	return SearchFields.HIST_GUID;
+                return SearchFields.HIST_GUID;
             case IMO:
                 return SearchFields.IMO;
             case LENGTH_OVER_ALL:
@@ -70,7 +72,7 @@ public class SearchFieldMapper {
             case ENGINE_POWER:
                 return SearchFields.ENGINE_POWER;
             case PRODUCER_NAME:
-            	return SearchFields.PRODUCER_NAME;
+                return SearchFields.PRODUCER_NAME;
             case ASSET_TYPE:
             default:
                 throw new IllegalArgumentException("No field found: " + field.name());
@@ -89,7 +91,7 @@ public class SearchFieldMapper {
     }
 
     private static String prepareSearchValue(SearchFields searchField, String searchValue) {
-    	String value = searchValue;
+        String value = searchValue;
         return value;
     }
 

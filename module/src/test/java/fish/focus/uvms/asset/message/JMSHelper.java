@@ -42,7 +42,7 @@ public class JMSHelper {
         sendAssetMessage(request);
         return asset;
     }
-    
+
     public Asset getAssetById(String value, AssetIdType type) throws Exception {
         String msg = AssetModuleRequestMapper.createGetAssetModuleRequest(value, type);
         String correlationId = sendAssetMessage(msg);
@@ -115,7 +115,7 @@ public class JMSHelper {
         params.put("host", "localhost");
         params.put("port", 5445);
         TransportConfiguration transportConfiguration = new TransportConfiguration(NettyConnectorFactory.class.getName(), params);
-        return ActiveMQJMSClient.createConnectionFactoryWithoutHA(JMSFactoryType.CF,transportConfiguration);
+        return ActiveMQJMSClient.createConnectionFactoryWithoutHA(JMSFactoryType.CF, transportConfiguration);
     }
 
     public void assetInfo(List<fish.focus.uvms.asset.domain.entity.Asset> asset) throws Exception {
@@ -135,10 +135,8 @@ public class JMSHelper {
         Jsonb jsonb = new JsonBConfiguratorAsset().getContext(null);
         String json = jsonb.toJson(abo);
 
-        sendAssetMessage(json,"METHOD" ,"UPSERT_ASSET");
+        sendAssetMessage(json, "METHOD", "UPSERT_ASSET");
     }
-
-
 
 
 }

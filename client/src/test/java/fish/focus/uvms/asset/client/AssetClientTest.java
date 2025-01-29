@@ -4,7 +4,9 @@ import fish.focus.uvms.asset.client.model.*;
 import fish.focus.uvms.asset.client.model.mt.MobileTerminal;
 import fish.focus.uvms.asset.client.model.search.SearchBranch;
 import fish.focus.uvms.asset.client.model.search.SearchFields;
+import fish.focus.uvms.asset.dto.AssetProjection;
 import fish.focus.uvms.commons.date.DateUtils;
+import fish.focus.uvms.commons.date.JsonBConfigurator;
 import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static junit.framework.TestCase.assertNotNull;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
@@ -32,9 +35,9 @@ public class AssetClientTest extends AbstractClientTest {
 
     @Inject
     AssetClient assetClient;
-    
+
     @Before
-    public void before() throws NamingException{
+    public void before() throws NamingException {
         InitialContext ctx = new InitialContext();
         ctx.rebind("java:global/asset_endpoint", "http://localhost:8080/asset/rest");
     }
@@ -51,7 +54,7 @@ public class AssetClientTest extends AbstractClientTest {
     public void getAssetByGuidTest() {
         AssetBO assetBo = new AssetBO();
         assetBo.setAsset(AssetHelper.createBasicAsset());
-        
+
         AssetBO upsertAssetBo = assetClient.upsertAsset(assetBo);
 
         AssetDTO asset = assetClient.getAssetById(AssetIdentifier.GUID, upsertAssetBo.getAsset().getId().toString());
@@ -72,12 +75,12 @@ public class AssetClientTest extends AbstractClientTest {
         AssetBO assetBo = new AssetBO();
         assetBo.setAsset(AssetHelper.createBasicAsset());
         AssetBO upsertAsset = assetClient.upsertAsset(assetBo);
-        
+
         assertThat(upsertAsset.getAsset().getId(), CoreMatchers.is(CoreMatchers.notNullValue()));
         assertThat(upsertAsset.getAsset().getHistoryId(), CoreMatchers.is(CoreMatchers.notNullValue()));
         assertThat(upsertAsset, CoreMatchers.is(CoreMatchers.notNullValue()));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void upsertAssertUpdateNameShouldCreateHistory() {
@@ -86,10 +89,10 @@ public class AssetClientTest extends AbstractClientTest {
         AssetBO upsertAssetBo = assetClient.upsertAsset(assetBo);
         assetBo.getAsset().setName("New" + UUID.randomUUID());
         AssetBO upsertAssetBo2 = assetClient.upsertAsset(assetBo);
-        
+
         assertThat(upsertAssetBo.getAsset().getHistoryId(), CoreMatchers.is(CoreMatchers.not(upsertAssetBo2.getAsset().getHistoryId())));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void upsertAssertTwiceShouldNotCreateNewHistory() {
@@ -99,7 +102,7 @@ public class AssetClientTest extends AbstractClientTest {
         AssetDTO created = assetClient.getAssetById(AssetIdentifier.GUID, upsertAssetBo.getAsset().getId().toString());
         AssetBO upsertAssetBo2 = assetClient.upsertAsset(assetBo);
         AssetDTO updated = assetClient.getAssetById(AssetIdentifier.GUID, upsertAssetBo2.getAsset().getId().toString());
-        
+
         assertEquals(created.getHistoryId(), updated.getHistoryId());
     }
 
@@ -119,7 +122,7 @@ public class AssetClientTest extends AbstractClientTest {
                 .filter(a -> a.getId().equals(upsertAssetBo.getAsset().getId()))
                 .count());
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void upsertAssetJMSTest() throws Exception {
@@ -131,7 +134,7 @@ public class AssetClientTest extends AbstractClientTest {
         AssetDTO fetchedAsset = assetClient.getAssetById(AssetIdentifier.CFR, asset.getCfr());
         assertThat(fetchedAsset.getCfr(), CoreMatchers.is(asset.getCfr()));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetHistoryListByAssetIdTest() {
@@ -141,7 +144,7 @@ public class AssetClientTest extends AbstractClientTest {
         AssetBO firstAssetBo = assetClient.upsertAsset(assetBo);
         firstAssetBo.getAsset().setName(UUID.randomUUID().toString());
         AssetBO secondAssetBo = assetClient.upsertAsset(firstAssetBo);
-        
+
         List<AssetDTO> histories = assetClient.getAssetHistoryListByAssetId(firstAssetBo.getAsset().getId());
         assertThat(histories.size(), CoreMatchers.is(2));
         assertEquals(1, histories.stream()
@@ -162,7 +165,7 @@ public class AssetClientTest extends AbstractClientTest {
         firstAssetBo.getAsset().setName(UUID.randomUUID().toString());
         Instant timestamp = Instant.now();
         assetClient.upsertAsset(firstAssetBo);
-    
+
         AssetDTO assetHistory = assetClient.getAssetFromAssetIdAndDate(AssetIdentifier.CFR, firstAssetBo.getAsset().getCfr(), timestamp);
         assertThat(assetHistory.getId(), CoreMatchers.is(firstAssetBo.getAsset().getId()));
         assertThat(assetHistory.getHistoryId(), CoreMatchers.is(firstAssetBo.getAsset().getHistoryId()));
@@ -259,12 +262,12 @@ public class AssetClientTest extends AbstractClientTest {
         AssetBO firstAssetBo = assetClient.upsertAsset(assetBo);
         firstAssetBo.getAsset().setName(UUID.randomUUID().toString());
         assetClient.upsertAsset(firstAssetBo);
-    
+
         AssetDTO assetHistory = assetClient.getAssetHistoryByAssetHistGuid(firstAssetBo.getAsset().getHistoryId());
         assertThat(assetHistory.getId(), CoreMatchers.is(firstAssetBo.getAsset().getId()));
         assertThat(assetHistory.getHistoryId(), CoreMatchers.is(firstAssetBo.getAsset().getHistoryId()));
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
     public void getAssetHistoryByDateQuery() {
@@ -275,7 +278,7 @@ public class AssetClientTest extends AbstractClientTest {
         Instant timestamp = Instant.now();
         firstAssetBo.getAsset().setName(UUID.randomUUID().toString());
         assetClient.upsertAsset(firstAssetBo);
-    
+
         SearchBranch trunk = new SearchBranch(true);
         trunk.addNewSearchLeaf(SearchFields.CFR, asset.getCfr());
         trunk.addNewSearchLeaf(SearchFields.NAME, asset.getName());
@@ -341,7 +344,7 @@ public class AssetClientTest extends AbstractClientTest {
         String code = createdCustomCode.getPrimaryKey().getCode();
         Instant validFromDate = createdCustomCode.getPrimaryKey().getValidFromDate();
 
-        Boolean ok = assetClient.isCodeValid(cst,code,validFromDate.plus(5, ChronoUnit.DAYS));
+        Boolean ok = assetClient.isCodeValid(cst, code, validFromDate.plus(5, ChronoUnit.DAYS));
         assertTrue(ok);
     }
 
@@ -358,7 +361,7 @@ public class AssetClientTest extends AbstractClientTest {
         String code = createdCustomCode.getPrimaryKey().getCode();
         Instant validToDate = createdCustomCode.getPrimaryKey().getValidToDate();
 
-        Boolean ok = assetClient.isCodeValid(cst,code,validToDate.plus(5, ChronoUnit.DAYS));
+        Boolean ok = assetClient.isCodeValid(cst, code, validToDate.plus(5, ChronoUnit.DAYS));
         Assert.assertFalse(ok);
     }
 
@@ -378,7 +381,7 @@ public class AssetClientTest extends AbstractClientTest {
 
         List<CustomCode> retrievedCustomCode = assetClient.getCodeForDate(cst, code, validToDate);
         assertNotNull(retrievedCustomCode);
-        assertTrue(retrievedCustomCode.size() > 0 );
+        assertTrue(retrievedCustomCode.size() > 0);
     }
 
     @Test
@@ -395,7 +398,7 @@ public class AssetClientTest extends AbstractClientTest {
         Instant validFromDate = createdCustomCode.getPrimaryKey().getValidFromDate();
         Instant validToDate = createdCustomCode.getPrimaryKey().getValidToDate();
 
-        List<CustomCode> retrievedCustomCode = assetClient.getCodeForDate(cst, code, validToDate.plus(5,ChronoUnit.DAYS));
+        List<CustomCode> retrievedCustomCode = assetClient.getCodeForDate(cst, code, validToDate.plus(5, ChronoUnit.DAYS));
         assertNotNull(retrievedCustomCode);
         assertEquals(0, retrievedCustomCode.size());
     }
@@ -424,7 +427,7 @@ public class AssetClientTest extends AbstractClientTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void createNewAssetOnUnknown(){
+    public void createNewAssetOnUnknown() {
         AssetMTEnrichmentRequest request = new AssetMTEnrichmentRequest();
         request.setMmsiValue("123456789");
         AssetMTEnrichmentResponse response = assetClient.collectAssetMT(request);
@@ -439,7 +442,7 @@ public class AssetClientTest extends AbstractClientTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void mmsiLongerThen9CharactersTest(){
+    public void mmsiLongerThen9CharactersTest() {
         AssetMTEnrichmentRequest request = new AssetMTEnrichmentRequest();
         request.setMmsiValue("1024307102");
         request.setFlagState("ERR");
@@ -455,7 +458,7 @@ public class AssetClientTest extends AbstractClientTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void createNewAssetWoMmsiFromFlux(){
+    public void createNewAssetWoMmsiFromFlux() {
         AssetMTEnrichmentRequest request = new AssetMTEnrichmentRequest();
         request.setFlagState("SWE");
         request.setTranspondertypeValue("FLUX");
@@ -473,7 +476,7 @@ public class AssetClientTest extends AbstractClientTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void createNewAssetOnUnknownWithVeryLongIRCS(){
+    public void createNewAssetOnUnknownWithVeryLongIRCS() {
         AssetMTEnrichmentRequest request = new AssetMTEnrichmentRequest();
         request.setMmsiValue("123456789");
         request.setIrcsValue("An IRCS value that is longer then 8 and should thus be set to null");
@@ -490,7 +493,7 @@ public class AssetClientTest extends AbstractClientTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void createNewAssetOnUnknownUseNameAndFSFromRequest(){
+    public void createNewAssetOnUnknownUseNameAndFSFromRequest() {
         AssetMTEnrichmentRequest request = new AssetMTEnrichmentRequest();
         request.setMmsiValue("987654321");
         request.setAssetName("Named Ship");
@@ -507,7 +510,7 @@ public class AssetClientTest extends AbstractClientTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void collectAssetMtTest(){
+    public void collectAssetMtTest() {
         AssetBO assetBo = new AssetBO();
         assetBo.setAsset(AssetHelper.createBasicAsset());
         assetBo.getAsset().setParked(true);
@@ -532,20 +535,24 @@ public class AssetClientTest extends AbstractClientTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetInformation(){
+    public void getAssetInformation() {
         List<String> assetIdList = new ArrayList<>();
 
-        for (int i = 0; i < 41 ; i++){
+        for (int i = 0; i < 41; i++) {
             assetIdList.add(createAsset());
         }
         String output = assetClient.getAssetList(assetIdList);
 
-        assertEquals(42, output.split("externalMarking").length);
+        var jsonb = new JsonBConfigurator().getContext(null);
+        List<AssetProjection> assets = jsonb.fromJson(output, new ArrayList<AssetProjection>() {
+        }.getClass().getGenericSuperclass());
+
+        assertThat("should return the same number of assets as was created", assets.size(), is(41));
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetInformationEmptyInputList(){
+    public void getAssetInformationEmptyInputList() {
         List<String> assetIdList = new ArrayList<>();
 
         String output = assetClient.getAssetList(assetIdList);
@@ -555,7 +562,7 @@ public class AssetClientTest extends AbstractClientTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void pollsForAssetInTheLastDay(){
+    public void pollsForAssetInTheLastDay() {
 
         List<SanePollDto> output = assetClient.getPollsForAssetInTheLastDay(UUID.randomUUID());
 
@@ -565,7 +572,7 @@ public class AssetClientTest extends AbstractClientTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void pollsInfo(){
+    public void pollsInfo() {
 
         SanePollDto output = assetClient.getPollInfo(UUID.randomUUID());
 
@@ -574,40 +581,40 @@ public class AssetClientTest extends AbstractClientTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getMobileTerminalsTest(){
+    public void getMobileTerminalsTest() {
         List<MobileTerminal> mobileTerminals = assetClient.getMobileTerminals(false, false);
         assertNotNull(mobileTerminals);
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getMtAtDateRandomId(){
+    public void getMtAtDateRandomId() {
 
         MobileTerminal output = assetClient.getMtAtDate(UUID.randomUUID(), Instant.now());
 
         assertNull(output);
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
-    public void getMobileTerminalAtDateWithMemberNumberAndDnidTest(){
-        Integer memberNr = 564; 
+    public void getMobileTerminalAtDateWithMemberNumberAndDnidTest() {
+        Integer memberNr = 564;
         Integer dnid = 15365;
         Instant instant = Instant.now().plusSeconds(1);// Instant.parse("2020-12-10T12:56:50Z");
         MobileTerminal mobileTerminal = assetClient.getMtFromMemberNumberAndDnidAtDate(memberNr, dnid, instant);
 
-       // assertEquals(mobileTerminal.getId().toString(), "952a2efd-da9e-4932-808e-c37f3eda3aea");
+        // assertEquals(mobileTerminal.getId().toString(), "952a2efd-da9e-4932-808e-c37f3eda3aea");
         assertNull(mobileTerminal);
     }
-    
+
     @Test
     @OperateOnDeployment("normal")
-    public void getVmsBillingTest(){
+    public void getVmsBillingTest() {
         List<fish.focus.uvms.asset.client.model.mt.VmsBillingDto> vmsBillingList = assetClient.getVmsBillingList();
         assertNotNull(vmsBillingList);
     }
 
-    private String createAsset(){
+    private String createAsset() {
         AssetBO assetBo = new AssetBO();
         assetBo.setAsset(AssetHelper.createBasicAsset());
         AssetBO upsertAsset = assetClient.upsertAsset(assetBo);

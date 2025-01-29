@@ -13,6 +13,7 @@ package fish.focus.uvms.asset.bean;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fish.focus.uvms.asset.domain.entity.Asset;
@@ -23,7 +24,7 @@ import fish.focus.uvms.asset.message.AuditProducer;
 public class AuditServiceBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuditServiceBean.class);
-    
+
     @Inject
     private AuditProducer auditProducer;
 

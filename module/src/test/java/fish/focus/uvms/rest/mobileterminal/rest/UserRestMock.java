@@ -17,6 +17,7 @@ import javax.ejb.Stateless;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+
 import fish.focus.uvms.rest.security.UnionVMSFeature;
 import fish.focus.uvms.usm.jwt.JwtTokenHandler;
 
@@ -26,12 +27,12 @@ public class UserRestMock {
 
     @EJB
     private JwtTokenHandler tokenHandler;
-    
+
     @GET
     public Response getToken() {
         String token = tokenHandler.createToken("user",
-                Arrays.asList(UnionVMSFeature.viewVesselsAndMobileTerminals.getFeatureId(),UnionVMSFeature.mobileTerminalPlugins.getFeatureId(),
-                        UnionVMSFeature.manageVessels.getFeatureId(),UnionVMSFeature.viewMobileTerminalPolls.getFeatureId(),UnionVMSFeature.managePolls.getFeatureId(), UnionVMSFeature.manageMobileTerminals.getFeatureId()));
+                Arrays.asList(UnionVMSFeature.viewVesselsAndMobileTerminals.getFeatureId(), UnionVMSFeature.mobileTerminalPlugins.getFeatureId(),
+                        UnionVMSFeature.manageVessels.getFeatureId(), UnionVMSFeature.viewMobileTerminalPolls.getFeatureId(), UnionVMSFeature.managePolls.getFeatureId(), UnionVMSFeature.manageMobileTerminals.getFeatureId()));
         return Response.ok(token).build();
     }
 }

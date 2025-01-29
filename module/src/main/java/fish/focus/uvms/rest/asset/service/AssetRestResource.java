@@ -68,16 +68,13 @@ public class AssetRestResource {
     //needed since eager fetch is not supported by AuditQuery et al, so workaround is to serialize while we still have a DB session active
     @PostConstruct
     public void init() {
-    	jsonb = new JsonBConfiguratorAsset().getContext(null);
+        jsonb = new JsonBConfiguratorAsset().getContext(null);
     }
 
     /**
-     *
      * @responseMessage 200 Asset list successfully retrieved
      * @responseMessage 500 Error when retrieving asset list
-     *
      * @summary Gets a list of assets filtered by a query
-     *
      */
     @POST
     @Path("list")
@@ -85,7 +82,7 @@ public class AssetRestResource {
     public Response getAssetList(@DefaultValue("1") @QueryParam("page") int page,
                                  @DefaultValue("1000000") @QueryParam("size") int size,
                                  @DefaultValue("false") @QueryParam("includeInactivated") boolean includeInactivated,
-                                 SearchBranch query)  throws Exception {
+                                 SearchBranch query) throws Exception {
         try {
             AssetListResponse assetList = assetService.getAssetList(query, page, size, includeInactivated);
             String returnString = jsonb.toJson(assetList);
@@ -95,7 +92,7 @@ public class AssetRestResource {
             throw e;
         }
     }
-    
+
     @POST
     @Path("assetList")
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
@@ -124,12 +121,9 @@ public class AssetRestResource {
     }
 
     /**
-     *
      * @responseMessage 200 Asset list successfully retrieved
      * @responseMessage 500 Error when retrieving asset list
-     *
      * @summary Gets a list of assets filtered by a query
-     *
      */
     @POST
     @Path("listcount")
@@ -146,12 +140,9 @@ public class AssetRestResource {
     }
 
     /**
-     *
      * @responseMessage 200 Asset successfully retrieved
      * @responseMessage 500 Error when retrieving asset
-     *
      * @summary Gets a asset by ID
-     *
      */
     @GET
     @Path(value = "/{id}")
@@ -163,7 +154,7 @@ public class AssetRestResource {
             return Response.status(200).entity(returnString).type(MediaType.APPLICATION_JSON)
                     .header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
-            LOG.error("Error when getting asset by ID. {}",id,e);
+            LOG.error("Error when getting asset by ID. {}", id, e);
             throw e;
         }
     }
@@ -171,18 +162,14 @@ public class AssetRestResource {
     /**
      * Creates a new asset
      *
-     * @param asset
-     *            the new asset to be created
-     *
+     * @param asset the new asset to be created
      * @return Response with status OK (200) in case of success otherwise status
-     *         NOT_MODIFIED or a BAD_REQUEST error code in case the provided
-     *         input incomplete, with an INTERNAL_SERVER_ERROR error code in
-     *         case an internal error prevented fulfilling the request or
-     *         UnauthorisedException with an FORBIDDEN error code in case the
-     *         end user is not authorized to perform the operation
-     *
+     * NOT_MODIFIED or a BAD_REQUEST error code in case the provided
+     * input incomplete, with an INTERNAL_SERVER_ERROR error code in
+     * case an internal error prevented fulfilling the request or
+     * UnauthorisedException with an FORBIDDEN error code in case the
+     * end user is not authorized to perform the operation
      * @summary Create a asset
-     *
      */
     @POST
     @RequiresFeature(UnionVMSFeature.manageVessels)
@@ -191,7 +178,7 @@ public class AssetRestResource {
             String remoteUser = servletRequest.getRemoteUser();
             Asset createdAssetSE = assetService.createAsset(asset, remoteUser);
             String returnString = jsonb.toJson(createdAssetSE);
-            return Response.status(200).entity(returnString).type(MediaType.APPLICATION_JSON )
+            return Response.status(200).entity(returnString).type(MediaType.APPLICATION_JSON)
                     .header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
             LOG.error("Error when creating asset. {}", asset, e);
@@ -200,12 +187,9 @@ public class AssetRestResource {
     }
 
     /**
-     *
      * @responseMessage 200 Asset successfully updated
      * @responseMessage 500 Error when updating asset
-     *
      * @summary Update a asset
-     *
      */
     @PUT
     @RequiresFeature(UnionVMSFeature.manageVessels)
@@ -215,10 +199,10 @@ public class AssetRestResource {
             Asset assetWithMT = assetService.populateMTListInAsset(asset);
             Asset updatedAsset = assetService.updateAsset(assetWithMT, remoteUser, asset.getComment());
             String returnString = jsonb.toJson(updatedAsset);
-            return Response.status(200).entity(returnString).type(MediaType.APPLICATION_JSON )
+            return Response.status(200).entity(returnString).type(MediaType.APPLICATION_JSON)
                     .header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
-            LOG.error("Error when updating asset: {}",asset, e);
+            LOG.error("Error when updating asset: {}", asset, e);
             throw e;
         }
     }
@@ -226,9 +210,9 @@ public class AssetRestResource {
     @PUT
     @Path("/{assetId}/archive")
     @RequiresFeature(UnionVMSFeature.manageVessels)
-    public Response archiveAsset(@PathParam("assetId") UUID assetId, @QueryParam("comment") String comment)  throws Exception {
+    public Response archiveAsset(@PathParam("assetId") UUID assetId, @QueryParam("comment") String comment) throws Exception {
         try {
-            if(comment == null || comment.isEmpty()){
+            if (comment == null || comment.isEmpty()) {
                 return Response.status(400).entity("Parameter comment is required").build();
             }
             String remoteUser = servletRequest.getRemoteUser();
@@ -237,7 +221,7 @@ public class AssetRestResource {
             String returnString = jsonb.toJson(archivedAsset);
             return Response.ok(returnString).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
-            LOG.error("Error when archiving asset. {}",assetId, e);
+            LOG.error("Error when archiving asset. {}", assetId, e);
             throw e;
         }
     }
@@ -247,7 +231,7 @@ public class AssetRestResource {
     @RequiresFeature(UnionVMSFeature.manageVessels)
     public Response unarchiveAsset(@PathParam("assetId") final UUID assetId, @QueryParam("comment") String comment) throws Exception {
 
-        if(comment == null || comment.isEmpty()){
+        if (comment == null || comment.isEmpty()) {
             return Response.status(400).entity("Parameter comment is required").build();
         }
         try {
@@ -262,13 +246,10 @@ public class AssetRestResource {
     }
 
     /**
-    *
-    * @responseMessage 200 Success
-    * @responseMessage 500 Error
-    *
-    * @summary Gets a list of all revisions for a specific asset
-    *
-    */
+     * @responseMessage 200 Success
+     * @responseMessage 500 Error
+     * @summary Gets a list of all revisions for a specific asset
+     */
     @GET
     @Path("/{id}/history")
     public Response getAssetHistoryListByAssetId(@PathParam("id") UUID id, @DefaultValue("100") @QueryParam("maxNbr") Integer maxNbr) throws Exception {
@@ -283,12 +264,9 @@ public class AssetRestResource {
     }
 
     /**
-     *
      * @responseMessage 200 Success
      * @responseMessage 500 Error
-     *
      * @summary Gets a list of all revisions for a specific asset
-     *
      */
     @GET
     @Path("/{id}/changeHistory")
@@ -307,19 +285,18 @@ public class AssetRestResource {
 
 
     /**
-     * @summary Get a specific asset by identifier (guid|cfr|ircs|imo|mmsi|iccat|uvi|gfcm)
-     *          at given date (DateTimeFormatter.ISO_OFFSET_DATE_TIME format, eg 2018-03-23T18:25:43).
-     * 
      * @param type
      * @param id
      * @param date DateTimeFormatter.ISO_OFFSET_DATE_TIME format
      * @return
+     * @summary Get a specific asset by identifier (guid|cfr|ircs|imo|mmsi|iccat|uvi|gfcm)
+     * at given date (DateTimeFormatter.ISO_OFFSET_DATE_TIME format, eg 2018-03-23T18:25:43).
      */
     @GET
     @Path("/{type : (guid|cfr|ircs|imo|mmsi|iccat|uvi|gfcm)}/{id}/history/")
     public Response getAssetFromAssetIdAndDate(@PathParam("type") String type,
                                                @PathParam("id") String id,
-                                               @QueryParam("date") String date)  throws Exception {
+                                               @QueryParam("date") String date) throws Exception {
         try {
 
             AssetIdentifier assetId = AssetIdentifier.valueOf(type.toUpperCase());
@@ -333,14 +310,11 @@ public class AssetRestResource {
         }
     }
 
-   /**
-    *
-    * @responseMessage 200 Success
-    * @responseMessage 500 Error
-    *
-    * @summary Gets a specific asset revision by history id
-    *
-    */
+    /**
+     * @responseMessage 200 Success
+     * @responseMessage 500 Error
+     * @summary Gets a specific asset revision by history id
+     */
     @GET
     @Path("history/{guid}")
     public Response getAssetHistoryByAssetHistGuid(@PathParam("guid") UUID guid) throws Exception {
@@ -380,7 +354,7 @@ public class AssetRestResource {
             throw e;
         }
     }
-    
+
     @PUT
     @Path("/notes")
     @RequiresFeature(UnionVMSFeature.manageVessels)
@@ -394,20 +368,20 @@ public class AssetRestResource {
             throw e;
         }
     }
-    
+
     @GET
     @Path("/note/{id}")
     @RequiresFeature(UnionVMSFeature.manageVessels)
-    public Response getNoteById(@PathParam("id") UUID id) throws Exception  {
+    public Response getNoteById(@PathParam("id") UUID id) throws Exception {
         try {
-        Note gottenNote = assetService.getNoteById(id);
-        return Response.ok(gottenNote).header("MDC", MDC.get("requestId")).build();
+            Note gottenNote = assetService.getNoteById(id);
+            return Response.ok(gottenNote).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
             LOG.error("Error getNoteById ", e);
             throw e;
         }
     }
-    
+
     @DELETE
     @Path("/notes/{id}")
     @RequiresFeature(UnionVMSFeature.manageVessels)
@@ -425,7 +399,7 @@ public class AssetRestResource {
     @Path("{id}/contacts")
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
     public Response getContactInfoListForAssetHistory(@PathParam("id") UUID assetId,
-                                                      @QueryParam("ofDate") String updatedDate) throws Exception  {
+                                                      @QueryParam("ofDate") String updatedDate) throws Exception {
         try {
             Instant instant = (updatedDate == null ? Instant.now() : DateUtils.stringToDate(updatedDate));
             List<ContactInfo> resultList = assetService.getContactInfoRevisionForAssetHistory(assetId, instant);
@@ -440,9 +414,9 @@ public class AssetRestResource {
     @Path("contact/{contactId}")
     @RequiresFeature(UnionVMSFeature.viewVesselsAndMobileTerminals)
     public Response getContact(@PathParam("contactId") UUID contactId) throws Exception {
-        try{
+        try {
             return Response.ok(assetDao.getContactById(contactId)).header("MDC", MDC.get("requestId")).build();
-        }catch (Exception e){
+        } catch (Exception e) {
             LOG.error("Error while getting contact by id {}.  {}", contactId, e);
             throw e;
         }
@@ -451,7 +425,7 @@ public class AssetRestResource {
     @POST
     @Path("contacts")
     @RequiresFeature(UnionVMSFeature.manageVessels)
-    public Response createContactInfoForAsset(ContactInfo contactInfo) throws Exception  {
+    public Response createContactInfoForAsset(ContactInfo contactInfo) throws Exception {
         try {
             String user = servletRequest.getRemoteUser();
             ContactInfo createdContactInfo = assetService.createContactInfoForAsset(contactInfo.getAssetId(), contactInfo, user);
@@ -461,12 +435,12 @@ public class AssetRestResource {
             throw e;
         }
     }
-    
+
     @PUT
     @Path("/contacts")
     @RequiresFeature(UnionVMSFeature.manageVessels)
     public Response udpateContactInfo(ContactInfo contactInfo) throws Exception {
-        try{
+        try {
             String username = servletRequest.getRemoteUser();
             ContactInfo updatedContactInfo = assetService.updateContactInfo(contactInfo, username);
             return Response.ok(updatedContactInfo).header("MDC", MDC.get("requestId")).build();
@@ -475,12 +449,12 @@ public class AssetRestResource {
             throw e;
         }
     }
-    
+
     @DELETE
     @Path("/contacts/{id}")
     @RequiresFeature(UnionVMSFeature.manageVessels)
     public Response deleteContactInfo(@PathParam("id") UUID id) throws Exception {
-        try{
+        try {
             assetService.deleteContactInfo(id);
             return Response.ok().header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
@@ -501,5 +475,5 @@ public class AssetRestResource {
             throw e;
         }
     }
-    
+
 }

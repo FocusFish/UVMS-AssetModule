@@ -12,7 +12,9 @@ import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
+
 import static fish.focus.uvms.asset.domain.entity.Asset.*;
+
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
@@ -24,30 +26,30 @@ import java.util.UUID;
 @Entity
 @Table(name = "Asset",
         uniqueConstraints = {@UniqueConstraint(name = "Asset_UC_ cfr", columnNames = "cfr"),
-            @UniqueConstraint(name = "asset_uc_imo", columnNames = "imo"),
-            @UniqueConstraint(name = "asset_uc_ircs" , columnNames = "ircs"),
-            @UniqueConstraint(name = "asset_uc_mmsi" , columnNames = "mmsi"),
-            @UniqueConstraint(name = "asset_uc_iccat" , columnNames = "iccat"),
-            @UniqueConstraint(name = "asset_uc_uvi" , columnNames = "uvi"),
-            @UniqueConstraint(name = "asset_uc_gfcm" , columnNames = "gfcm"),
-            @UniqueConstraint(name = "asset_uc_historyid" , columnNames = "historyid"),
-            @UniqueConstraint(name = "asset_uc_cfr" , columnNames = "cfr"),
+                @UniqueConstraint(name = "asset_uc_imo", columnNames = "imo"),
+                @UniqueConstraint(name = "asset_uc_ircs", columnNames = "ircs"),
+                @UniqueConstraint(name = "asset_uc_mmsi", columnNames = "mmsi"),
+                @UniqueConstraint(name = "asset_uc_iccat", columnNames = "iccat"),
+                @UniqueConstraint(name = "asset_uc_uvi", columnNames = "uvi"),
+                @UniqueConstraint(name = "asset_uc_gfcm", columnNames = "gfcm"),
+                @UniqueConstraint(name = "asset_uc_historyid", columnNames = "historyid"),
+                @UniqueConstraint(name = "asset_uc_cfr", columnNames = "cfr"),
         })
 
 @NamedQueries({
-          @NamedQuery(name = ASSET_FIND_ALL, query = "SELECT v FROM Asset v"),
-          @NamedQuery(name = ASSET_FIND_BY_CFR, query = "SELECT v FROM Asset v WHERE v.cfr = :cfr"),
-          @NamedQuery(name = ASSET_FIND_BY_IRCS, query = "SELECT v FROM Asset v WHERE v.ircs = :ircs"),
-          @NamedQuery(name = ASSET_FIND_BY_IMO, query = "SELECT v FROM Asset v WHERE v.imo = :imo"),
-          @NamedQuery(name = ASSET_FIND_BY_MMSI, query = "SELECT v FROM Asset v WHERE v.mmsi = :mmsi"),
-          @NamedQuery(name = ASSET_FIND_BY_ICCAT, query = "SELECT v FROM Asset v WHERE v.iccat = :iccat"),
-          @NamedQuery(name = ASSET_FIND_BY_UVI, query = "SELECT v FROM Asset v WHERE v.uvi = :uvi"),
-          @NamedQuery(name = ASSET_FIND_BY_GFCM, query = "SELECT v FROM Asset v WHERE v.gfcm = :gfcm"),
-          @NamedQuery(name = ASSET_FIND_BY_NATIONAL_ID, query = "SELECT v FROM Asset v WHERE v.nationalId = :nationalId"),
-          @NamedQuery(name = ASSET_FIND_BY_IDS, query = "SELECT new fish.focus.uvms.asset.dto.AssetProjection(a.id, a.historyId, a.ircsIndicator, a.ersIndicator, a.aisIndicator, a.vmsIndicator, a.hullMaterial, a.commissionDate, a.constructionYear, a.constructionPlace, a.updateTime, a.source, a.vesselType, a.vesselDateOfEntry, a.cfr, a.imo, a.ircs, a.mmsi, a.iccat, a.uvi, a.gfcm, a.active, a.flagStateCode, a.eventCode, a.name, a.externalMarking, a.agentIsAlsoOwner, a.lengthOverAll, a.lengthBetweenPerpendiculars, a.safteyGrossTonnage, a.otherTonnage, a.grossTonnage, a.grossTonnageUnit, a.portOfRegistration, a.powerOfAuxEngine, a.powerOfMainEngine, a.hasLicence, a.licenceType, a.mainFishingGearCode, a.subFishingGearCode, a.gearFishingType, a.ownerName, a.hasVms, a.ownerAddress, a.assetAgentAddress, a.countryOfImportOrExport, a.typeOfExport, a.administrativeDecisionDate, a.segment, a.segmentOfAdministrativeDecision, a.publicAid, a.registrationNumber, a.updatedBy, a.prodOrgCode, a.prodOrgName, m.id, a.comment, a.nationalId, a.parked) FROM Asset a LEFT JOIN a.mobileTerminals m WHERE a.id in :idList"),
-          @NamedQuery(name = ASSET_FIND_BY_ALL_IDENTIFIERS, query = "SELECT v FROM Asset v WHERE v.cfr = :cfr OR v.ircs = :ircs OR v.imo = :imo OR v.mmsi = :mmsi OR v.iccat = :iccat OR v.uvi = :uvi OR v.gfcm = :gfcm"),
-          @NamedQuery(name = ASSET_FIND_BY_MMSI_OR_IRCS, query = "SELECT a FROM Asset a WHERE (replace(a.ircs, '-', '') = :ircs OR a.mmsi = :mmsi) AND a.active = true"),
-          @NamedQuery(name = ASSET_ALL_AVAILABLE_VESSEL_TYPES, query = "SELECT DISTINCT a.vesselType FROM Asset a"),
+        @NamedQuery(name = ASSET_FIND_ALL, query = "SELECT v FROM Asset v"),
+        @NamedQuery(name = ASSET_FIND_BY_CFR, query = "SELECT v FROM Asset v WHERE v.cfr = :cfr"),
+        @NamedQuery(name = ASSET_FIND_BY_IRCS, query = "SELECT v FROM Asset v WHERE v.ircs = :ircs"),
+        @NamedQuery(name = ASSET_FIND_BY_IMO, query = "SELECT v FROM Asset v WHERE v.imo = :imo"),
+        @NamedQuery(name = ASSET_FIND_BY_MMSI, query = "SELECT v FROM Asset v WHERE v.mmsi = :mmsi"),
+        @NamedQuery(name = ASSET_FIND_BY_ICCAT, query = "SELECT v FROM Asset v WHERE v.iccat = :iccat"),
+        @NamedQuery(name = ASSET_FIND_BY_UVI, query = "SELECT v FROM Asset v WHERE v.uvi = :uvi"),
+        @NamedQuery(name = ASSET_FIND_BY_GFCM, query = "SELECT v FROM Asset v WHERE v.gfcm = :gfcm"),
+        @NamedQuery(name = ASSET_FIND_BY_NATIONAL_ID, query = "SELECT v FROM Asset v WHERE v.nationalId = :nationalId"),
+        @NamedQuery(name = ASSET_FIND_BY_IDS, query = "SELECT new fish.focus.uvms.asset.dto.AssetProjection(a.id, a.historyId, a.ircsIndicator, a.ersIndicator, a.aisIndicator, a.vmsIndicator, a.hullMaterial, a.commissionDate, a.constructionYear, a.constructionPlace, a.updateTime, a.source, a.vesselType, a.vesselDateOfEntry, a.cfr, a.imo, a.ircs, a.mmsi, a.iccat, a.uvi, a.gfcm, a.active, a.flagStateCode, a.eventCode, a.name, a.externalMarking, a.agentIsAlsoOwner, a.lengthOverAll, a.lengthBetweenPerpendiculars, a.safteyGrossTonnage, a.otherTonnage, a.grossTonnage, a.grossTonnageUnit, a.portOfRegistration, a.powerOfAuxEngine, a.powerOfMainEngine, a.hasLicence, a.licenceType, a.mainFishingGearCode, a.subFishingGearCode, a.gearFishingType, a.ownerName, a.hasVms, a.ownerAddress, a.assetAgentAddress, a.countryOfImportOrExport, a.typeOfExport, a.administrativeDecisionDate, a.segment, a.segmentOfAdministrativeDecision, a.publicAid, a.registrationNumber, a.updatedBy, a.prodOrgCode, a.prodOrgName, m.id, a.comment, a.nationalId, a.parked) FROM Asset a LEFT JOIN a.mobileTerminals m WHERE a.id in :idList"),
+        @NamedQuery(name = ASSET_FIND_BY_ALL_IDENTIFIERS, query = "SELECT v FROM Asset v WHERE v.cfr = :cfr OR v.ircs = :ircs OR v.imo = :imo OR v.mmsi = :mmsi OR v.iccat = :iccat OR v.uvi = :uvi OR v.gfcm = :gfcm"),
+        @NamedQuery(name = ASSET_FIND_BY_MMSI_OR_IRCS, query = "SELECT a FROM Asset a WHERE (replace(a.ircs, '-', '') = :ircs OR a.mmsi = :mmsi) AND a.active = true"),
+        @NamedQuery(name = ASSET_ALL_AVAILABLE_VESSEL_TYPES, query = "SELECT DISTINCT a.vesselType FROM Asset a"),
 })
 public class Asset implements Serializable {
 
@@ -732,7 +734,7 @@ public class Asset implements Serializable {
     }
 
     public Set<MobileTerminal> getMobileTerminals() {
-        if(mobileTerminals == null)
+        if (mobileTerminals == null)
             mobileTerminals = new HashSet<>();
         return mobileTerminals;
     }

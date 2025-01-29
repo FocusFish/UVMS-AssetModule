@@ -7,6 +7,7 @@ import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminalPlugin;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminalPluginCapability;
 import fish.focus.uvms.mobileterminal.model.dto.*;
+
 import java.util.*;
 
 public class MobileTerminalDtoMapper {
@@ -24,8 +25,8 @@ public class MobileTerminalDtoMapper {
         return dtos;
     }
 
-    public static MobileTerminalDto mapToMobileTerminalDto(MobileTerminal mt){
-        if(mt == null) {
+    public static MobileTerminalDto mapToMobileTerminalDto(MobileTerminal mt) {
+        if (mt == null) {
             return null;
         }
         MobileTerminalDto dto = new MobileTerminalDto();
@@ -63,7 +64,7 @@ public class MobileTerminalDtoMapper {
         return dto;
     }
 
-    public static Set<ChannelDto> mapToChannelDtos(Set<Channel> channels){
+    public static Set<ChannelDto> mapToChannelDtos(Set<Channel> channels) {
         Set<ChannelDto> dtoSet = new LinkedHashSet<>(channels.size());
         for (Channel channel : channels) {
             dtoSet.add(mapToChannelDto(channel));
@@ -71,7 +72,7 @@ public class MobileTerminalDtoMapper {
         return dtoSet;
     }
 
-    public static ChannelDto mapToChannelDto(Channel channel){
+    public static ChannelDto mapToChannelDto(Channel channel) {
         ChannelDto dto = new ChannelDto();
         dto.setActive(channel.isActive());
         dto.setArchived(channel.getArchived());
@@ -98,7 +99,7 @@ public class MobileTerminalDtoMapper {
         return dto;
     }
 
-    public static MobileTerminalPluginDto mapToMobileTerminalPluginDto(MobileTerminalPlugin plugin){
+    public static MobileTerminalPluginDto mapToMobileTerminalPluginDto(MobileTerminalPlugin plugin) {
         MobileTerminalPluginDto dto = new MobileTerminalPluginDto();
 
         dto.setCapabilities(plugin.getCapabilities() == null ? null : mapToMobileTerminalPluginCapabilityDtos(plugin.getCapabilities()));
@@ -115,7 +116,7 @@ public class MobileTerminalDtoMapper {
         return dto;
     }
 
-    public static Set<MobileTerminalPluginCapabilityDto> mapToMobileTerminalPluginCapabilityDtos(Set<MobileTerminalPluginCapability> capabilities){
+    public static Set<MobileTerminalPluginCapabilityDto> mapToMobileTerminalPluginCapabilityDtos(Set<MobileTerminalPluginCapability> capabilities) {
         Set<MobileTerminalPluginCapabilityDto> dtos = new HashSet<>(capabilities.size());
         for (MobileTerminalPluginCapability capability : capabilities) {
             dtos.add(mapToMobileTerminalPluginCapabilityDto(capability));
@@ -123,7 +124,7 @@ public class MobileTerminalDtoMapper {
         return dtos;
     }
 
-    public static MobileTerminalPluginCapabilityDto mapToMobileTerminalPluginCapabilityDto(MobileTerminalPluginCapability capability){
+    public static MobileTerminalPluginCapabilityDto mapToMobileTerminalPluginCapabilityDto(MobileTerminalPluginCapability capability) {
         MobileTerminalPluginCapabilityDto dto = new MobileTerminalPluginCapabilityDto();
         dto.setId(capability.getId());
         dto.setName(capability.getName());

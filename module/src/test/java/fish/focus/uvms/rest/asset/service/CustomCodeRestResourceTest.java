@@ -37,7 +37,7 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
 
     @Before
     public void before() {
-        jsonb =  new JsonBConfigurator().getContext(null);
+        jsonb = new JsonBConfigurator().getContext(null);
     }
 
     @Test
@@ -50,7 +50,8 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
                 .path("listconstants")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
-                .get(new GenericType<List<String>>(){});
+                .get(new GenericType<List<String>>() {
+                });
 
         // resultSet must at least contain a constants with our created customCode
         boolean found = false;
@@ -77,7 +78,8 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
                 .path("listconstants")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
-                .get(new GenericType<List<String>>(){});
+                .get(new GenericType<List<String>>() {
+                });
 
         // for every constants
         Boolean found = false;
@@ -89,7 +91,8 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
                     .request(MediaType.APPLICATION_JSON)
                     .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                     .get(String.class);
-            List<CustomCode> codes = jsonb.fromJson(json, new ArrayList<CustomCode>(){}.getClass().getGenericSuperclass());
+            List<CustomCode> codes = jsonb.fromJson(json, new ArrayList<CustomCode>() {
+            }.getClass().getGenericSuperclass());
         }
     }
 
@@ -298,13 +301,13 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
             customCode.setDescription(descr);
         }
 
-        Map<String,String> nvp = new HashMap<>();
+        Map<String, String> nvp = new HashMap<>();
 
         //  0 2 4 6 n = keys   1 3 5 7 m = values
         int n = references.size();
         int i = 0;
-        while(i < n){
-            nvp.put(references.get(i),references.get(i + 1));
+        while (i < n) {
+            nvp.put(references.get(i), references.get(i + 1));
             i = i + 2;
         }
 
@@ -434,7 +437,7 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
         customCode.setPrimaryKey(primaryKey);
         customCode.setDescription(descr);
 
-        Map<String,String> nvp = new HashMap<>();
+        Map<String, String> nvp = new HashMap<>();
         nvp.put("fishmobil", "testtesttest");
         nvp.put("fishskr", "zzzzzzzzz");
         customCode.setNameValue(nvp);
@@ -479,8 +482,8 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
         CustomCode customCode = jsonb.fromJson(createdJson, CustomCode.class);
         CustomCodesPK customCodesPk = customCode.getPrimaryKey();
 
-        Instant  date  = customCodesPk.getValidFromDate();
-        Instant  dateWithinRange = date.plus(1, ChronoUnit.DAYS);
+        Instant date = customCodesPk.getValidFromDate();
+        Instant dateWithinRange = date.plus(1, ChronoUnit.DAYS);
         String dateToTest = DateUtils.dateToEpochMilliseconds(dateWithinRange);
 
         String json = getWebTargetExternal()
@@ -493,7 +496,8 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .get(String.class);
         // record existed alles ok
-        List<CustomCode> codes = jsonb.fromJson(json, new ArrayList<CustomCode>(){}.getClass().getGenericSuperclass());
+        List<CustomCode> codes = jsonb.fromJson(json, new ArrayList<CustomCode>() {
+        }.getClass().getGenericSuperclass());
 
         assertNotNull(codes);
         assertTrue(codes.size() > 0);
@@ -508,8 +512,8 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
         CustomCode customCode = jsonb.fromJson(createdJson, CustomCode.class);
         CustomCodesPK customCodesPk = customCode.getPrimaryKey();
 
-        Instant  date  = customCodesPk.getValidFromDate();
-        Instant  dateWithoutRange = date.minus(2, ChronoUnit.DAYS);
+        Instant date = customCodesPk.getValidFromDate();
+        Instant dateWithoutRange = date.minus(2, ChronoUnit.DAYS);
         String dateToTest = DateUtils.dateToEpochMilliseconds(dateWithoutRange);
 
         String json = getWebTargetExternal()
@@ -523,7 +527,8 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
                 .get(String.class);
 
         // record existed NOT as expected alles ok
-        List<CustomCode> codes = jsonb.fromJson(json, new ArrayList<CustomCode>(){}.getClass().getGenericSuperclass());
+        List<CustomCode> codes = jsonb.fromJson(json, new ArrayList<CustomCode>() {
+        }.getClass().getGenericSuperclass());
         assertNotNull(codes);
         assertEquals(0, codes.size());
     }
@@ -537,8 +542,8 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
         CustomCode customCode = jsonb.fromJson(createdJson, CustomCode.class);
         CustomCodesPK customCodesPk = customCode.getPrimaryKey();
 
-        Instant  date  = customCodesPk.getValidFromDate();
-        Instant  dateWithinRange = date.plus(1, ChronoUnit.DAYS);
+        Instant date = customCodesPk.getValidFromDate();
+        Instant dateWithinRange = date.plus(1, ChronoUnit.DAYS);
         String dateToTest = DateUtils.dateToEpochMilliseconds(dateWithinRange);
 
         Boolean ret = getWebTargetExternal()
@@ -563,8 +568,8 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
         CustomCode customCode = jsonb.fromJson(createdJson, CustomCode.class);
         CustomCodesPK customCodesPk = customCode.getPrimaryKey();
 
-        Instant  date  = customCodesPk.getValidFromDate();
-        Instant  dateWithoutRange = date.minus(2, ChronoUnit.DAYS);
+        Instant date = customCodesPk.getValidFromDate();
+        Instant dateWithoutRange = date.minus(2, ChronoUnit.DAYS);
         String dateToTest = DateUtils.dateToEpochMilliseconds(dateWithoutRange);
 
         Boolean ret = getWebTargetExternal()
@@ -588,8 +593,8 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
         String createdJson = createACustomCodeHelper(txt);
         CustomCode customCode = jsonb.fromJson(createdJson, CustomCode.class);
         CustomCodesPK customCodesPk = customCode.getPrimaryKey();
-        Instant  date  = customCodesPk.getValidFromDate();
-        Instant  dateWithinRange = date.plus(2,ChronoUnit.DAYS);
+        Instant date = customCodesPk.getValidFromDate();
+        Instant dateWithinRange = date.plus(2, ChronoUnit.DAYS);
         String dateWithin = DateUtils.dateToEpochMilliseconds(dateWithinRange);
 
         String json = getWebTargetExternal()
@@ -602,7 +607,8 @@ public class CustomCodeRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .get(String.class);
 
-        List<CustomCode> codes = jsonb.fromJson(json, new ArrayList<CustomCode>(){}.getClass().getGenericSuperclass());
+        List<CustomCode> codes = jsonb.fromJson(json, new ArrayList<CustomCode>() {
+        }.getClass().getGenericSuperclass());
         assertNotNull(codes);
         assertTrue(codes.size() > 0);
     }

@@ -12,7 +12,7 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.asset.model.constants;
 
 public enum UnitTonnage {
-	LONDON, OSLO;
+    LONDON, OSLO;
 
     public static UnitTonnage getType(String grossTonnageUnit) {
         if (grossTonnageUnit != null && !grossTonnageUnit.isEmpty()) {

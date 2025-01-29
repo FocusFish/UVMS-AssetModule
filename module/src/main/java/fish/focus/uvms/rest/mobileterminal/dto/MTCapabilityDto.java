@@ -15,23 +15,23 @@ import java.util.List;
 
 public class MTCapabilityDto<T> {
 
-	private String name;
-	
-	private List<T> optionList;
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
+    private String name;
 
-	public List<T> getOptionList() {
-		return optionList;
-	}
+    private List<T> optionList;
 
-	public void setOptionList(List<T> optionList) {
-		this.optionList = optionList;
-	}
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<T> getOptionList() {
+        return optionList;
+    }
+
+    public void setOptionList(List<T> optionList) {
+        this.optionList = optionList;
+    }
 }

@@ -5,12 +5,10 @@ import java.util.UUID;
 
 public class ChannelChangeHistory {
 
+    List<ChangeHistoryItem> changes;
     private ChangeType changeType;
     private UUID id;
     private UUID historyId;
-
-    List<ChangeHistoryItem> changes;
-
 
     public ChangeType getChangeType() {
         return changeType;

@@ -22,6 +22,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import fish.focus.schema.mobileterminal.types.v1.MobileTerminalFault;
