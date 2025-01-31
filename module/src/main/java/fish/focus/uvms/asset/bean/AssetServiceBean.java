@@ -662,7 +662,7 @@ public class AssetServiceBean {
 
         // find the fartyg2 record
         for (Asset asset : assets) {
-            if ((asset.getSource() != null) && (asset.getSource().equals(CarrierSource.NATIONAL.toString()))) {
+            if (asset.getSource() != null && asset.getSource().equals(CarrierSource.NATIONAL.toString())) {
                 fartyg2Asset = asset;
             } else {
                 nonFartyg2Asset = asset;
