@@ -20,9 +20,7 @@ import fish.focus.uvms.tests.mobileterminal.service.arquillian.helper.TestPollHe
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
@@ -35,23 +33,27 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
 public class PollServiceBeanIntTest extends TransactionalTests {
 
     private static final String MESSAGE_PRODUCER_METHODS_FAIL = "MESSAGE_PRODUCER_METHODS_FAIL";
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    private final Calendar cal = Calendar.getInstance();
+
     @Inject
     private PollServiceBean pollServiceBean;
+
     @EJB
     private TestPollHelper testPollHelper;
+
     @EJB
     private PollProgramDaoBean pollProgramDao;
+
     @Inject
     private AssetDao assetDao;
-    private Calendar cal = Calendar.getInstance();
 
     @Test
     @OperateOnDeployment("normal")
@@ -65,14 +67,13 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void createPoll_FromMPSBIT() {   //MPSBIT = Mapped Poll Service Bean Int Test, a test class for a, now removed, middle layer
-
         PollRequestType pollRequestType = helper_createPollRequestType(PollType.MANUAL_POLL);
 
         // create a poll
         CreatePollResultDto createPollResultDto = pollServiceBean.createPoll(pollRequestType);
         em.flush();
 
-        if (createPollResultDto.getSentPolls().size() == 0 && createPollResultDto.getUnsentPolls().size() == 0) {
+        if (createPollResultDto.getSentPolls().isEmpty() && createPollResultDto.getUnsentPolls().isEmpty()) {
             Assert.fail();
         }
     }
@@ -80,14 +81,12 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void createPollWithBrokenJMS_WillFail() {
-        try {
-            System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "true");
-            PollRequestType pollRequestType = testPollHelper.createPollRequestType();
-            pollServiceBean.createPoll(pollRequestType);
-            Assert.fail();
-        } catch (Throwable t) {
-            Assert.assertTrue(true);
-        }
+        System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "true");
+        PollRequestType pollRequestType = testPollHelper.createPollRequestType();
+
+        CreatePollResultDto pollResult = pollServiceBean.createPoll(pollRequestType);
+
+        assertThat(pollResult.isUnsentPoll(), is(true));
     }
 
     @Test
@@ -111,7 +110,6 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void startProgramPoll() {
-
         System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "false");
 
         Instant startDate = testPollHelper.getStartDate();
@@ -130,7 +128,6 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void startProgramPoll_FromMPSBIT() {
-
         // we want to be able to tamper with the dates for proper test coverage
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();
@@ -157,7 +154,6 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void stopProgramPoll() {
-
         System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "false");
 
         Instant startDate = testPollHelper.getStartDate();
@@ -176,7 +172,6 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void stopProgramPoll_FromMPSBIT() {
-
         // we want to be able to tamper with the dates for proper test coverage
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();
@@ -226,7 +221,6 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void inactivateProgramPoll_FromMPSBIT() {
-
         // we want to be able to tamper with the dates for proper test coverage
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();
@@ -280,30 +274,21 @@ public class PollServiceBeanIntTest extends TransactionalTests {
         assertEquals(startedProgramPollsBefore + 1, responseList.size());
 
         assertEquals(ProgramPollStatus.STARTED, responseList.get(0).getPollState());
-
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void startProgramPoll_ShouldFailWithNullAsPollId() {
-        try {
-            pollServiceBean.startProgramPoll(null, "TEST");
-            Assert.fail();
-        } catch (EJBTransactionRolledbackException e) {
-            Assert.assertTrue(true);
-        }
+        assertThrows(EJBTransactionRolledbackException.class, () -> pollServiceBean.startProgramPoll(null, "TEST"));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void stopProgramPoll_ShouldFailWithNullAsPollId() {
-        thrown.expect(EJBTransactionRolledbackException.class);
-
-        pollServiceBean.stopProgramPoll(null, "TEST");
+        assertThrows(EJBTransactionRolledbackException.class, () -> pollServiceBean.stopProgramPoll(null, "TEST"));
     }
 
     private PollRequestType helper_createPollRequestType(PollType pollType) {
-
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, 2015);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
@@ -312,7 +297,7 @@ public class PollServiceBeanIntTest extends TransactionalTests {
         String endDate = format.format(cal.getTime());
 
         PollRequestType prt = new PollRequestType();
-        prt.setComment("aComment" + UUID.randomUUID().toString());
+        prt.setComment("aComment" + UUID.randomUUID());
         prt.setUserName("TEST");
         prt.setPollType(pollType);
         PollMobileTerminal pollMobileTerminal = helper_createPollMobileTerminal();
@@ -338,7 +323,6 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     }
 
     private PollMobileTerminal helper_createPollMobileTerminal() {
-
         Asset asset = assetDao.createAsset(AssetTestsHelper.createBasicAsset());
 
         MobileTerminal mobileTerminal = testPollHelper.createAndPersistMobileTerminal(asset);
