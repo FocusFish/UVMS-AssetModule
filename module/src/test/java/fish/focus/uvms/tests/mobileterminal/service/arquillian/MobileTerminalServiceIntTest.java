@@ -38,7 +38,7 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
     // TODO we do test on those transactions that are wrong in construction
     private static final String MESSAGE_PRODUCER_METHODS_FAIL = "MESSAGE_PRODUCER_METHODS_FAIL";
     private static final String USERNAME = "TEST_USERNAME";
-    private static final String NEW_MOBILETERMINAL_TYPE = "IRIDIUM";
+    private static final String NEW_MOBILE_TERMINAL_TYPE = "IRIDIUM";
     private static final String TEST_COMMENT = "TEST_COMMENT";
 
     @EJB
@@ -119,7 +119,7 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
         MobileTerminal updated = upsertMobileTerminalEntity(created);
 
         assertNotNull(updated);
-        assertEquals(NEW_MOBILETERMINAL_TYPE, updated.getMobileTerminalType().name());
+        assertEquals(NEW_MOBILE_TERMINAL_TYPE, updated.getMobileTerminalType().name());
     }
 
     @Test
@@ -138,7 +138,7 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
 
         assertNotNull(updated);
         assertNotNull(updated.getId());
-        assertEquals(NEW_MOBILETERMINAL_TYPE, updated.getMobileTerminalType().name());
+        assertEquals(NEW_MOBILE_TERMINAL_TYPE, updated.getMobileTerminalType().name());
     }
 
     @Test
@@ -150,7 +150,7 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
         MobileTerminal updated = updateMobileTerminal(created);
 
         assertNotNull(updated);
-        assertEquals(NEW_MOBILETERMINAL_TYPE, updated.getMobileTerminalType().toString());
+        assertEquals(NEW_MOBILE_TERMINAL_TYPE, updated.getMobileTerminalType().toString());
         assertEquals(TerminalSourceEnum.INTERNAL, updated.getSource());
     }
 
@@ -354,7 +354,7 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
     }
 
     private MobileTerminal upsertMobileTerminalEntity(MobileTerminal created) {
-        created.setMobileTerminalType(MobileTerminalTypeEnum.getType(NEW_MOBILETERMINAL_TYPE));
+        created.setMobileTerminalType(MobileTerminalTypeEnum.getType(NEW_MOBILE_TERMINAL_TYPE));
         return mobileTerminalService.upsertMobileTerminal(created, TerminalSourceEnum.INTERNAL, USERNAME);
     }
 }

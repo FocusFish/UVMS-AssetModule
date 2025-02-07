@@ -21,7 +21,7 @@ import java.util.UUID;
 @RunWith(Arquillian.class)
 public class AssetKeyTestsIT extends TransactionalTests {
 
-    private AssetTestsHelper assetTestsHelper = new AssetTestsHelper();
+    private final AssetTestsHelper assetTestsHelper = new AssetTestsHelper();
 
     @Inject
     private AssetDao assetDao;
@@ -41,7 +41,7 @@ public class AssetKeyTestsIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void create_Asset_CFR() {
-        create(AssetIdentifier.CFR, "CFR_VAL" + UUID.randomUUID().toString());
+        create(AssetIdentifier.CFR, "CFR_VAL" + UUID.randomUUID());
     }
 
     @Test
@@ -341,8 +341,7 @@ public class AssetKeyTestsIT extends TransactionalTests {
     }
 
     private Asset getAssetHelper(AssetIdentifier assetIdType, String value) {
-
-        Asset fetchedAsset = null;
+        Asset fetchedAsset;
         switch (assetIdType) {
             case CFR:
                 fetchedAsset = assetDao.getAssetByCfr(value);
@@ -365,6 +364,8 @@ public class AssetKeyTestsIT extends TransactionalTests {
             case GFCM:
                 fetchedAsset = assetDao.getAssetByGfcm(value);
                 break;
+            default:
+                fetchedAsset = null;
         }
         return fetchedAsset;
     }

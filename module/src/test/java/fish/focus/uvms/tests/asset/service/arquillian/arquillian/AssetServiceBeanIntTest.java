@@ -33,9 +33,12 @@ import javax.transaction.*;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
@@ -58,26 +61,22 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void createAssert() {
+    public void createAssert() throws AssetServiceException {
         // this test is to ensure that create actually works
-        try {
-            // create an Asset
-            Asset asset = AssetTestsHelper.createBiggerAsset();
-            Asset createdAsset = assetService.createAsset(asset, "test");
-            commit();
-            assertNotNull(createdAsset);
-            assetService.deleteAsset(AssetIdentifier.GUID, createdAsset.getId().toString());
-            commit();
-        } catch (AssetServiceException e) {
-            fail();
-        }
+        // create an Asset
+        Asset asset = AssetTestsHelper.createBiggerAsset();
+        Asset createdAsset = assetService.createAsset(asset, "test");
+        commit();
+        assertNotNull(createdAsset);
+        assetService.deleteAsset(AssetIdentifier.GUID, createdAsset.getId().toString());
+        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void upsertAssert() {
         Asset asset = AssetTestsHelper.createBiggerAsset();
-        Long nationalId = (long) (Math.random() * 10000000d);
+        Long nationalId = ThreadLocalRandom.current().nextLong(10_000_000);
         asset.setNationalId(nationalId);
         AssetBO abo = new AssetBO();
         abo.setAsset(asset);
@@ -219,7 +218,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         commit();
         // change it and store it
         createdAsset.setName("ÄNDRAD");
-        Asset changedAsset = assetService.updateAsset(createdAsset, "CHG_USER", "En changekommentar");
+        assetService.updateAsset(createdAsset, "CHG_USER", "En changekommentar");
         commit();
 
         // fetch it and check name
@@ -239,7 +238,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
         // change it to get an audit
         createdAsset.setName("ÄNDRAD_1");
-        Asset changedAsset1 = assetService.updateAsset(createdAsset, "CHG_USER_1", "En changekommentar");
+        assetService.updateAsset(createdAsset, "CHG_USER_1", "En changekommentar");
         commit();
 
         assetService.deleteAsset(AssetIdentifier.GUID, createdAsset.getId().toString());
@@ -259,9 +258,8 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         commit();
         // change it and store it
         createdAsset.setName("ÄNDRAD_1");
-        Asset changedAsset1 = assetService.updateAsset(createdAsset, "CHG_USER_1", "En changekommentar");
+        assetService.updateAsset(createdAsset, "CHG_USER_1", "En changekommentar");
         commit();
-        UUID historyId1 = changedAsset1.getHistoryId();
 
         // change it and store it
         createdAsset.setName("ÄNDRAD_2");
@@ -271,12 +269,11 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
         // change it and store it
         createdAsset.setName("ÄNDRAD_3");
-        Asset changedAsset3 = assetService.updateAsset(createdAsset, "CHG_USER_3", "En changekommentar");
+        assetService.updateAsset(createdAsset, "CHG_USER_3", "En changekommentar");
         commit();
-        UUID historyId3 = changedAsset3.getHistoryId();
 
         List<Asset> assetVersions = assetService.getRevisionsForAsset(asset.getId());
-        assertEquals(assetVersions.size(), 4);
+        assertEquals(4, assetVersions.size());
         commit();
 
         Asset fetchedAssetAtRevision = assetService.getAssetRevisionForRevisionId(historyId2);
@@ -288,7 +285,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void updateAssetBOWithIdentifierCFR() throws AssetServiceException {
+    public void updateAssetBOWithIdentifierCFR() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         Asset createdAsset = assetService.createAsset(asset, "Test");
 
@@ -303,15 +300,15 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
         Asset updatedAsset = assetService.getAssetById(createdAsset.getId());
 
-        assertThat(updatedAsset.getCfr(), CoreMatchers.is(createdAsset.getCfr()));
-        assertThat(updatedAsset.getIrcs(), CoreMatchers.is(assetUpdates.getIrcs()));
-        assertThat(updatedAsset.getMmsi(), CoreMatchers.is(assetUpdates.getMmsi()));
-        assertThat(updatedAsset.getName(), CoreMatchers.is(assetUpdates.getName()));
+        assertThat(updatedAsset.getCfr(), is(createdAsset.getCfr()));
+        assertThat(updatedAsset.getIrcs(), is(assetUpdates.getIrcs()));
+        assertThat(updatedAsset.getMmsi(), is(assetUpdates.getMmsi()));
+        assertThat(updatedAsset.getName(), is(assetUpdates.getName()));
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void updateAssetBOWithIdentifierIRCS() throws AssetServiceException {
+    public void updateAssetBOWithIdentifierIRCS() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         Asset createdAsset = assetService.createAsset(asset, "Test");
 
@@ -326,15 +323,15 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
         Asset updatedAsset = assetService.getAssetById(createdAsset.getId());
 
-        assertThat(updatedAsset.getIrcs(), CoreMatchers.is(createdAsset.getIrcs()));
-        assertThat(updatedAsset.getCfr(), CoreMatchers.is(assetUpdates.getCfr()));
-        assertThat(updatedAsset.getMmsi(), CoreMatchers.is(assetUpdates.getMmsi()));
-        assertThat(updatedAsset.getName(), CoreMatchers.is(assetUpdates.getName()));
+        assertThat(updatedAsset.getIrcs(), is(createdAsset.getIrcs()));
+        assertThat(updatedAsset.getCfr(), is(assetUpdates.getCfr()));
+        assertThat(updatedAsset.getMmsi(), is(assetUpdates.getMmsi()));
+        assertThat(updatedAsset.getName(), is(assetUpdates.getName()));
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void updateAssetBOWithIdentifierNullCFR() throws AssetServiceException {
+    public void updateAssetBOWithIdentifierNullCFR() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         Asset createdAsset = assetService.createAsset(asset, "Test");
 
@@ -350,10 +347,10 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
         Asset updatedAsset = assetService.getAssetById(createdAsset.getId());
 
-        assertThat(updatedAsset.getIrcs(), CoreMatchers.is(createdAsset.getIrcs()));
-        assertThat(updatedAsset.getCfr(), CoreMatchers.is(assetUpdates.getCfr()));
-        assertThat(updatedAsset.getMmsi(), CoreMatchers.is(assetUpdates.getMmsi()));
-        assertThat(updatedAsset.getName(), CoreMatchers.is(assetUpdates.getName()));
+        assertThat(updatedAsset.getIrcs(), is(createdAsset.getIrcs()));
+        assertThat(updatedAsset.getCfr(), is(assetUpdates.getCfr()));
+        assertThat(updatedAsset.getMmsi(), is(assetUpdates.getMmsi()));
+        assertThat(updatedAsset.getName(), is(assetUpdates.getName()));
     }
 
     @Test
@@ -524,12 +521,8 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         assertEquals(1, notes.size());
 
         Note toBeDeleted = notes.values().iterator().next();
-        try {
-            assetService.deleteNote(toBeDeleted.getId(), "Someone else");
-            fail();
-        } catch (Exception e) {
-            assertTrue(e.getMessage().contains("Can only delete notes created by the same user"));
-        }
+        Exception exception = assertThrows(Exception.class, () -> assetService.deleteNote(toBeDeleted.getId(), "Someone else"));
+        assertThat(exception.getMessage(), containsString("Can only delete notes created by the same user"));
     }
 
     @Test
@@ -545,12 +538,8 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
         Note toBeUpdated = notes.values().iterator().next();
         toBeUpdated.setNote("Something completely different");
-        try {
-            assetService.updateNote(toBeUpdated, "Someone else");
-            fail();
-        } catch (Exception e) {
-            assertTrue(e.getMessage().contains("Can only change notes created by the same user"));
-        }
+        Exception exception = assertThrows(Exception.class, () -> assetService.updateNote(toBeUpdated, "Someone else"));
+        assertThat(exception.getMessage(), containsString("Can only change notes created by the same user"));
     }
 
     @Test
@@ -628,8 +617,8 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         assertEquals(asset.getId(), UUID.fromString(assetUUID));
 
         List<String> fetchedAssetGroups = response.getAssetFilterList();
-        assertNotNull(fetchedAssetGroups);
-        assertTrue(fetchedAssetGroups.size() > 0);
+        assertThat(fetchedAssetGroups, is(notNullValue()));
+        assertThat(fetchedAssetGroups, is(not(empty())));
         assertTrue(fetchedAssetGroups.contains(createdAssetGroupId.toString()));
         assertEquals(request.getSerialNumberValue(), response.getSerialNumber());
     }
@@ -666,8 +655,8 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         assertEquals(asset.getId(), UUID.fromString(assetUUID));
 
         List<String> fetchedAssetGroups = response.getAssetFilterList();
-        assertNotNull(fetchedAssetGroups);
-        assertTrue(fetchedAssetGroups.size() > 0);
+        assertThat(fetchedAssetGroups, is(notNullValue()));
+        assertThat(fetchedAssetGroups, is(not(empty())));
         assertTrue(fetchedAssetGroups.contains(createdAssetGroupId.toString()));
     }
 
@@ -687,8 +676,8 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         assertEquals(asset.getId(), UUID.fromString(assetUUID));
 
         List<String> fetchedAssetGroups = response.getAssetFilterList();
-        assertNotNull(fetchedAssetGroups);
-        assertTrue(fetchedAssetGroups.size() > 0);
+        assertThat(fetchedAssetGroups, is(notNullValue()));
+        assertThat(fetchedAssetGroups, is(not(empty())));
         assertTrue(fetchedAssetGroups.contains(createdAssetGroupId.toString()));
     }
 
@@ -720,15 +709,15 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
         AssetMTEnrichmentRequest request = createRequest(mobileTerminal1);
         AssetMTEnrichmentResponse response = assetService.collectAssetMT(request);
-        assertThat(response.getAssetUUID(), CoreMatchers.is(asset1.getId().toString()));
+        assertThat(response.getAssetUUID(), is(asset1.getId().toString()));
 
         AssetMTEnrichmentRequest request2 = createRequest(mobileTerminal2);
         AssetMTEnrichmentResponse response2 = assetService.collectAssetMT(request2);
-        assertThat(response2.getAssetUUID(), CoreMatchers.is(asset2.getId().toString()));
+        assertThat(response2.getAssetUUID(), is(asset2.getId().toString()));
 
         AssetMTEnrichmentRequest request3 = createRequest(mobileTerminal3);
         AssetMTEnrichmentResponse response3 = assetService.collectAssetMT(request3);
-        assertThat(response3.getAssetUUID(), CoreMatchers.is(asset3.getId().toString()));
+        assertThat(response3.getAssetUUID(), is(asset3.getId().toString()));
     }
 
     @Test
@@ -753,7 +742,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
         AssetMTEnrichmentRequest request = createRequest(mobileTerminalNonExisting);
         AssetMTEnrichmentResponse response = assetService.collectAssetMT(request);
-        assertThat(response.getAssetName(), CoreMatchers.is(CoreMatchers.nullValue()));
+        assertThat(response.getAssetName(), is(CoreMatchers.nullValue()));
     }
 
     @Test
@@ -764,7 +753,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
         AssetMTEnrichmentRequest request = createRequest(mobileTerminalUnlinked);
         AssetMTEnrichmentResponse response = assetService.collectAssetMT(request);
-        assertThat(response.getAssetName(), CoreMatchers.is(CoreMatchers.nullValue()));
+        assertThat(response.getAssetName(), is(CoreMatchers.nullValue()));
     }
 
     @Test
@@ -780,7 +769,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         request.setTranspondertypeValue(iridiumTerminal.getMobileTerminalType().toString());
         request.setSerialNumberValue(iridiumTerminal.getSerialNo());
         AssetMTEnrichmentResponse response = assetService.collectAssetMT(request);
-        assertThat(response.getAssetUUID(), CoreMatchers.is(asset.getId().toString()));
+        assertThat(response.getAssetUUID(), is(asset.getId().toString()));
     }
 
     private AssetMTEnrichmentRequest createRequest(MobileTerminal mobileTerminal) {
@@ -840,7 +829,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
         assetFilterQuery.setType("GUID");
         assetFilterQuery.setValueType(AssetFilterValueType.STRING);
-        assetFilterQuery.setValues(new HashSet(Arrays.asList(assetFilterValue)));
+        assetFilterQuery.setValues(new HashSet<>(List.of(assetFilterValue)));
         assetFilterServiceBean.createAssetFilterQuery(filter.getId(), assetFilterQuery);
 
         return createdAssetGroup;

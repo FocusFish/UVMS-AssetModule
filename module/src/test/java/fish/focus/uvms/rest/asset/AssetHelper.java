@@ -14,7 +14,7 @@ import java.util.Random;
 
 public abstract class AssetHelper {
 
-    private static Random rnd = new Random();
+    private static final Random rnd = new Random();
 
     public static Asset createBasicAsset() {
         Asset assetEntity = new Asset();
@@ -51,7 +51,6 @@ public abstract class AssetHelper {
     }
 
     public static Asset createBiggerAsset() {
-
         Asset assetEntity = new Asset();
         Instant now = Instant.now();
 
@@ -158,7 +157,7 @@ public abstract class AssetHelper {
     public static String getRandomIntegers(int length) {
         return new Random()
                 .ints(0, 9)
-                .mapToObj(i -> String.valueOf(i))
+                .mapToObj(String::valueOf)
                 .limit(length)
                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
                 .toString();

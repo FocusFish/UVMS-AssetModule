@@ -1,23 +1,22 @@
 package fish.focus.uvms.tests;
 
-import java.io.File;
-
+import fish.focus.uvms.rest.mobileterminal.rest.ExchangeModuleRestMock;
+import fish.focus.uvms.rest.mobileterminal.rest.UserRestMock;
+import fish.focus.uvms.tests.mobileterminal.service.arquillian.helper.UnionVMSMock;
 import org.eu.ingwar.tools.arquillian.extension.suite.annotations.ArquillianSuiteDeployment;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
-import fish.focus.uvms.rest.mobileterminal.rest.ExchangeModuleRestMock;
-import fish.focus.uvms.rest.mobileterminal.rest.UserRestMock;
-import fish.focus.uvms.tests.mobileterminal.service.arquillian.helper.UnionVMSMock;
+
+import java.io.File;
 
 @ArquillianSuiteDeployment
 public abstract class BuildAssetServiceDeployment {
 
     @Deployment(name = "normal", order = 2)
     public static Archive<?> createDeployment() {
-
         WebArchive testWar = ShrinkWrap.create(WebArchive.class, "test.war");
 
         File[] files = Maven.resolver().loadPomFromFile("pom.xml").importRuntimeAndTestDependencies().resolve()
@@ -40,7 +39,6 @@ public abstract class BuildAssetServiceDeployment {
 
     @Deployment(name = "uvms", order = 1)
     public static Archive<?> createExchangeMock() {
-
         WebArchive testWar = ShrinkWrap.create(WebArchive.class, "unionvms.war");
         File[] files = Maven.resolver().loadPomFromFile("pom.xml")
                 .resolve("fish.focus.uvms.exchange:exchange-client",

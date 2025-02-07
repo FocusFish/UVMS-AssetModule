@@ -39,16 +39,15 @@ public class JMSHelper {
 
     private static final Jsonb JSONB = JsonbBuilder.create();
 
-    public Asset upsertAsset(Asset asset) throws Exception {
+    public void upsertAsset(Asset asset) throws Exception {
         String request = AssetModuleRequestMapper.createUpsertAssetModuleRequest(asset, "Test user");
         sendAssetMessage(request);
-        return asset;
     }
 
     public Asset getAssetById(String value, AssetIdType type) throws Exception {
         String msg = AssetModuleRequestMapper.createGetAssetModuleRequest(value, type);
-        String correlationId = sendAssetMessage(msg);
-        Message response = listenForResponse(correlationId);
+        sendAssetMessage(msg);
+        Message response = listenForResponse();
         GetAssetModuleResponse assetModuleResponse = JAXBMarshaller.unmarshallTextMessage((TextMessage) response, GetAssetModuleResponse.class);
         return assetModuleResponse.getAsset();
     }
@@ -70,11 +69,11 @@ public class JMSHelper {
         }
     }
 
-    public String sendAssetMessageWithFunction(String text, String function) throws Exception {
-        return sendAssetMessage(text, MessageConstants.JMS_FUNCTION_PROPERTY, function);
+    public void sendAssetMessageWithFunction(String text, String function) throws Exception {
+        sendAssetMessage(text, MessageConstants.JMS_FUNCTION_PROPERTY, function);
     }
 
-    public String sendAssetMessage(String text, String jmsStringProperty, String jmsStringPropertyValue) throws Exception {
+    public void sendAssetMessage(String text, String jmsStringProperty, String jmsStringPropertyValue) throws Exception {
         try (Connection connection = getConnectionFactory().createConnection("test", "test")) {
             connection.setClientID(UUID.randomUUID().toString());
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -87,12 +86,10 @@ public class JMSHelper {
             message.setText(text);
 
             session.createProducer(assetQueue).send(message);
-
-            return message.getJMSMessageID();
         }
     }
 
-    public Message listenForResponse(String correlationId) throws Exception {
+    public Message listenForResponse() throws Exception {
         try (Connection connection = getConnectionFactory().createConnection("test", "test")) {
             connection.setClientID(UUID.randomUUID().toString());
             connection.start();

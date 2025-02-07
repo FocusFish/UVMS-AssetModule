@@ -7,8 +7,14 @@ import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
+
 public class MobileTerminalEntityToModelMapper {
-    private static Logger LOG = LoggerFactory.getLogger(MobileTerminalEntityToModelMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MobileTerminalEntityToModelMapper.class);
+
+    private MobileTerminalEntityToModelMapper() {
+        // to hide default public constructor
+    }
 
     public static MobileTerminalType mapToMobileTerminalType(MobileTerminal entity) {
         if (entity == null) {
@@ -36,7 +42,7 @@ public class MobileTerminalEntityToModelMapper {
         model.setType(entity.getMobileTerminalType().name());
         model.setInactive(!entity.getActive());
         model.setArchived(entity.getArchived());
-        model.setId(new Long(entity.getCreateTime().getEpochSecond()).intValue());
+        model.setId((int) entity.getCreateTime().getEpochSecond());
 
         model.getChannels().addAll(ChannelMapper.mapChannels(entity));
 

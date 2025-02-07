@@ -14,13 +14,12 @@ package fish.focus.uvms.rest.asset.service;
 import fish.focus.schema.mobileterminal.config.v1.ConfigList;
 import fish.focus.schema.mobileterminal.config.v1.TerminalSystemType;
 import fish.focus.schema.mobileterminal.types.v1.SearchKey;
-import fish.focus.uvms.rest.security.RequiresFeature;
-import fish.focus.uvms.rest.security.UnionVMSFeature;
-import fish.focus.wsdl.asset.types.ConfigSearchField;
 import fish.focus.uvms.asset.bean.ConfigServiceBean;
 import fish.focus.uvms.mobileterminal.bean.ConfigServiceBeanMT;
 import fish.focus.uvms.rest.mobileterminal.dto.MTMobileTerminalConfig;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+import fish.focus.uvms.rest.security.RequiresFeature;
+import fish.focus.uvms.rest.security.UnionVMSFeature;
+import fish.focus.wsdl.asset.types.ConfigSearchField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -33,7 +32,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +43,10 @@ import java.util.Map;
 public class AssetConfigRestResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(AssetConfigRestResource.class);
+
     @Inject
     ConfigServiceBeanMT configServiceMT;
+
     @Inject
     private ConfigServiceBean configService;
 
@@ -94,7 +94,7 @@ public class AssetConfigRestResource {
         try {
             return Response.ok(SearchKey.values()).header("MDC", MDC.get("requestId")).build();
         } catch (Exception ex) {
-            LOG.error("[ Error when getting config search fields ] {}", ex.getStackTrace());
+            LOG.error("[ Error when getting config search fields ]", ex);
             throw ex;
         }
     }

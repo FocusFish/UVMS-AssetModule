@@ -12,8 +12,8 @@ package fish.focus.uvms.tests;
 
 import fish.focus.schema.config.types.v1.PullSettingsStatus;
 import fish.focus.schema.config.types.v1.SettingType;
-import fish.focus.uvms.config.model.mapper.ModuleResponseMapper;
 import fish.focus.uvms.asset.message.AssetProducer;
+import fish.focus.uvms.config.model.mapper.ModuleResponseMapper;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;

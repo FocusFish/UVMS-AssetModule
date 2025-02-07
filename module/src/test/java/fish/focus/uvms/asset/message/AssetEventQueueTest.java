@@ -31,6 +31,7 @@ import javax.jms.Message;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -41,13 +42,13 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
+    private final JMSHelper jmsHelper = new JMSHelper();
+
     @Inject
     AssetModelMapper assetModelMapper;
 
     @Inject
     AssetServiceBean assetServiceBean;
-
-    private final JMSHelper jmsHelper = new JMSHelper();
 
     @Test
     @OperateOnDeployment("normal")
@@ -56,7 +57,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         request.setMethod(AssetModuleMethod.PING);
         String requestString = JAXBMarshaller.marshallJaxBObjectToString(request);
         String correlationId = jmsHelper.sendAssetMessage(requestString);
-        Message response = jmsHelper.listenForResponse(correlationId);
+        Message response = jmsHelper.listenForResponse();
         assertThat(response, is(notNullValue()));
     }
 
@@ -687,7 +688,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         Asset assetType = AssetTestHelper.createBasicAsset();
         fish.focus.uvms.asset.domain.entity.Asset asset = assetModelMapper.toAssetEntity(assetType);
         asset.setName("Create with national id");
-        Long nationalId = (long) (Math.random() * 10000000d);
+        Long nationalId = ThreadLocalRandom.current().nextLong(10_000_000);
         asset.setNationalId(nationalId);
 
         jmsHelper.upsertAssetUsingMethod(asset);
