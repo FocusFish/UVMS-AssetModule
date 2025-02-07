@@ -1,6 +1,5 @@
 package fish.focus.uvms.tests.mobileterminal.service.arquillian;
 
-import com.sun.xml.bind.v2.runtime.reflect.opt.Const;
 import fish.focus.uvms.asset.bean.AssetServiceBean;
 import fish.focus.uvms.asset.domain.dao.AssetDao;
 import fish.focus.uvms.asset.domain.entity.Asset;
