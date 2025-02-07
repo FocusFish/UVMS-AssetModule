@@ -9,14 +9,9 @@ import fish.focus.uvms.mobileterminal.search.poll.PollSearchMapper;
 import fish.focus.uvms.tests.TransactionalTests;
 import fish.focus.uvms.tests.mobileterminal.service.arquillian.helper.TestPollHelper;
 import org.hamcrest.CoreMatchers;
-import org.hamcrest.core.StringContains;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.internal.matchers.ThrowableMessageMatcher;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
@@ -28,15 +23,15 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
 public class PollDaoBeanIntTest extends TransactionalTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
     @EJB
     private PollDaoBean pollDao;
+
     @Inject
     private TestPollHelper testPollHelper;
 
@@ -44,37 +39,31 @@ public class PollDaoBeanIntTest extends TransactionalTests {
     @OperateOnDeployment("normal")
     public void testCreatePoll() {
         PollBase poll = createPollHelper();
-        pollDao.createPoll(poll);
-        em.flush();
+        createPollAndFlush(poll);
 
         assertNotNull(poll.getId());
+    }
+
+    private void createPollAndFlush(PollBase poll) {
+        pollDao.createPoll(poll);
+        em.flush();
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void testCreatePoll_updateUserConstraintViolation() {
-        thrown.expect(ConstraintViolationException.class);
-
         PollBase poll = createPollHelper();
         char[] updatedBy = new char[61];
         Arrays.fill(updatedBy, 'x');
         poll.setUpdatedBy(new String(updatedBy));
 
-        pollDao.createPoll(poll);
-        em.flush();
+        assertThrows(ConstraintViolationException.class, () -> createPollAndFlush(poll));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void testCreatePoll_WithNull() {
-        try {
-            pollDao.createPoll(null);
-            Assert.fail();
-
-            em.flush();
-        } catch (RuntimeException e) {
-            Assert.assertTrue(true);
-        }
+        assertThrows(EJBTransactionRolledbackException.class, () -> createPollAndFlush(null));
     }
 
     @Test
@@ -82,8 +71,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
     public void testCreatePoll_WithDefaultGuidGeneration() {
         PollBase poll = createPollHelper();
         poll.setId(null);
-        pollDao.createPoll(poll);
-        em.flush();
+        createPollAndFlush(poll);
 
         assertNotNull(poll.getId());
     }
@@ -92,8 +80,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
     @OperateOnDeployment("normal")
     public void testGetPollById() {
         PollBase poll = createPollHelper();
-        pollDao.createPoll(poll);
-        em.flush();
+        createPollAndFlush(poll);
 
         PollBase found = pollDao.getPollById(poll.getId());
         assertNotNull(found);
@@ -111,12 +98,8 @@ public class PollDaoBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void testGetPollById_willFailWithNull() {
-        try {
-            PollBase poll = pollDao.getPollById(null);
-            fail();
-        } catch (Exception e) {
-            assertTrue(e.getMessage().contains("id to load is required for loading"));
-        }
+        Exception exception = assertThrows(Exception.class, () -> pollDao.getPollById(null));
+        assertThat(exception.getMessage(), containsString("id to load is required for loading"));
     }
 
     @Test
@@ -271,23 +254,21 @@ public class PollDaoBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void testGetPollListSearchCount_noSqlPhraseCausesException() {
-        thrown.expect(EJBTransactionRolledbackException.class);
-        checkExpectedMessage("unexpected end of subtree []");
-
-        String sql = "";
+        String emptySql = "";
         List<PollSearchKeyValue> listOfPollSearchKeyValue = new ArrayList<>();
-        pollDao.getPollListSearchCount(sql, listOfPollSearchKeyValue);
+
+        Exception exception = assertThrows(EJBTransactionRolledbackException.class, () -> pollDao.getPollListSearchCount(emptySql, listOfPollSearchKeyValue));
+        assertThat(exception.getMessage(), containsString("unexpected end of subtree []"));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void testGetPollListSearchCount_malformedSqlPhraseCausesException() {
-        thrown.expect(EJBTransactionRolledbackException.class);
-        checkExpectedMessage("unexpected token: * near line");
-
         String sql = "SELECT * FROM PollBase p";
         List<PollSearchKeyValue> listOfPollSearchKeyValue = new ArrayList<>();
-        pollDao.getPollListSearchCount(sql, listOfPollSearchKeyValue);
+
+        Exception exception = assertThrows(EJBTransactionRolledbackException.class, () -> pollDao.getPollListSearchCount(sql, listOfPollSearchKeyValue));
+        assertThat(exception.getMessage(), containsString("unexpected token: * near line"));
     }
 
     @Test
@@ -313,23 +294,23 @@ public class PollDaoBeanIntTest extends TransactionalTests {
         Integer pageNumber = 0;
         Integer pageSize = 1;
 
-        thrown.expect(EJBTransactionRolledbackException.class);
-        checkExpectedMessage("Error building query with values: Page number: " + pageNumber + " and Page size: " + pageSize);
-
         PollSearchKeyValue pollSearchKeyValue1 = new PollSearchKeyValue();
         pollSearchKeyValue1.setSearchField(PollSearchField.POLL_ID);
 
         List<PollSearchKeyValue> listOfPollSearchKeyValue = Collections.singletonList(pollSearchKeyValue1);
         String sql = PollSearchMapper.createSelectSearchSql(listOfPollSearchKeyValue, true, PollTypeEnum.MANUAL_POLL);
-        pollDao.getPollListSearchPaginated(pageNumber, pageSize, sql, listOfPollSearchKeyValue);
+
+        Exception exception = assertThrows(EJBTransactionRolledbackException.class, () -> pollDao.getPollListSearchPaginated(pageNumber, pageSize, sql, listOfPollSearchKeyValue));
+
+        String expectedErrorMessage = "Error building query with values: Page number: " + pageNumber + " and Page size: " + pageSize;
+        assertThat(exception.getMessage(), containsString(expectedErrorMessage));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void testGetPollListSearchPaginated_PollSearchField_POLL_ID() {
         PollBase poll = createPollHelper();
-        pollDao.createPoll(poll);
-        em.flush();
+        createPollAndFlush(poll);
 
         String testValue1 = UUID.randomUUID().toString();
         String testValue2 = UUID.randomUUID().toString();
@@ -418,8 +399,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
     public void findByAssetInTimespan() {
         PollBase poll = createPollHelper();
         poll.setAssetId(UUID.randomUUID());
-        pollDao.createPoll(poll);
-        em.flush();
+        createPollAndFlush(poll);
 
         List<PollBase> byAssetInTimespan = pollDao.findByAssetInTimespan(poll.getAssetId(), Instant.now().minus(1, ChronoUnit.DAYS), Instant.now());
         assertEquals(1, byAssetInTimespan.size());
@@ -432,8 +412,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
         PollBase poll = createPollHelper();
         poll.setAssetId(UUID.randomUUID());
         poll.setCreateTime(Instant.now().minus(25, ChronoUnit.HOURS));
-        pollDao.createPoll(poll);
-        em.flush();
+        createPollAndFlush(poll);
 
         List<PollBase> byAssetInTimespan = pollDao.findByAssetInTimespan(poll.getAssetId(), Instant.now().minus(1, ChronoUnit.DAYS), Instant.now());
         assertEquals(0, byAssetInTimespan.size());
@@ -447,9 +426,5 @@ public class PollDaoBeanIntTest extends TransactionalTests {
         poll.setMobileterminal(testPollHelper.createAndPersistMobileTerminal(null));
         poll.setComment("test comment");
         return poll;
-    }
-
-    private void checkExpectedMessage(String message) {
-        thrown.expect(new ThrowableMessageMatcher(new StringContains(message)));
     }
 }

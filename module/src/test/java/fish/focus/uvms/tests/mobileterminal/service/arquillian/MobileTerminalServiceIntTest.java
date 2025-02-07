@@ -15,10 +15,7 @@ import fish.focus.uvms.tests.asset.service.arquillian.arquillian.AssetTestsHelpe
 import fish.focus.uvms.tests.mobileterminal.service.arquillian.helper.TestPollHelper;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
@@ -43,16 +40,19 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
     private static final String USERNAME = "TEST_USERNAME";
     private static final String NEW_MOBILETERMINAL_TYPE = "IRIDIUM";
     private static final String TEST_COMMENT = "TEST_COMMENT";
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+
     @EJB
     private TestPollHelper testPollHelper;
+
     @EJB
     private MobileTerminalServiceBean mobileTerminalService;
+
     @Inject
     private MobileTerminalPluginDaoBean pluginDao;
+
     @Inject
     private AssetDao assetDao;
+
     @Inject
     private AssetServiceBean assetService;
 
@@ -207,38 +207,31 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void createMobileTerminal_WillFail_Null_Plugin() {
-        thrown.expect(EJBTransactionRolledbackException.class);
-
         MobileTerminal mobileTerminal = testPollHelper.createBasicMobileTerminal();
         mobileTerminal.setPlugin(null);
+        assertThrows(EJBTransactionRolledbackException.class, () -> createMobileTerminalAndFlush(mobileTerminal));
+    }
+
+    private void createMobileTerminalAndFlush(MobileTerminal mobileTerminal) {
         mobileTerminalService.createMobileTerminal(mobileTerminal, USERNAME);
+        em.flush();
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void createMobileTerminal_WillFail_Empty_Channel() {
-        try {
-            MobileTerminal mobileTerminal = testPollHelper.createBasicMobileTerminal();
-            Channel emptyChannel = new Channel();
-            mobileTerminal.getChannels().add(emptyChannel);
-            mobileTerminalService.createMobileTerminal(mobileTerminal, USERNAME);
-            em.flush();
-            fail();
-        } catch (Exception e) {
-            assertTrue(true);
-        }
+        MobileTerminal mobileTerminal = testPollHelper.createBasicMobileTerminal();
+        Channel emptyChannel = new Channel();
+        mobileTerminal.getChannels().add(emptyChannel);
+        assertThrows(EJBTransactionRolledbackException.class, () -> createMobileTerminalAndFlush(mobileTerminal));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void createMobileTerminal_WillFail_Null_SerialNumber() {
-        thrown.expect(ConstraintViolationException.class);
-
         MobileTerminal mobileTerminal = testPollHelper.createBasicMobileTerminal();
         mobileTerminal.setSerialNo(null);
-        mobileTerminalService.createMobileTerminal(mobileTerminal, USERNAME);
-
-        em.flush();
+        assertThrows(ConstraintViolationException.class, () -> createMobileTerminalAndFlush(mobileTerminal));
     }
 
     @Test
@@ -247,12 +240,7 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
         MobileTerminal created = testPollHelper.createAndPersistMobileTerminal(null);
         assertNotNull(created);
         created.setId(null);
-        try {
-            upsertMobileTerminalEntity(created);
-            Assert.fail();
-        } catch (Throwable t) {
-            assertTrue(true);
-        }
+        assertThrows(Exception.class, () -> upsertMobileTerminalEntity(created));
     }
 
     @Test
@@ -263,12 +251,7 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
 
         created.setId(null);
 
-        try {
-            updateMobileTerminal(created);
-            fail();
-        } catch (Throwable t) {
-            assertTrue(true);
-        }
+        assertThrows(Exception.class, () -> updateMobileTerminal(created));
     }
 
     @Test
