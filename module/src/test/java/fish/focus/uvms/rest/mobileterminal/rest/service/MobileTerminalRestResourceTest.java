@@ -1215,7 +1215,7 @@ public class MobileTerminalRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void updateMobileTerminalAndChannelAndGetChangeHistory() throws InterruptedException {
+    public void updateMobileTerminalAndChannelAndGetChangeHistory() {
         MobileTerminal mt = MobileTerminalTestHelper.createBasicMobileTerminal();
         mt.setAsset(null);
 
@@ -1271,14 +1271,13 @@ public class MobileTerminalRestResourceTest extends AbstractAssetRestTest {
         // After store_data_at_delete = true Change 1 -> 2
         // For some reason mtChange at index 1 seems to have 2 changes more often then index 2...
 
-
         assertEquals(2, mtChanges.get(1).getChannelChanges().size());
 
         //one subclass should have 8 changes 9 if count deleted
         Optional<ChannelChangeHistory> eightChangesChannel = mtChanges.get(1).getChannelChanges().values().stream()
                 .filter(list -> list.getChanges().size() == 9).findAny();
         assertTrue(eightChangesChannel.isPresent());
-        assertTrue(eightChangesChannel.get().getChangeType().equals(ChangeType.CREATED));
+        assertEquals(ChangeType.CREATED, eightChangesChannel.get().getChangeType());
         assertTrue(eightChangesChannel.get().getChanges().stream().allMatch(item -> item.getOldValue() == null));
         assertTrue(eightChangesChannel.get().getChanges().stream().allMatch(item -> item.getNewValue() != null));
 
@@ -1339,7 +1338,7 @@ public class MobileTerminalRestResourceTest extends AbstractAssetRestTest {
                 .filter(list -> list.getChanges().size() == 9).findAny();
 
         assertTrue(eightChangesChannel.isPresent());
-        assertTrue(eightChangesChannel.get().getChangeType().equals(ChangeType.REMOVED));
+        assertEquals(ChangeType.REMOVED, eightChangesChannel.get().getChangeType());
         assertTrue(eightChangesChannel.get().getChanges().stream().allMatch(item -> item.getOldValue() != null));
         assertTrue(eightChangesChannel.get().getChanges().stream().allMatch(item -> item.getNewValue() == null));
     }
@@ -1473,7 +1472,7 @@ public class MobileTerminalRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getChangeHistoryRowWithAssetName() throws InterruptedException {
+    public void getChangeHistoryRowWithAssetName() {
         MobileTerminal mt = MobileTerminalTestHelper.createBasicMobileTerminal();
 
         Asset asset = createAndRestBasicAsset();
@@ -1499,9 +1498,9 @@ public class MobileTerminalRestResourceTest extends AbstractAssetRestTest {
         });
 
         assertEquals(asset.getName(), jsonMap.values().stream()
-                .filter(row -> row.getAssetName() != null)
-                .filter(row -> row.getAssetName().equals(asset.getName()))
-                .map(row -> row.getAssetName())
+                .map(ChangeHistoryRow::getAssetName)
+                .filter(Objects::nonNull)
+                .filter(assetName -> assetName.equals(asset.getName()))
                 .findFirst()
                 .orElse("Not!!AssetName"));
     }

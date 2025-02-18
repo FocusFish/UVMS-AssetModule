@@ -1,9 +1,7 @@
 package fish.focus.uvms.rest.mobileterminal.rest.service;
 
-import fish.focus.uvms.commons.date.JsonBConfigurator;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.mobileterminal.dto.MTListResponse;
-import fish.focus.uvms.mobileterminal.dto.MobileTerminalListQuery;
 import fish.focus.uvms.mobileterminal.entity.Channel;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import fish.focus.uvms.mobileterminal.entity.types.MobileTerminalStatus;
@@ -20,16 +18,16 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.json.bind.Jsonb;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
@@ -42,7 +40,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
     public void getMobileTerminalListWithExistingButEmptyInput() {
         //First, to make sure that we have something in DB, create one MT
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
-        MobileTerminal created = createMobileTerminal(mobileTerminal);
+        createMobileTerminal(mobileTerminal);
 
         Response response = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -59,10 +57,10 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
     public void getMobileTerminalListTest() {
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
 
-        MobileTerminal created = createMobileTerminal(mobileTerminal);
+        createMobileTerminal(mobileTerminal);
 
         MTQuery mtQuery = new MTQuery();
-        mtQuery.setSerialNumbers(Arrays.asList(MobileTerminalTestHelper.getSerialNumber()));
+        mtQuery.setSerialNumbers(List.of(MobileTerminalTestHelper.getSerialNumber()));
 
         TestMTListResponse response = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -85,14 +83,14 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
     public void getMobileTerminalListWithWildCardsInSerialNumberTest() {
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
 
-        MobileTerminal created = createMobileTerminal(mobileTerminal);
+        createMobileTerminal(mobileTerminal);
 
         String serialNumber = MobileTerminalTestHelper.getSerialNumber();
         // Wildcard in front of serialNumber
         String wildCardInFront = "*" + serialNumber.substring(3);
 
         MTQuery mtQuery = new MTQuery();
-        mtQuery.setSerialNumbers(Arrays.asList(wildCardInFront));
+        mtQuery.setSerialNumbers(List.of(wildCardInFront));
 
         TestMTListResponse response = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -114,7 +112,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         String wildCardInBack = serialNumber.substring(0, serialNumber.length() - 3) + "*";
 
         mtQuery = new MTQuery();
-        mtQuery.setSerialNumbers(Arrays.asList(wildCardInBack));
+        mtQuery.setSerialNumbers(List.of(wildCardInBack));
 
         response = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -136,7 +134,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         String wildCardAtBothEnds = "*" + serialNumber.substring(3, serialNumber.length() - 3) + "*";
 
         mtQuery = new MTQuery();
-        mtQuery.setSerialNumbers(Arrays.asList(wildCardAtBothEnds));
+        mtQuery.setSerialNumbers(List.of(wildCardAtBothEnds));
 
         response = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -147,13 +145,13 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         assertNotNull(response);
 
         terminal = response.getMobileTerminalList().get(0);
-        List<String> terminalSerialNumberList = new ArrayList<String>();
-        response.getMobileTerminalList().forEach((mt) -> terminalSerialNumberList.add(mt.getSerialNo()));
+        List<String> terminalSerialNumberList = new ArrayList<>();
+        response.getMobileTerminalList().forEach(mt -> terminalSerialNumberList.add(mt.getSerialNo()));
         assertTrue(terminalSerialNumberList.contains(MobileTerminalTestHelper.getSerialNumber()));
         assertEquals(MobileTerminalTypeEnum.INMARSAT_C, terminal.getMobileTerminalType());
         assertEquals(TerminalSourceEnum.INTERNAL, terminal.getSource());
 
-        assertTrue(response.getMobileTerminalList().size() > 0);
+        assertThat(response.getMobileTerminalList(), is(not(empty())));
     }
 
     @Test
@@ -161,11 +159,10 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
     public void getMobileTerminalListWithSatelliteNrTest() {
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
 
-        MobileTerminal created = createMobileTerminal(mobileTerminal);
-
+        createMobileTerminal(mobileTerminal);
 
         MTQuery mtQuery = new MTQuery();
-        mtQuery.setSateliteNumbers(Arrays.asList(mobileTerminal.getSatelliteNumber()));
+        mtQuery.setSateliteNumbers(List.of(mobileTerminal.getSatelliteNumber()));
 
         TestMTListResponse response = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -189,12 +186,12 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
     public void getMobileTerminalListWithDNIDTest() {
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
 
-        MobileTerminal created = createMobileTerminal(mobileTerminal);
+        createMobileTerminal(mobileTerminal);
 
         List<Channel> channelList = new ArrayList<>(mobileTerminal.getChannels());
 
         MTQuery mtQuery = new MTQuery();
-        mtQuery.setDnids(Arrays.asList(channelList.get(0).getDnid()));
+        mtQuery.setDnids(List.of(channelList.get(0).getDnid()));
 
         TestMTListResponse response = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -204,13 +201,12 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
 
         assertNotNull(response);
 
+        assertEquals(1, response.getMobileTerminalList().size());
         MobileTerminal terminal = response.getMobileTerminalList().get(0);
 
-        assertEquals(terminal.getSerialNo(), MobileTerminalTestHelper.getSerialNumber());
+        assertEquals(MobileTerminalTestHelper.getSerialNumber(), terminal.getSerialNo());
         assertEquals(MobileTerminalTypeEnum.INMARSAT_C, terminal.getMobileTerminalType());
         assertEquals(TerminalSourceEnum.INTERNAL, terminal.getSource());
-
-        assertEquals(1, response.getMobileTerminalList().size());
     }
 
     @Test
@@ -218,12 +214,12 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
     public void getMobileTerminalListWithMemberNumberTest() {
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
 
-        MobileTerminal created = createMobileTerminal(mobileTerminal);
+        createMobileTerminal(mobileTerminal);
 
         List<Channel> channelList = new ArrayList<>(mobileTerminal.getChannels());
 
         MTQuery mtQuery = new MTQuery();
-        mtQuery.setMemberNumbers(Arrays.asList(channelList.get(0).getMemberNumber()));
+        mtQuery.setMemberNumbers(List.of(channelList.get(0).getMemberNumber()));
 
         TestMTListResponse response = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -232,16 +228,13 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
                 .post(Entity.json(mtQuery), TestMTListResponse.class);
 
         assertNotNull(response);
+        assertThat(response.getMobileTerminalList(), is(not(empty())));
 
-        assertTrue(response.getMobileTerminalList().size() > 0);
         MobileTerminal terminal = response.getMobileTerminalList().get(0);
-
 
         assertEquals(MobileTerminalTestHelper.getSerialNumber(), terminal.getSerialNo());
         assertEquals(MobileTerminalTypeEnum.INMARSAT_C, terminal.getMobileTerminalType());
         assertEquals(TerminalSourceEnum.INTERNAL, terminal.getSource());
-
-        assertTrue(response.getMobileTerminalList().size() > 0);
     }
 
     @Test
@@ -249,15 +242,14 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
     public void getMobileTerminalListWithSatelliteAndDNIDTest() {
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
 
-        MobileTerminal created = createMobileTerminal(mobileTerminal);
-
+        createMobileTerminal(mobileTerminal);
 
         // One thing from channel
         List<Channel> channelList = new ArrayList<>(mobileTerminal.getChannels());
 
         MTQuery mtQuery = new MTQuery();
-        mtQuery.setSateliteNumbers(Arrays.asList(mobileTerminal.getSatelliteNumber()));
-        mtQuery.setDnids(Arrays.asList(channelList.get(0).getDnid()));
+        mtQuery.setSateliteNumbers(List.of(mobileTerminal.getSatelliteNumber()));
+        mtQuery.setDnids(List.of(channelList.get(0).getDnid()));
 
         TestMTListResponse response = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -283,8 +275,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
         mobileTerminal.setAsset(asset);
 
-        MobileTerminal created = createMobileTerminal(mobileTerminal);
-
+        createMobileTerminal(mobileTerminal);
 
         MTQuery mtQuery = new MTQuery();
         List<String> inputList = new ArrayList<>();
@@ -308,7 +299,6 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         assertEquals(MobileTerminalTypeEnum.INMARSAT_C, terminal.getMobileTerminalType());
         assertEquals(TerminalSourceEnum.INTERNAL, terminal.getSource());
         assertEquals(asset.getId().toString(), terminal.getAssetUUID());
-
     }
 
     @Test
@@ -322,9 +312,6 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         List<String> inputList = new ArrayList<>();
         inputList.add(created.getId().toString());
         mtQuery.setMobileterminalIds(inputList);
-
-        Jsonb jsonb = new JsonBConfigurator().getContext(null);
-        String json = jsonb.toJson(mtQuery);
 
         TestMTListResponse response = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -340,7 +327,6 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         assertEquals(terminal.getSerialNo(), MobileTerminalTestHelper.getSerialNumber());
         assertEquals(MobileTerminalTypeEnum.INMARSAT_C, terminal.getMobileTerminalType());
         assertEquals(TerminalSourceEnum.INTERNAL, terminal.getSource());
-
     }
 
     @Test
@@ -359,7 +345,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         MobileTerminal created = createMobileTerminal(mobileTerminal);
 
         MTQuery mtQuery = new MTQuery();
-        mtQuery.setMobileterminalIds(Arrays.asList(created.getId().toString()));
+        mtQuery.setMobileterminalIds(List.of(created.getId().toString()));
 
         TestMTListResponse response = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -403,7 +389,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         assertNotNull(updated);
 
         MTQuery mtQuery = new MTQuery();
-        mtQuery.setMobileterminalIds(Arrays.asList(created.getId().toString()));
+        mtQuery.setMobileterminalIds(List.of(created.getId().toString()));
 
         TestMTListResponse response = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -426,7 +412,6 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
     @OperateOnDeployment("normal")
     public void getHistoricalMobileTerminalListTest() {
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
-        List<Channel> channelList = new ArrayList<>(mobileTerminal.getChannels());
 
         MobileTerminal created = createMobileTerminal(mobileTerminal);
 
@@ -442,7 +427,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         assertNotNull(updated);
 
         MTQuery mtQuery = new MTQuery();
-        mtQuery.setMobileterminalIds(Arrays.asList(created.getId().toString()));
+        mtQuery.setMobileterminalIds(List.of(created.getId().toString()));
         mtQuery.setDate(now);
 
         TestMTListResponse response = getWebTargetExternal()
@@ -465,14 +450,11 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
     @Test
     @OperateOnDeployment("normal")
     public void getMobileTerminalList_ArchivedMobileTerminalsIncluded() {
-
         MobileTerminal prePersist = MobileTerminalTestHelper.createBasicMobileTerminal();
         prePersist.setAsset(null);
 
-        MobileTerminalListQuery mobileTerminalListQuery = MobileTerminalTestHelper.createMobileTerminalListQuery();
-
         MTQuery mtQuery = new MTQuery();
-        mtQuery.setSerialNumbers(Arrays.asList(MobileTerminalTestHelper.getSerialNumber()));
+        mtQuery.setSerialNumbers(List.of(MobileTerminalTestHelper.getSerialNumber()));
 
         MTListResponse mtListResponse = getWebTargetExternal()
                 .path("/mobileterminal/list")
@@ -529,7 +511,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
         MobileTerminal created = createMobileTerminal(mobileTerminal);
 
         MTQuery mtQuery = new MTQuery();
-        mtQuery.setSerialNumbers(Arrays.asList(MobileTerminalTestHelper.getSerialNumber()));
+        mtQuery.setSerialNumbers(List.of(MobileTerminalTestHelper.getSerialNumber()));
 
         // Check the search result
         MTListResponse returnList = sendMTListQuery(mtQuery);

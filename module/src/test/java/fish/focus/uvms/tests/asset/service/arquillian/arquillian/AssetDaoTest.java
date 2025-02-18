@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class AssetDaoTest extends TransactionalTests {
 
-    private static Random rnd = new Random();
+    private static final Random rnd = new Random();
 
     @Inject
     private AssetDao assetDao;
@@ -224,7 +224,7 @@ public class AssetDaoTest extends TransactionalTests {
 
         List<Asset> fetchedAsset = assetDao.getAssetByMmsiOrIrcs(asset1.getMmsi(), null);
         assertEquals(1, fetchedAsset.size());
-        assertTrue(fetchedAsset.get(0).getId().equals(asset1.getId()));
+        assertEquals(asset1.getId(), fetchedAsset.get(0).getId());
     }
 
     @Test
@@ -237,7 +237,7 @@ public class AssetDaoTest extends TransactionalTests {
 
         List<Asset> fetchedAsset = assetDao.getAssetByMmsiOrIrcs(null, asset1.getIrcs().replace("-", ""));
         assertEquals(1, fetchedAsset.size());
-        assertTrue(fetchedAsset.get(0).getId().equals(asset1.getId()));
+        assertEquals(asset1.getId(), fetchedAsset.get(0).getId());
     }
 
     @Test
@@ -253,7 +253,7 @@ public class AssetDaoTest extends TransactionalTests {
 
         List<Asset> fetchedAsset = assetDao.getAssetByMmsiOrIrcs(null, testIrcs);
         assertEquals(1, fetchedAsset.size());
-        assertTrue(fetchedAsset.get(0).getId().equals(asset1.getId()));
+        assertEquals(asset1.getId(), fetchedAsset.get(0).getId());
     }
 
     @Test
@@ -266,7 +266,7 @@ public class AssetDaoTest extends TransactionalTests {
 
         List<Asset> fetchedAsset = assetDao.getAssetByMmsiOrIrcs(null, asset1.getIrcs());
         assertEquals(1, fetchedAsset.size());
-        assertTrue(fetchedAsset.get(0).getId().equals(asset1.getId()));
+        assertEquals(asset1.getId(), fetchedAsset.get(0).getId());
     }
 
     @Test
@@ -369,7 +369,7 @@ public class AssetDaoTest extends TransactionalTests {
         asset = assetDao.createAsset(asset);
         commit();
 
-        List<Asset> assetsAtDate = assetDao.getAssetsAtDate(Arrays.asList(asset.getId()), Instant.now());
+        List<Asset> assetsAtDate = assetDao.getAssetsAtDate(List.of(asset.getId()), Instant.now());
         Asset assetAtDate = assetsAtDate.get(0);
 
         assertThat(assetAtDate.getId(), is(notNullValue()));
@@ -1412,7 +1412,7 @@ public class AssetDaoTest extends TransactionalTests {
         assertTrue(assets.size() >= 3);
 
         List<UUID> idList = assets.stream()
-                .map(a -> a.getId())
+                .map(Asset::getId)
                 .collect(Collectors.toList());
 
         assertTrue(idList.indexOf(asset1.getId()) > idList.indexOf(asset2.getId()));
@@ -1445,7 +1445,7 @@ public class AssetDaoTest extends TransactionalTests {
         assertTrue(assets.size() >= 3);
 
         List<UUID> idList = assets.stream()
-                .map(a -> a.getId())
+                .map(Asset::getId)
                 .collect(Collectors.toList());
 
         assertTrue(idList.indexOf(asset1.getId()) > idList.indexOf(asset2.getId()));

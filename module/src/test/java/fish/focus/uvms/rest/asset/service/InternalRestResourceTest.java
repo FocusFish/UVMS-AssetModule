@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -436,7 +437,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .path(asset.getId().toString())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
-                .get(new GenericType<List<SanePollDto>>() {
+                .get(new GenericType<>() {
                 });
 
         assertEquals(1, pollList.size());
@@ -476,7 +477,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .path(asset.getId().toString())
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
-                .get(new GenericType<List<SanePollDto>>() {
+                .get(new GenericType<>() {
                 });
 
         assertEquals(1, pollList.size());
@@ -522,7 +523,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getMobileterminalListTest() {
+    public void getMobileTerminalListTest() {
         MobileTerminal mt = MobileTerminalTestHelper.createBasicMobileTerminal();
 
         MobileTerminal createdMobileTerminal = getWebTargetInternal()
@@ -536,7 +537,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .path("mobileterminals")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
-                .get(new GenericType<List<MobileTerminal>>() {
+                .get(new GenericType<>() {
                 });
 
         assertTrue(mobileTerminals.stream().anyMatch(m -> m.getId().equals(createdMobileTerminal.getId())));
@@ -544,7 +545,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getMobileterminalListWithHistoryTest() {
+    public void getMobileTerminalListWithHistoryTest() {
         MobileTerminal mt = MobileTerminalTestHelper.createBasicMobileTerminal();
 
         MobileTerminal createdMobileTerminal = getWebTargetInternal()
@@ -567,7 +568,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .queryParam("includeHistory", true)
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
-                .get(new GenericType<List<MobileTerminal>>() {
+                .get(new GenericType<>() {
                 });
 
         assertTrue(mobileTerminals.stream().anyMatch(m -> m.getHistoryId().equals(createdMobileTerminal.getHistoryId())));
@@ -619,9 +620,9 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getMobileTerminalAtDateWithMemberNumberAndDnidTest() throws InterruptedException {
-        Integer memberNr = (int) (10000 + (Math.random() * (100000 - 10000)));
-        Integer dnid = (int) (100 + (Math.random() * (1000 - 100)));
+    public void getMobileTerminalAtDateWithMemberNumberAndDnidTest() {
+        Integer memberNr = ThreadLocalRandom.current().nextInt(10000, (100000 - 10000));
+        Integer dnid = ThreadLocalRandom.current().nextInt(100, (1000 - 100));
 
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
         Channel channel = MobileTerminalTestHelper.createBasicChannel();
@@ -643,7 +644,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
         created.getChannels().iterator().next().setDnid(newdnid);
         Instant createdTimestamp = Instant.now();
 
-        MobileTerminal updated = getWebTargetInternal()
+        getWebTargetInternal()
                 .path("mobileterminal")
                 .queryParam("comment", "NEW_TEST_COMMENT")
                 .request(MediaType.APPLICATION_JSON)
@@ -670,9 +671,9 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getMobileTerminalWithMemberNumberAndDnidAtDateTest() throws InterruptedException {
-        Integer memberNr = (int) (10000 + (Math.random() * (100000 - 10000)));
-        Integer dnid = (int) (100 + (Math.random() * (1000 - 100)));
+    public void getMobileTerminalWithMemberNumberAndDnidAtDateTest() {
+        Integer memberNr = ThreadLocalRandom.current().nextInt(10000, (100000 - 10000));
+        Integer dnid = ThreadLocalRandom.current().nextInt(100, (1000 - 100));
 
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
         Channel channel = MobileTerminalTestHelper.createBasicChannel();
@@ -695,7 +696,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
 
         Instant createdTimestamp = Instant.now().minusSeconds(20);
 
-        MobileTerminal updated = getWebTargetInternal()
+        getWebTargetInternal()
                 .path("mobileterminal")
                 .queryParam("comment", "NEW_TEST_COMMENT")
                 .request(MediaType.APPLICATION_JSON)

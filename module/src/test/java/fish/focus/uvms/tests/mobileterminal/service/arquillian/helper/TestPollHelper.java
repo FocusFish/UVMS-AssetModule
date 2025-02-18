@@ -1,9 +1,9 @@
 package fish.focus.uvms.tests.mobileterminal.service.arquillian.helper;
 
 import fish.focus.schema.mobileterminal.polltypes.v1.*;
-import fish.focus.uvms.commons.date.DateUtils;
 import fish.focus.uvms.asset.domain.dao.AssetDao;
 import fish.focus.uvms.asset.domain.entity.Asset;
+import fish.focus.uvms.commons.date.DateUtils;
 import fish.focus.uvms.mobileterminal.dao.MobileTerminalPluginDaoBean;
 import fish.focus.uvms.mobileterminal.dao.TerminalDaoBean;
 import fish.focus.uvms.mobileterminal.entity.*;
@@ -24,8 +24,8 @@ import java.util.*;
 @LocalBean
 public class TestPollHelper {
 
-    private Calendar cal = Calendar.getInstance();
-    private Random rnd = new Random();
+    private final Calendar cal = Calendar.getInstance();
+    private final Random rnd = new Random();
 
     @EJB
     private TerminalDaoBean terminalDao;
@@ -35,8 +35,6 @@ public class TestPollHelper {
 
     @Inject
     private AssetDao assetDao;
-
-    private String serialNumber;
 
     public MobileTerminal createBasicMobileTerminal() {
         MobileTerminal mobileTerminal = new MobileTerminal();
@@ -49,7 +47,7 @@ public class TestPollHelper {
         MobileTerminalPlugin mtp = plugs.get(0);
         mobileTerminal.setPlugin(mtp);
 
-        serialNumber = generateARandomStringWithMaxLength(10);
+        String serialNumber = generateARandomStringWithMaxLength(10);
 
         mobileTerminal.setSatelliteNumber("S" + generateARandomStringWithMaxLength(4));
         mobileTerminal.setAntenna("A");
@@ -71,14 +69,14 @@ public class TestPollHelper {
         StringBuilder ret = new StringBuilder();
         for (int i = 0; i < len; i++) {
             int val = random.nextInt(10);
-            ret.append(String.valueOf(val));
+            ret.append(val);
         }
         return ret.toString();
     }
 
     public PollRequestType createPollRequestType() {
         PollRequestType prt = new PollRequestType();
-        prt.setComment("aComment" + UUID.randomUUID().toString());
+        prt.setComment("aComment" + UUID.randomUUID());
         prt.setUserName("TEST");
         prt.setPollType(PollType.MANUAL_POLL);
         PollMobileTerminal pollMobileTerminal = createPollMobileTerminal();
@@ -104,7 +102,7 @@ public class TestPollHelper {
         return pmt;
     }
 
-    public MobileTerminal createAndPersistMobileTerminalOceanRegionSupport(Asset asset, boolean aor_e, boolean aor_w, boolean por, boolean ior) {
+    public MobileTerminal createAndPersistMobileTerminalOceanRegionSupport(Asset asset, boolean aorE, boolean aorW, boolean por, boolean ior) {
         List<MobileTerminalPlugin> plugs = mobileTerminalPluginDao.getPluginList();
         MobileTerminalPlugin mtp = plugs.get(0);
 
@@ -120,8 +118,8 @@ public class TestPollHelper {
         mt.setInstalledBy("Mike the not so Great");
 
         // only set if true so we can see if code defaults to false
-        if (aor_e) mt.setEastAtlanticOceanRegion(aor_e);
-        if (aor_w) mt.setWestAtlanticOceanRegion(aor_w);
+        if (aorE) mt.setEastAtlanticOceanRegion(aorE);
+        if (aorW) mt.setWestAtlanticOceanRegion(aorW);
         if (por) mt.setPacificOceanRegion(por);
         if (ior) mt.setIndianOceanRegion(ior);
 

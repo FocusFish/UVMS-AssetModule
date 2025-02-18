@@ -73,7 +73,6 @@ public class AssetFilterServiceBeanTest extends TransactionalTests {
         assetFilterService.deleteAssetFilterById(createdAssetFilterEntity.getId(), createdAssetFilterEntity.getOwner());
         AssetFilter fetchedAssetFilterEntity = assetFilterService.getAssetFilterById(guid);
         assertNull(fetchedAssetFilterEntity);
-        // assertNotNull(fetchedAssetFilterEntity);
     }
 
     @Test
@@ -173,5 +172,4 @@ public class AssetFilterServiceBeanTest extends TransactionalTests {
         AssetFilterValue fetchedAssetFilterValue = assetFilterService.getAssetFilterValue(assetFilterValue.getId());
         assertNotNull(fetchedAssetFilterValue);
     }
-
 }

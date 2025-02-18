@@ -39,9 +39,7 @@ public class AssetRemapTest extends TransactionalTests {
         assetRemapMapping.setNewAssetId(newAsset.getId());
         assetRemapMapping.setCreatedDate(Instant.now());
 
-        assetRemapMapping = assetDao.createAssetRemapMapping(assetRemapMapping);
-
-        String id = assetRemapMapping.getId().toString();
+        assetDao.createAssetRemapMapping(assetRemapMapping);
 
         System.setProperty("MovementsRemapped", "0");
         assetRemapTask.remap();
@@ -53,7 +51,6 @@ public class AssetRemapTest extends TransactionalTests {
         assertNotNull(oldAsset);
         newAsset = assetDao.getAssetById(newAsset.getId());
         assertNotNull(newAsset);
-
     }
 
     @Test
@@ -142,7 +139,5 @@ public class AssetRemapTest extends TransactionalTests {
         assertNull(oldAsset);
         newAsset = assetDao.getAssetById(newAsset.getId());
         assertNotNull(newAsset);
-
     }
-
 }

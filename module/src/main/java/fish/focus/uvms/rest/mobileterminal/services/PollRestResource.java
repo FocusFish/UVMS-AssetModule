@@ -11,10 +11,11 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.rest.mobileterminal.services;
 
-import fish.focus.schema.mobileterminal.polltypes.v1.*;
+import fish.focus.schema.mobileterminal.polltypes.v1.PollListQuery;
+import fish.focus.schema.mobileterminal.polltypes.v1.PollRequestType;
+import fish.focus.schema.mobileterminal.polltypes.v1.PollResponseType;
+import fish.focus.schema.mobileterminal.polltypes.v1.PollableQuery;
 import fish.focus.uvms.commons.date.JsonBConfigurator;
-import fish.focus.uvms.rest.security.RequiresFeature;
-import fish.focus.uvms.rest.security.UnionVMSFeature;
 import fish.focus.uvms.mobileterminal.bean.MobileTerminalServiceBean;
 import fish.focus.uvms.mobileterminal.bean.PollServiceBean;
 import fish.focus.uvms.mobileterminal.dao.PollProgramDaoBean;
@@ -25,6 +26,8 @@ import fish.focus.uvms.mobileterminal.mapper.PollDtoMapper;
 import fish.focus.uvms.mobileterminal.mapper.PollEntityToModelMapper;
 import fish.focus.uvms.mobileterminal.model.dto.CreatePollResultDto;
 import fish.focus.uvms.mobileterminal.model.dto.SimpleCreatePoll;
+import fish.focus.uvms.rest.security.RequiresFeature;
+import fish.focus.uvms.rest.security.UnionVMSFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -48,7 +51,7 @@ import java.util.UUID;
 @Produces(value = {MediaType.APPLICATION_JSON})
 public class PollRestResource {
 
-    private final static Logger LOG = LoggerFactory.getLogger(PollRestResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PollRestResource.class);
 
     @Inject
     private PollServiceBean pollServiceBean;
@@ -200,9 +203,8 @@ public class PollRestResource {
             String returnString = jsonb.toJson(pollProgram);
             return Response.ok(returnString).header("MDC", MDC.get("requestId")).build();
         } catch (Exception ex) {
-            LOG.error("getPollProgram", ex.getStackTrace());
+            LOG.error("getPollProgram", ex);
             throw ex;
-
         }
     }
 }

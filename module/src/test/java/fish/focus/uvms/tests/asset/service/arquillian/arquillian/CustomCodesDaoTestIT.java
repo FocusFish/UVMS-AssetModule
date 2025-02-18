@@ -24,7 +24,7 @@ public class CustomCodesDaoTestIT extends TransactionalTests {
 
     private static final String CONSTANT = "TESTcarrieractiveTEST";
 
-    private Random rnd = new Random();
+    private final Random rnd = new Random();
 
     @Inject
     private CustomCodeDao customCodesDao;
@@ -32,57 +32,57 @@ public class CustomCodesDaoTestIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void create() {
-        CustomCode record_active = createHelper(CONSTANT, true);
-        CustomCode record_inactive = createHelper(CONSTANT, false);
-        CustomCode createdrecord_active = customCodesDao.create(record_active);
-        String constant_active = createdrecord_active.getPrimaryKey().getConstant();
-        String value_active = createdrecord_active.getPrimaryKey().getCode();
-        CustomCode fetched_record = customCodesDao.get(createdrecord_active.getPrimaryKey());
-        assertEquals(constant_active, fetched_record.getPrimaryKey().getConstant());
-        assertEquals(value_active, fetched_record.getPrimaryKey().getCode());
-        CustomCode createdrecord_inactive = customCodesDao.create(record_inactive);
-        String constant_inactive = createdrecord_inactive.getPrimaryKey().getConstant();
-        String value_inactive = createdrecord_inactive.getPrimaryKey().getCode();
-        CustomCode fetched_inactiverecord = customCodesDao.get(createdrecord_inactive.getPrimaryKey());
-        assertEquals(constant_inactive, fetched_inactiverecord.getPrimaryKey().getConstant());
-        assertEquals(value_inactive, fetched_inactiverecord.getPrimaryKey().getCode());
-        List<CustomCode> rs = customCodesDao.getAllFor(record_active.getPrimaryKey().getConstant());
+        CustomCode recordActive = createHelper(CONSTANT, true);
+        CustomCode recordInactive = createHelper(CONSTANT, false);
+        CustomCode createdRecordActive = customCodesDao.create(recordActive);
+        String constantActive = createdRecordActive.getPrimaryKey().getConstant();
+        String valueActive = createdRecordActive.getPrimaryKey().getCode();
+        CustomCode fetchedRecord = customCodesDao.get(createdRecordActive.getPrimaryKey());
+        assertEquals(constantActive, fetchedRecord.getPrimaryKey().getConstant());
+        assertEquals(valueActive, fetchedRecord.getPrimaryKey().getCode());
+        CustomCode createdRecordInactive = customCodesDao.create(recordInactive);
+        String constantInactive = createdRecordInactive.getPrimaryKey().getConstant();
+        String valueInactive = createdRecordInactive.getPrimaryKey().getCode();
+        CustomCode fetchedInactiveRecord = customCodesDao.get(createdRecordInactive.getPrimaryKey());
+        assertEquals(constantInactive, fetchedInactiveRecord.getPrimaryKey().getConstant());
+        assertEquals(valueInactive, fetchedInactiveRecord.getPrimaryKey().getCode());
+        List<CustomCode> rs = customCodesDao.getAllFor(recordActive.getPrimaryKey().getConstant());
         assertEquals(2, rs.size());
-        customCodesDao.delete(record_active.getPrimaryKey());
-        customCodesDao.delete(record_inactive.getPrimaryKey());
+        customCodesDao.delete(recordActive.getPrimaryKey());
+        customCodesDao.delete(recordInactive.getPrimaryKey());
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void get() {
-        CustomCode record = createHelper(CONSTANT, true);
-        CustomCode createdrecord = customCodesDao.create(record);
-        CustomCode rec = customCodesDao.get(createdrecord.getPrimaryKey());
+        CustomCode customCode = createHelper(CONSTANT, true);
+        CustomCode createdRecord = customCodesDao.create(customCode);
+        CustomCode rec = customCodesDao.get(createdRecord.getPrimaryKey());
         assertNotNull(rec);
-        customCodesDao.delete(record.getPrimaryKey());
+        customCodesDao.delete(customCode.getPrimaryKey());
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void exists() {
-        CustomCode record = createHelper(CONSTANT, true);
-        CustomCode created = customCodesDao.create(record);
+        CustomCode customCode = createHelper(CONSTANT, true);
+        CustomCode created = customCodesDao.create(customCode);
         Boolean exists = customCodesDao.exists(created.getPrimaryKey());
         Assert.assertTrue(exists);
-        customCodesDao.delete(record.getPrimaryKey());
+        customCodesDao.delete(customCode.getPrimaryKey());
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void getAllFor() {
         for (int i = 0; i < 10; i++) {
-            CustomCode record = createHelper(CONSTANT, "kod" + i, "description" + i);
-            customCodesDao.create(record);
+            CustomCode customCode = createHelper(CONSTANT, "kod" + i, "description" + i);
+            customCodesDao.create(customCode);
         }
         em.flush();
         for (int i = 0; i < 10; i++) {
-            CustomCode record = createHelper(CONSTANT + "2", "kod" + i, "description" + i);
-            customCodesDao.create(record);
+            CustomCode customCode = createHelper(CONSTANT + "2", "kod" + i, "description" + i);
+            customCodesDao.create(customCode);
         }
         em.flush();
         List<CustomCode> rs1 = customCodesDao.getAllFor(CONSTANT);
@@ -103,9 +103,8 @@ public class CustomCodesDaoTestIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void updateDescription() {
-
-        CustomCode record = createHelper(CONSTANT, "kod", "description");
-        CustomCode created = customCodesDao.create(record);
+        CustomCode customCode = createHelper(CONSTANT, "kod", "description");
+        CustomCode created = customCodesDao.create(customCode);
         String createdDescription = created.getDescription();
 
         created.setDescription("CHANGED");
@@ -123,9 +122,8 @@ public class CustomCodesDaoTestIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void storeLatest() {
-
-        CustomCode record = createHelper(CONSTANT, "kod", "description");
-        CustomCode created = customCodesDao.replace(record);
+        CustomCode customCode = createHelper(CONSTANT, "kod", "description");
+        CustomCode created = customCodesDao.replace(customCode);
 
         CustomCode aNewCustomCode = new CustomCode();
 
@@ -141,44 +139,25 @@ public class CustomCodesDaoTestIT extends TransactionalTests {
     }
 
     private CustomCode createHelper(String constant, Boolean active) {
-        CustomCode record = new CustomCode();
+        CustomCode customCode = new CustomCode();
         if (active) {
             CustomCodesPK primaryKey = createPrimaryKey(constant, "1");
-            record.setPrimaryKey(primaryKey);
-            record.setDescription("Active");
+            customCode.setPrimaryKey(primaryKey);
+            customCode.setDescription("Active");
         } else {
             CustomCodesPK primaryKey = createPrimaryKey(constant, "0");
-            record.setPrimaryKey(primaryKey);
-            record.setDescription("InActive");
+            customCode.setPrimaryKey(primaryKey);
+            customCode.setDescription("InActive");
         }
-        return record;
-    }
-
-    private CustomCode createHelper(String constant, Boolean active, CustomCodesPK primaryKey) {
-        int n = rnd.nextInt(10);
-        int duration = rnd.nextInt(90);
-        Instant fromDate = Instant.now(Clock.systemUTC());
-        fromDate = fromDate.minus(n, ChronoUnit.DAYS);
-        Instant toDate = Instant.now(Clock.systemUTC());
-        toDate = toDate.plus(duration, ChronoUnit.DAYS);
-
-        CustomCode record = new CustomCode();
-        if (active) {
-            record.setPrimaryKey(primaryKey);
-            record.setDescription("Active");
-        } else {
-            record.setPrimaryKey(primaryKey);
-            record.setDescription("InActive");
-        }
-        return record;
+        return customCode;
     }
 
     private CustomCode createHelper(String constant, String code, String descr) {
-        CustomCode record = new CustomCode();
+        CustomCode customCode = new CustomCode();
         CustomCodesPK primaryKey = createPrimaryKey(constant, code);
-        record.setPrimaryKey(primaryKey);
-        record.setDescription(descr);
-        return record;
+        customCode.setPrimaryKey(primaryKey);
+        customCode.setDescription(descr);
+        return customCode;
     }
 
     private CustomCodesPK createPrimaryKey(String constant, String code) {

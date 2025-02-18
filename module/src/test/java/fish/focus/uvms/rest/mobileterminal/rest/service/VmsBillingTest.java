@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -125,8 +126,8 @@ public class VmsBillingTest extends AbstractAssetRestTest {
 
     private Asset createAsset(String name) {
         Asset asset = AssetHelper.createBasicAsset();
-        Long natId = (long) (100000 + (Math.random() * (1000000 - 100000)));
-        asset.setNationalId(natId);
+        long nationalId = ThreadLocalRandom.current().nextLong(100_000,  (1_000_000 - 100_000));
+        asset.setNationalId(nationalId);
         asset.setName(name);
 
         return getWebTargetInternal()
@@ -138,8 +139,8 @@ public class VmsBillingTest extends AbstractAssetRestTest {
 
     private MobileTerminal createMobileTerminalWithChannel(Asset asset,
                                                            boolean defaultChannel, boolean pollChannel, boolean configChannel) {
-        Integer memberNr = (int) (10000 + (Math.random() * (100000 - 10000)));
-        Integer dnid = (int) (100 + (Math.random() * (1000 - 100)));
+        Integer memberNr = ThreadLocalRandom.current().nextInt(10_000,  (100_000 - 10_000));
+        Integer dnid = ThreadLocalRandom.current().nextInt(100,  (1_000 - 100));
 
         MobileTerminal mobileTerminal = MobileTerminalTestHelper.createBasicMobileTerminal();
         mobileTerminal.setAsset(asset);

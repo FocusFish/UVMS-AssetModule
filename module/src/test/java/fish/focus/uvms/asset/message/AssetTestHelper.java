@@ -10,15 +10,12 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.asset.message;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.Random;
-import java.util.UUID;
-
 import fish.focus.uvms.commons.date.DateUtils;
 import fish.focus.wsdl.asset.types.*;
+
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.Random;
 
 public class AssetTestHelper {
 
@@ -103,10 +100,9 @@ public class AssetTestHelper {
     public static String getRandomIntegers(int length) {
         return new Random()
                 .ints(0, 9)
-                .mapToObj(i -> String.valueOf(i))
+                .mapToObj(String::valueOf)
                 .limit(length)
                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
                 .toString();
     }
-
 }

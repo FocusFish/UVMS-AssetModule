@@ -234,7 +234,7 @@ public class PollRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void archiveProgramPollTest() throws Exception {
+    public void archiveProgramPollTest() {
         Asset asset = createAndRestBasicAsset();
         MobileTerminal createdMT = createAndRestMobileTerminal(asset);
 

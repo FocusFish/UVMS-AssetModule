@@ -10,18 +10,13 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.rest.asset;
 
-import java.io.IOException;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import fish.focus.uvms.constants.AuthConstants;
 import fish.focus.uvms.rest.security.UserRoleRequestWrapper;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class AuthenticationFilterMock implements Filter {
 
@@ -35,8 +30,8 @@ public class AuthenticationFilterMock implements Filter {
         httpResponse.addHeader(AuthConstants.HTTP_HEADER_AUTHORIZATION, "MOCK_TOKEN");
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        UserRoleRequestWrapper arequest = new UserRoleRequestWrapper(httpRequest, "MOCK_USER");
-        chain.doFilter(arequest, httpResponse);
+        UserRoleRequestWrapper wrappedRequest = new UserRoleRequestWrapper(httpRequest, "MOCK_USER");
+        chain.doFilter(wrappedRequest, httpResponse);
     }
 
     @Override
