@@ -56,11 +56,11 @@ public class AssetMessageJSONBean {
         }
     }
 
-    public void assetInformation(TextMessage message) throws IOException, JMSException {
+    public void updateAssetInformation(TextMessage message) throws IOException, JMSException {
         List<Asset> assetBos = jsonb.fromJson(message.getText(), new ArrayList<Asset>() {
         }.getClass().getGenericSuperclass());
         for (Asset oneAsset : assetBos) {
-            assetService.assetInformation(oneAsset, oneAsset.getUpdatedBy() == null ? "UVMS (JMS)" : oneAsset.getUpdatedBy());
+            assetService.updateAssetInformation(oneAsset, oneAsset.getUpdatedBy() == null ? "UVMS (JMS)" : oneAsset.getUpdatedBy());
         }
         LOG.info("Processed update asset list of size: " + assetBos.size());
     }

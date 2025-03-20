@@ -16,6 +16,7 @@ import fish.focus.uvms.asset.message.event.AssetMessageEvent;
 import fish.focus.uvms.asset.message.event.AssetMessageEventBean;
 import fish.focus.uvms.asset.message.event.AssetMessageJSONBean;
 import fish.focus.uvms.asset.model.constants.FaultCode;
+import fish.focus.uvms.asset.model.exception.AssetException;
 import fish.focus.uvms.asset.model.mapper.AssetModuleResponseMapper;
 import fish.focus.uvms.asset.model.mapper.JAXBMarshaller;
 import fish.focus.uvms.commons.message.api.MessageConstants;
@@ -68,34 +69,38 @@ public class MessageConsumerBean implements MessageListener {
             String propertyFunction = textMessage.getStringProperty(MessageConstants.JMS_FUNCTION_PROPERTY);
             if (propertyFunction != null && propertyFunction.equals("ASSET_INFORMATION")) {
                 LOG.info("Message received in AssetModule with FUNCTION = {}", propertyFunction);
-                assetJsonBean.assetInformation(textMessage);
+                assetJsonBean.updateAssetInformation(textMessage);
                 return;
             }
 
-            AssetModuleRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, AssetModuleRequest.class);
-            AssetModuleMethod method = request.getMethod();
-            LOG.info("Message received in AssetModule with unmarshalled method = {}", method);
-
-            switch (method) {
-                case GET_ASSET:
-                    GetAssetModuleRequest getRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, GetAssetModuleRequest.class);
-                    messageEventBean.getAsset(textMessage, getRequest.getId());
-                    break;
-                case PING:
-                    messageEventBean.ping(new AssetMessageEvent(textMessage));
-                    break;
-                case UPSERT_ASSET:
-                    UpsertAssetModuleRequest upsertRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, UpsertAssetModuleRequest.class);
-                    AssetMessageEvent upsertAssetMessageEvent = new AssetMessageEvent(textMessage, upsertRequest.getAsset(), upsertRequest.getUserName());
-                    messageEventBean.upsertAsset(upsertAssetMessageEvent);
-                    break;
-                default:
-                    LOG.error("[ Not implemented method consumed: {} ]", method);
-                    assetErrorEvent.fire(new AssetMessageEvent(textMessage, AssetModuleResponseMapper.createFaultMessage(FaultCode.ASSET_MESSAGE, "Method not implemented")));
-            }
+            handleXmlFormattedMessage(textMessage);
         } catch (Exception e) {
             LOG.error("[ Error when receiving message in AssetModule. ] {}", findLineInStackTrace(e, "duplicate key value violates unique constraint"));
             assetErrorEvent.fire(new AssetMessageEvent(textMessage, AssetModuleResponseMapper.createFaultMessage(FaultCode.ASSET_MESSAGE, "Method not implemented")));
+        }
+    }
+
+    private void handleXmlFormattedMessage(TextMessage textMessage) throws AssetException {
+        AssetModuleRequest request = JAXBMarshaller.unmarshallTextMessage(textMessage, AssetModuleRequest.class);
+        AssetModuleMethod method = request.getMethod();
+        LOG.info("Message received in AssetModule with unmarshalled method = {}", method);
+
+        switch (method) {
+            case GET_ASSET:
+                GetAssetModuleRequest getRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, GetAssetModuleRequest.class);
+                messageEventBean.getAsset(textMessage, getRequest.getId());
+                break;
+            case PING:
+                messageEventBean.ping(new AssetMessageEvent(textMessage));
+                break;
+            case UPSERT_ASSET:
+                UpsertAssetModuleRequest upsertRequest = JAXBMarshaller.unmarshallTextMessage(textMessage, UpsertAssetModuleRequest.class);
+                AssetMessageEvent upsertAssetMessageEvent = new AssetMessageEvent(textMessage, upsertRequest.getAsset(), upsertRequest.getUserName());
+                messageEventBean.upsertAsset(upsertAssetMessageEvent);
+                break;
+            default:
+                LOG.error("[ Not implemented method consumed: {} ]", method);
+                assetErrorEvent.fire(new AssetMessageEvent(textMessage, AssetModuleResponseMapper.createFaultMessage(FaultCode.ASSET_MESSAGE, "Method not implemented")));
         }
     }
 

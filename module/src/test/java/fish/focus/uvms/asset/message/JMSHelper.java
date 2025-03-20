@@ -108,7 +108,7 @@ public class JMSHelper {
         return ActiveMQJMSClient.createConnectionFactoryWithoutHA(JMSFactoryType.CF, transportConfiguration);
     }
 
-    public void assetInfo(List<fish.focus.uvms.asset.domain.entity.Asset> asset) throws Exception {
+    public void updateAssetInfo(List<fish.focus.uvms.asset.domain.entity.Asset> asset) throws Exception {
         String json = JSONB.toJson(asset);
         sendAssetMessageWithFunction(json, "ASSET_INFORMATION");
     }

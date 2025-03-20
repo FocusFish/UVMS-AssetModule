@@ -76,7 +76,7 @@ public class AssetReMappingTest extends TransactionalTests {
         newAsset.setName("ShouldNotBeThis2");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
