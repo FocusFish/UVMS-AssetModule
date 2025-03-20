@@ -21,13 +21,14 @@ import javax.naming.NamingException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
@@ -46,7 +47,7 @@ public class AssetClientTest extends AbstractClientTest {
     @OperateOnDeployment("normal")
     public void pingTest() {
         String response = assetClient.ping();
-        assertThat(response, CoreMatchers.is("pong"));
+        assertThat(response, is("pong"));
     }
 
     @Test
@@ -58,13 +59,13 @@ public class AssetClientTest extends AbstractClientTest {
         AssetBO upsertAssetBo = assetClient.upsertAsset(assetBo);
 
         AssetDTO asset = assetClient.getAssetById(AssetIdentifier.GUID, upsertAssetBo.getAsset().getId().toString());
-        assertThat(asset, CoreMatchers.is(CoreMatchers.notNullValue()));
-        assertThat(asset.getId(), CoreMatchers.is(upsertAssetBo.getAsset().getId()));
+        assertThat(asset, is(notNullValue()));
+        assertThat(asset.getId(), is(upsertAssetBo.getAsset().getId()));
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getNonExistantAssetTest() {
+    public void getNonExistentAssetTest() {
         AssetDTO asset = assetClient.getAssetById(AssetIdentifier.GUID, UUID.randomUUID().toString());
         assertNull(asset);
     }
@@ -76,9 +77,9 @@ public class AssetClientTest extends AbstractClientTest {
         assetBo.setAsset(AssetHelper.createBasicAsset());
         AssetBO upsertAsset = assetClient.upsertAsset(assetBo);
 
-        assertThat(upsertAsset.getAsset().getId(), CoreMatchers.is(CoreMatchers.notNullValue()));
-        assertThat(upsertAsset.getAsset().getHistoryId(), CoreMatchers.is(CoreMatchers.notNullValue()));
-        assertThat(upsertAsset, CoreMatchers.is(CoreMatchers.notNullValue()));
+        assertThat(upsertAsset.getAsset().getId(), is(notNullValue()));
+        assertThat(upsertAsset.getAsset().getHistoryId(), is(notNullValue()));
+        assertThat(upsertAsset, is(notNullValue()));
     }
 
     @Test
@@ -90,7 +91,7 @@ public class AssetClientTest extends AbstractClientTest {
         assetBo.getAsset().setName("New" + UUID.randomUUID());
         AssetBO upsertAssetBo2 = assetClient.upsertAsset(assetBo);
 
-        assertThat(upsertAssetBo.getAsset().getHistoryId(), CoreMatchers.is(CoreMatchers.not(upsertAssetBo2.getAsset().getHistoryId())));
+        assertThat(upsertAssetBo.getAsset().getHistoryId(), is(not(upsertAssetBo2.getAsset().getHistoryId())));
     }
 
     @Test
@@ -132,7 +133,7 @@ public class AssetClientTest extends AbstractClientTest {
         assetClient.upsertAssetAsync(assetBo);
         Thread.sleep(5000); // Needed due to async call
         AssetDTO fetchedAsset = assetClient.getAssetById(AssetIdentifier.CFR, asset.getCfr());
-        assertThat(fetchedAsset.getCfr(), CoreMatchers.is(asset.getCfr()));
+        assertThat(fetchedAsset.getCfr(), is(asset.getCfr()));
     }
 
     @Test
@@ -146,7 +147,7 @@ public class AssetClientTest extends AbstractClientTest {
         AssetBO secondAssetBo = assetClient.upsertAsset(firstAssetBo);
 
         List<AssetDTO> histories = assetClient.getAssetHistoryListByAssetId(firstAssetBo.getAsset().getId());
-        assertThat(histories.size(), CoreMatchers.is(2));
+        assertThat(histories.size(), is(2));
         assertEquals(1, histories.stream()
                 .filter(a -> a.getHistoryId().equals(firstAssetBo.getAsset().getHistoryId()))
                 .count());
@@ -167,8 +168,8 @@ public class AssetClientTest extends AbstractClientTest {
         assetClient.upsertAsset(firstAssetBo);
 
         AssetDTO assetHistory = assetClient.getAssetFromAssetIdAndDate(AssetIdentifier.CFR, firstAssetBo.getAsset().getCfr(), timestamp);
-        assertThat(assetHistory.getId(), CoreMatchers.is(firstAssetBo.getAsset().getId()));
-        assertThat(assetHistory.getHistoryId(), CoreMatchers.is(firstAssetBo.getAsset().getHistoryId()));
+        assertThat(assetHistory.getId(), is(firstAssetBo.getAsset().getId()));
+        assertThat(assetHistory.getHistoryId(), is(firstAssetBo.getAsset().getHistoryId()));
     }
 
     @Test
@@ -179,11 +180,11 @@ public class AssetClientTest extends AbstractClientTest {
         assetBo.setAsset(asset);
         AssetBO firstAssetBo = assetClient.upsertAsset(assetBo);
 
-        List<AssetDTO> assets = assetClient.getAssetsAtDate(Arrays.asList(firstAssetBo.getAsset().getId()), Instant.now());
-        assertThat(assets.size(), CoreMatchers.is(1));
+        List<AssetDTO> assets = assetClient.getAssetsAtDate(List.of(firstAssetBo.getAsset().getId()), Instant.now());
+        assertThat(assets.size(), is(1));
         AssetDTO assetDto = assets.get(0);
-        assertThat(assetDto.getId(), CoreMatchers.is(firstAssetBo.getAsset().getId()));
-        assertThat(assetDto.getHistoryId(), CoreMatchers.is(firstAssetBo.getAsset().getHistoryId()));
+        assertThat(assetDto.getId(), is(firstAssetBo.getAsset().getId()));
+        assertThat(assetDto.getHistoryId(), is(firstAssetBo.getAsset().getHistoryId()));
     }
 
     @Test
@@ -197,11 +198,11 @@ public class AssetClientTest extends AbstractClientTest {
         Instant timestamp = Instant.now();
         assetClient.upsertAsset(firstAssetBo);
 
-        List<AssetDTO> assets = assetClient.getAssetsAtDate(Arrays.asList(firstAssetBo.getAsset().getId()), timestamp);
-        assertThat(assets.size(), CoreMatchers.is(1));
+        List<AssetDTO> assets = assetClient.getAssetsAtDate(List.of(firstAssetBo.getAsset().getId()), timestamp);
+        assertThat(assets.size(), is(1));
         AssetDTO assetDto = assets.get(0);
-        assertThat(assetDto.getId(), CoreMatchers.is(firstAssetBo.getAsset().getId()));
-        assertThat(assetDto.getHistoryId(), CoreMatchers.is(firstAssetBo.getAsset().getHistoryId()));
+        assertThat(assetDto.getId(), is(firstAssetBo.getAsset().getId()));
+        assertThat(assetDto.getHistoryId(), is(firstAssetBo.getAsset().getHistoryId()));
     }
 
     @Test
@@ -214,11 +215,11 @@ public class AssetClientTest extends AbstractClientTest {
         firstAssetBo.getAsset().setName(UUID.randomUUID().toString());
         assetClient.upsertAsset(firstAssetBo);
 
-        List<AssetDTO> assets = assetClient.getAssetsAtDate(Arrays.asList(firstAssetBo.getAsset().getId()), Instant.now());
-        assertThat(assets.size(), CoreMatchers.is(1));
+        List<AssetDTO> assets = assetClient.getAssetsAtDate(List.of(firstAssetBo.getAsset().getId()), Instant.now());
+        assertThat(assets.size(), is(1));
         AssetDTO assetDto = assets.get(0);
-        assertThat(assetDto.getId(), CoreMatchers.is(firstAssetBo.getAsset().getId()));
-        assertThat(assetDto.getHistoryId(), CoreMatchers.is(CoreMatchers.not(firstAssetBo.getAsset().getHistoryId())));
+        assertThat(assetDto.getId(), is(firstAssetBo.getAsset().getId()));
+        assertThat(assetDto.getHistoryId(), is(CoreMatchers.not(firstAssetBo.getAsset().getHistoryId())));
     }
 
     @Test
@@ -229,11 +230,11 @@ public class AssetClientTest extends AbstractClientTest {
         assetBo.setAsset(asset);
         AssetBO firstAssetBo = assetClient.upsertAsset(assetBo);
 
-        List<AssetDTO> assets = assetClient.getAssetsAtDate(Arrays.asList(firstAssetBo.getAsset().getId()), Instant.now().minus(10, ChronoUnit.HOURS));
-        assertThat(assets.size(), CoreMatchers.is(1));
+        List<AssetDTO> assets = assetClient.getAssetsAtDate(List.of(firstAssetBo.getAsset().getId()), Instant.now().minus(10, ChronoUnit.HOURS));
+        assertThat(assets.size(), is(1));
         AssetDTO assetDto = assets.get(0);
-        assertThat(assetDto.getId(), CoreMatchers.is(firstAssetBo.getAsset().getId()));
-        assertThat(assetDto.getHistoryId(), CoreMatchers.is(firstAssetBo.getAsset().getHistoryId()));
+        assertThat(assetDto.getId(), is(firstAssetBo.getAsset().getId()));
+        assertThat(assetDto.getHistoryId(), is(firstAssetBo.getAsset().getHistoryId()));
     }
 
     @Test
@@ -246,11 +247,11 @@ public class AssetClientTest extends AbstractClientTest {
         firstAssetBo.getAsset().setName(UUID.randomUUID().toString());
         assetClient.upsertAsset(firstAssetBo);
 
-        List<AssetDTO> assets = assetClient.getAssetsAtDate(Arrays.asList(firstAssetBo.getAsset().getId()), Instant.now().minus(10, ChronoUnit.HOURS));
-        assertThat(assets.size(), CoreMatchers.is(1));
+        List<AssetDTO> assets = assetClient.getAssetsAtDate(List.of(firstAssetBo.getAsset().getId()), Instant.now().minus(10, ChronoUnit.HOURS));
+        assertThat(assets.size(), is(1));
         AssetDTO assetDto = assets.get(0);
-        assertThat(assetDto.getId(), CoreMatchers.is(firstAssetBo.getAsset().getId()));
-        assertThat(assetDto.getHistoryId(), CoreMatchers.is(firstAssetBo.getAsset().getHistoryId()));
+        assertThat(assetDto.getId(), is(firstAssetBo.getAsset().getId()));
+        assertThat(assetDto.getHistoryId(), is(firstAssetBo.getAsset().getHistoryId()));
     }
 
     @Test
@@ -264,8 +265,8 @@ public class AssetClientTest extends AbstractClientTest {
         assetClient.upsertAsset(firstAssetBo);
 
         AssetDTO assetHistory = assetClient.getAssetHistoryByAssetHistGuid(firstAssetBo.getAsset().getHistoryId());
-        assertThat(assetHistory.getId(), CoreMatchers.is(firstAssetBo.getAsset().getId()));
-        assertThat(assetHistory.getHistoryId(), CoreMatchers.is(firstAssetBo.getAsset().getHistoryId()));
+        assertThat(assetHistory.getId(), is(firstAssetBo.getAsset().getId()));
+        assertThat(assetHistory.getHistoryId(), is(firstAssetBo.getAsset().getHistoryId()));
     }
 
     @Test
@@ -285,8 +286,8 @@ public class AssetClientTest extends AbstractClientTest {
         trunk.addNewSearchLeaf(SearchFields.DATE, DateUtils.dateToEpochMilliseconds(timestamp));
 
         List<AssetDTO> assetList = assetClient.getAssetList(trunk);
-        assertThat(assetList.size(), CoreMatchers.is(1));
-        assertThat(assetList.get(0).getHistoryId(), CoreMatchers.is(firstAssetBo.getAsset().getHistoryId()));
+        assertThat(assetList.size(), is(1));
+        assertThat(assetList.get(0).getHistoryId(), is(firstAssetBo.getAsset().getHistoryId()));
     }
 
     @Test
@@ -302,7 +303,7 @@ public class AssetClientTest extends AbstractClientTest {
         trunk.addNewSearchLeaf(SearchFields.NAME, asset.getName());
 
         List<String> assetList = assetClient.getAssetIdList(trunk, 1, 100000, false);
-        assertThat(assetList.size(), CoreMatchers.is(1));
+        assertThat(assetList.size(), is(1));
         assertEquals(assetList.get(0), firstAssetBo.getAsset().getId().toString());
     }
 
@@ -313,14 +314,13 @@ public class AssetClientTest extends AbstractClientTest {
         CustomCode createdCustomCode = assetClient.createCustomCode(customCode);
         assertNotNull(createdCustomCode);
         List<String> rs = assetClient.getConstants();
-        assertTrue(rs.size() > 0);
+        assertThat(rs, is(not(empty())));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void getCodesForConstantsTest() {
-
-        String constant = "Test_Constant" + UUID.randomUUID().toString();
+        String constant = "Test_Constant" + UUID.randomUUID();
 
         for (int i = 0; i < 5; i++) {
             CustomCode customCode = AssetHelper.createCustomCode(constant);
@@ -334,8 +334,7 @@ public class AssetClientTest extends AbstractClientTest {
     @Test
     @OperateOnDeployment("normal")
     public void isCodeValidTest() {
-
-        String constant = "Test_Constant" + UUID.randomUUID().toString();
+        String constant = "Test_Constant" + UUID.randomUUID();
         CustomCode customCode = AssetHelper.createCustomCode(constant);
         CustomCode createdCustomCode = assetClient.createCustomCode(customCode);
         assertNotNull(createdCustomCode);
@@ -351,8 +350,7 @@ public class AssetClientTest extends AbstractClientTest {
     @Test
     @OperateOnDeployment("normal")
     public void isCodeValidNegativeTest() {
-
-        String constant = "Test_Constant" + UUID.randomUUID().toString();
+        String constant = "Test_Constant" + UUID.randomUUID();
         CustomCode customCode = AssetHelper.createCustomCode(constant);
         CustomCode createdCustomCode = assetClient.createCustomCode(customCode);
         assertNotNull(createdCustomCode);
@@ -368,8 +366,7 @@ public class AssetClientTest extends AbstractClientTest {
     @Test
     @OperateOnDeployment("normal")
     public void getCodeForDateTest() {
-
-        String constant = "Test_Constant" + UUID.randomUUID().toString();
+        String constant = "Test_Constant" + UUID.randomUUID();
         CustomCode customCode = AssetHelper.createCustomCode(constant);
         CustomCode createdCustomCode = assetClient.createCustomCode(customCode);
         assertNotNull(createdCustomCode);
@@ -381,14 +378,13 @@ public class AssetClientTest extends AbstractClientTest {
 
         List<CustomCode> retrievedCustomCode = assetClient.getCodeForDate(cst, code, validToDate);
         assertNotNull(retrievedCustomCode);
-        assertTrue(retrievedCustomCode.size() > 0);
+        assertThat(retrievedCustomCode, is(not(empty())));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void getCodeForDateNegativeTest() {
-
-        String constant = "Test_Constant" + UUID.randomUUID().toString();
+        String constant = "Test_Constant" + UUID.randomUUID();
         CustomCode customCode = AssetHelper.createCustomCode(constant);
         CustomCode createdCustomCode = assetClient.createCustomCode(customCode);
         assertNotNull(createdCustomCode);
@@ -406,8 +402,7 @@ public class AssetClientTest extends AbstractClientTest {
     @Test
     @OperateOnDeployment("normal")
     public void customCodesReplaceTest() {
-
-        String constant = "Test_Constant" + UUID.randomUUID().toString();
+        String constant = "Test_Constant" + UUID.randomUUID();
         CustomCode customCode = AssetHelper.createCustomCode(constant);
         assetClient.replace(customCode);
         customCode.setDescription("replaced");
@@ -417,8 +412,6 @@ public class AssetClientTest extends AbstractClientTest {
     @Test
     @OperateOnDeployment("normal")
     public void collectAssetMTTest() {
-
-        //public AssetMTEnrichmentResponse collectAssetMT(AssetMTEnrichmentRequest request) throws Exception {
         AssetMTEnrichmentRequest request = new AssetMTEnrichmentRequest();
         AssetMTEnrichmentResponse response = assetClient.collectAssetMT(request);
 
@@ -436,7 +429,7 @@ public class AssetClientTest extends AbstractClientTest {
         assertNotNull(response.getAssetHistoryId());
         assertNotNull(response.getAssetUUID());
         assertTrue(response.getAssetName().contains("Unknown"));
-        assertTrue(response.getFlagstate().equals("UNK"));
+        assertEquals("UNK", response.getFlagstate());
         assertEquals("123456789", response.getMmsi());
     }
 
@@ -486,7 +479,7 @@ public class AssetClientTest extends AbstractClientTest {
         assertNotNull(response.getAssetHistoryId());
         assertNotNull(response.getAssetUUID());
         assertTrue(response.getAssetName().contains("Unknown"));
-        assertTrue(response.getFlagstate().equals("UNK"));
+        assertEquals("UNK", response.getFlagstate());
         assertEquals("123456789", response.getMmsi());
         assertNull(response.getIrcs());
     }
@@ -503,8 +496,8 @@ public class AssetClientTest extends AbstractClientTest {
         assertNotNull(response);
         assertNotNull(response.getAssetHistoryId());
         assertNotNull(response.getAssetUUID());
-        assertTrue(response.getAssetName(), response.getAssetName().equals("Named Ship"));
-        assertTrue(response.getFlagstate().equals("SWE"));
+        assertEquals("Named Ship", response.getAssetName());
+        assertEquals("SWE", response.getFlagstate());
         assertEquals("987654321", response.getMmsi());
     }
 
@@ -526,8 +519,8 @@ public class AssetClientTest extends AbstractClientTest {
         assertNotNull(response);
         assertNotNull(response.getAssetHistoryId());
         assertNotNull(response.getAssetUUID());
-        assertTrue(response.getAssetName(), response.getAssetName().equals(upsertAssetBo.getAsset().getName()));
-        assertTrue(response.getFlagstate().equals(upsertAssetBo.getAsset().getFlagStateCode()));
+        assertEquals(upsertAssetBo.getAsset().getName(), response.getAssetName());
+        assertEquals(upsertAssetBo.getAsset().getFlagStateCode(), response.getFlagstate());
         assertEquals(upsertAssetBo.getAsset().getMmsi(), response.getMmsi());
 
         assertTrue(response.getParked());
@@ -563,7 +556,6 @@ public class AssetClientTest extends AbstractClientTest {
     @Test
     @OperateOnDeployment("normal")
     public void pollsForAssetInTheLastDay() {
-
         List<SanePollDto> output = assetClient.getPollsForAssetInTheLastDay(UUID.randomUUID());
 
         assertNotNull(output);
@@ -573,7 +565,6 @@ public class AssetClientTest extends AbstractClientTest {
     @Test
     @OperateOnDeployment("normal")
     public void pollsInfo() {
-
         SanePollDto output = assetClient.getPollInfo(UUID.randomUUID());
 
         assertNull(output);
@@ -603,7 +594,6 @@ public class AssetClientTest extends AbstractClientTest {
         Instant instant = Instant.now().plusSeconds(1);// Instant.parse("2020-12-10T12:56:50Z");
         MobileTerminal mobileTerminal = assetClient.getMtFromMemberNumberAndDnidAtDate(memberNr, dnid, instant);
 
-        // assertEquals(mobileTerminal.getId().toString(), "952a2efd-da9e-4932-808e-c37f3eda3aea");
         assertNull(mobileTerminal);
     }
 
