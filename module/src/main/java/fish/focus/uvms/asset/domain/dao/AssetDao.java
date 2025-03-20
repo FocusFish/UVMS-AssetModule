@@ -1,12 +1,12 @@
 package fish.focus.uvms.asset.domain.dao;
 
-import fish.focus.uvms.commons.date.DateUtils;
 import fish.focus.uvms.asset.domain.constant.AssetIdentifier;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.domain.entity.AssetRemapMapping;
 import fish.focus.uvms.asset.domain.entity.ContactInfo;
 import fish.focus.uvms.asset.dto.AssetProjection;
 import fish.focus.uvms.asset.remote.dto.search.*;
+import fish.focus.uvms.commons.date.DateUtils;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
@@ -20,12 +20,7 @@ import org.hibernate.envers.query.criteria.MatchMode;
 
 import javax.ejb.Stateless;
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.*;
@@ -160,7 +155,7 @@ public class AssetDao {
     }
 
     public Long getAssetCount(SearchBranch queryTree, boolean includeInactivated) {
-        if (isHistoricSearch(queryTree) == true) {
+        if (isHistoricSearch(queryTree)) {
             return getAssetCountHistoric(queryTree, includeInactivated);
         }
         return getAssetCountCB(queryTree, includeInactivated);
@@ -219,10 +214,7 @@ public class AssetDao {
     private boolean isHistoricSearch(SearchBranch queryTree) {
         SearchLeaf dateSearchField = getDateSearchField(queryTree);
         SearchLeaf historySearchField = getHistoryIdSearchField(queryTree);
-        if (dateSearchField != null || historySearchField != null) {
-            return true;
-        }
-        return false;
+        return dateSearchField != null || historySearchField != null;
     }
 
     private List<Asset> getAssetListSearchPaginatedCriteriaBuilder(Integer pageNumber, Integer pageSize, SearchBranch queryTree, boolean includeInactivated) {
