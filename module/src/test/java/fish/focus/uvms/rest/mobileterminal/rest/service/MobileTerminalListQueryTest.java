@@ -229,6 +229,7 @@ public class MobileTerminalListQueryTest extends AbstractAssetRestTest {
 
         assertNotNull(response);
         assertThat(response.getMobileTerminalList(), is(not(empty())));
+        assertThat(response.getMobileTerminalList(), hasSize(1));
 
         MobileTerminal terminal = response.getMobileTerminalList().get(0);
 

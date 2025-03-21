@@ -27,6 +27,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 /**
@@ -171,22 +173,29 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
     @OperateOnDeployment("normal")
     public void unAssignMobileTerminalFromCarrier() {
         MobileTerminal persistMobileTerminal = testPollHelper.createAndPersistMobileTerminal(null);
+        assertThat(persistMobileTerminal.getId(), is(notNullValue()));
+
         Asset persistAsset = createAndPersistAsset();
-        assertNotNull(persistMobileTerminal.getId());
-        assertNotNull(persistAsset.getId());
+        assertThat(persistAsset.getId(), is(notNullValue()));
 
         UUID mobileTerminalId = persistMobileTerminal.getId();
         UUID assetId = persistAsset.getId();
 
-        MobileTerminal mobileTerminal = mobileTerminalService.assignMobileTerminal(assetId, mobileTerminalId, TEST_COMMENT, USERNAME);
-        assertNotNull(mobileTerminal);
-        assertNotNull(mobileTerminal.getAsset());
-        assertEquals(1, persistAsset.getMobileTerminals().size());
+        MobileTerminal assignedMobileTerminal = mobileTerminalService.assignMobileTerminal(assetId, mobileTerminalId, TEST_COMMENT, USERNAME);
+        assertThat(assignedMobileTerminal, is(notNullValue()));
+        assertThat(assignedMobileTerminal.getAsset(), is(notNullValue()));
 
-        mobileTerminal = mobileTerminalService.unAssignMobileTerminal(assetId, mobileTerminalId, TEST_COMMENT, USERNAME);
-        assertNotNull(mobileTerminal);
-        assertNull(mobileTerminal.getAsset());
-        assertEquals(0, persistAsset.getMobileTerminals().size());
+        Asset assignedAsset = assetDao.getAssetById(assetId);
+        assertThat(assignedAsset, is(notNullValue()));
+        assertThat(assignedAsset.getMobileTerminals(), hasSize(1));
+
+        MobileTerminal unassignedMobileTerminal = mobileTerminalService.unAssignMobileTerminal(assetId, mobileTerminalId, TEST_COMMENT, USERNAME);
+        assertThat(unassignedMobileTerminal, is(notNullValue()));
+        assertThat(unassignedMobileTerminal.getAsset(), is(nullValue()));
+
+        Asset unassignedAsset = assetDao.getAssetById(assetId);
+        assertThat(unassignedAsset, is(notNullValue()));
+        assertThat(unassignedAsset.getMobileTerminals(), is(empty()));
     }
 
     @Test
