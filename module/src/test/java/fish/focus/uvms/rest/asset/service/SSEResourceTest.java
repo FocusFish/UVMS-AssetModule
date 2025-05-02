@@ -5,20 +5,6 @@
  */
 package fish.focus.uvms.rest.asset.service;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import javax.inject.Inject;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.sse.InboundSseEvent;
-import javax.ws.rs.sse.SseEventSource;
-
 import fish.focus.uvms.asset.domain.dao.AssetDao;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.domain.entity.AssetRemapMapping;
@@ -34,33 +20,48 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.sse.InboundSseEvent;
+import javax.ws.rs.sse.SseEventSource;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
 import static org.junit.Assert.*;
 
 /**
  * @author Jem
  */
 @RunWith(Arquillian.class)
-//@RunAsClient
 public class SSEResourceTest extends AbstractAssetRestTest {
-    private final static Logger LOG = LoggerFactory.getLogger(SSEResourceTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SSEResourceTest.class);
 
+    //Connection close and there is nothing to receive
+    private static final Runnable onComplete = () -> LOG.info("Done!");
     private static String dataString = "";
-    private static String errorString = "";
-    private static Consumer<InboundSseEvent> onEvent = (inboundSseEvent) -> {
+
+    private static final Consumer<InboundSseEvent> onEvent = inboundSseEvent -> {
         String data = inboundSseEvent.readData();
         dataString = dataString.concat(data);
     };
+
+    private static String errorString = "";
     //Error
-    private static Consumer<Throwable> onError = (throwable) -> {
+    private static final Consumer<Throwable> onError = throwable -> {
         LOG.error("Error while testing sse: ", throwable);
         errorString = throwable.getMessage();
     };
-    //Connection close and there is nothing to receive
-    private static Runnable onComplete = () -> {
-        System.out.println("Done!");
-    };
+
     @Inject
     private AssetDao assetDao;
+
     @Inject
     private AssetRemapTask assetRemapTask;
 
@@ -155,5 +156,4 @@ public class SSEResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .put(Entity.json(asset), Asset.class);
     }
-
 }

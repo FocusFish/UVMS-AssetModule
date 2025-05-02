@@ -11,31 +11,24 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.tests;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.inject.Inject;
-import javax.jms.DeliveryMode;
-import javax.jms.JMSConnectionFactory;
-import javax.jms.JMSContext;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
-import javax.jms.Topic;
-import javax.json.bind.Jsonb;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import fish.focus.schema.exchange.plugin.types.v1.PluginType;
 import fish.focus.schema.exchange.service.v1.CapabilityListType;
 import fish.focus.schema.exchange.service.v1.CapabilityType;
 import fish.focus.schema.exchange.service.v1.CapabilityTypeType;
 import fish.focus.schema.exchange.service.v1.ServiceResponseType;
-import fish.focus.schema.mobileterminal.types.v1.PluginCapability;
-import fish.focus.schema.mobileterminal.types.v1.PluginCapabilityType;
 import fish.focus.uvms.commons.date.JsonBConfigurator;
 import fish.focus.uvms.commons.message.api.MessageConstants;
 import fish.focus.uvms.commons.message.context.MappedDiagnosticContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.inject.Inject;
+import javax.jms.*;
+import javax.json.bind.Jsonb;
 
 @Startup
 @Singleton

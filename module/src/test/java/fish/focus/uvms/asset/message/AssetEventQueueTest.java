@@ -31,6 +31,7 @@ import javax.jms.Message;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
@@ -41,13 +42,13 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
+    private final JMSHelper jmsHelper = new JMSHelper();
+
     @Inject
     AssetModelMapper assetModelMapper;
 
     @Inject
     AssetServiceBean assetServiceBean;
-
-    private final JMSHelper jmsHelper = new JMSHelper();
 
     @Test
     @OperateOnDeployment("normal")
@@ -56,7 +57,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         request.setMethod(AssetModuleMethod.PING);
         String requestString = JAXBMarshaller.marshallJaxBObjectToString(request);
         String correlationId = jmsHelper.sendAssetMessage(requestString);
-        Message response = jmsHelper.listenForResponse(correlationId);
+        Message response = jmsHelper.listenForResponse();
         assertThat(response, is(notNullValue()));
     }
 
@@ -163,7 +164,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void assetInformationTest1() throws Exception {
+    public void updateAssetInformationTest1() throws Exception {
         Asset asset = AssetTestHelper.createBasicAsset();
         asset.setName(null);
         jmsHelper.upsertAsset(asset);
@@ -179,7 +180,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setName("namebyassetinfo");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -191,7 +192,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void assetInformationTest2() throws Exception {
+    public void updateAssetInformationTest2() throws Exception {
         Asset assetWithsMMSI = AssetTestHelper.createBasicAsset();
         assetWithsMMSI.setIrcs(null);
         assetWithsMMSI.setName("ShouldNotBeThis");
@@ -223,7 +224,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setName("ShouldNotBeThis");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -238,7 +239,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void NationalAssetWithCorrectIrcsAndMmsiAndInternalAssetWithCorrectButFaultyFormatedIrcs() throws Exception {
+    public void nationalAssetWithCorrectIrcsAndMmsiAndInternalAssetWithCorrectButFaultyFormatedIrcs() throws Exception {
         String correctIrcs = "SFC-" + AssetTestsHelper.getRandomIntegers(4);
         String correctMmsi = AssetTestsHelper.getRandomIntegers(9);
 
@@ -273,7 +274,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setName("ShouldNotBeThis");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -291,9 +292,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void assetInformationTest3() throws Exception {
-
-
+    public void updateAssetInformationTest3() throws Exception {
         Asset assetWithsIRCS = AssetTestHelper.createBasicAsset();
         assetWithsIRCS.setMmsiNo(null);
         assetWithsIRCS.setName(null);
@@ -314,7 +313,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setName("namnetestfall3");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -326,7 +325,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void assetInformationTest4() throws Exception {
+    public void updateAssetInformationTest4() throws Exception {
         Asset assetWithsIRCS = AssetTestHelper.createBasicAsset();
         assetWithsIRCS.setMmsiNo(null);
         assetWithsIRCS.setName("namnetestfall4");
@@ -344,7 +343,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setName("ShouldNotBeThis");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -359,7 +358,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void assetInformationTest5() throws Exception {
+    public void updateAssetInformationTest5() throws Exception {
         Asset assetWithsMMSI = AssetTestHelper.createBasicAsset();
         assetWithsMMSI.setIrcs(null);
         assetWithsMMSI.setName(null);
@@ -380,7 +379,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setName("namnetestfall5");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -391,7 +390,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void assetInformationTest6() throws Exception {
+    public void updateAssetInformationTest6() throws Exception {
         Asset assetWithsMMSI = AssetTestHelper.createBasicAsset();
         assetWithsMMSI.setIrcs(null);
         assetWithsMMSI.setName(null);
@@ -410,7 +409,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setName("namnetestfall6");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -424,7 +423,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void assetInformationTest6XEUSource() throws Exception {
+    public void updateAssetInformationTest6XEUSource() throws Exception {
         Asset assetWithsMMSI = AssetTestHelper.createBasicAsset();
         assetWithsMMSI.setIrcs(null);
         assetWithsMMSI.setName(null);
@@ -442,7 +441,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setName("namnetestfall6");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -457,7 +456,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void assetInformationTest7() throws Exception {
+    public void updateAssetInformationTest7() throws Exception {
         Asset assetWithsIRCS = AssetTestHelper.createBasicAsset();
         assetWithsIRCS.setMmsiNo(null);
         assetWithsIRCS.setName(null);
@@ -476,7 +475,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setName("namnetestfall7");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -490,7 +489,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void assetInformationTest7ThirdCountrySource() throws Exception {
+    public void updateAssetInformationTest7ThirdCountrySource() throws Exception {
         Asset assetWithsIRCS = AssetTestHelper.createBasicAsset();
         assetWithsIRCS.setMmsiNo(null);
         assetWithsIRCS.setName(null);
@@ -509,7 +508,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setName("namnetestfall7");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -524,7 +523,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void assetInformationIrcsWithSpaceTest() throws Exception {
+    public void updateAssetInformationIrcsWithSpaceTest() throws Exception {
         String randomSuffix = AssetTestsHelper.getRandomIntegers(6);
         String ircs = "I" + randomSuffix;
         String testIrcs = "I " + randomSuffix;
@@ -544,7 +543,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setIrcs(testIrcs);
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -556,7 +555,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
 
     @Test
     @OperateOnDeployment("normal")
-    public void assetInformationMergeIrcsWithSpaceTest() throws Exception {
+    public void updateAssetInformationMergeIrcsWithSpaceTest() throws Exception {
         String randomSuffix = AssetTestsHelper.getRandomIntegers(6);
         String ircs = "I" + randomSuffix;
         String testIrcs = "I " + randomSuffix;
@@ -588,7 +587,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
         newAsset.setMmsi(mmsi);
         newAsset.setIrcs(testIrcs);
-        jmsHelper.assetInfo(List.of(newAsset));
+        jmsHelper.updateAssetInfo(List.of(newAsset));
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -621,7 +620,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setName("shouldNotBeThis");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -661,7 +660,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         newAsset.setName("createAssetWithEmptyStringIRCS2NewName");
         List<fish.focus.uvms.asset.domain.entity.Asset> assetList = new ArrayList<>();
         assetList.add(newAsset);
-        jmsHelper.assetInfo(assetList);
+        jmsHelper.updateAssetInfo(assetList);
         await()
                 .atMost(2, SECONDS)
                 .untilAsserted(() -> {
@@ -687,7 +686,7 @@ public class AssetEventQueueTest extends BuildAssetServiceDeployment {
         Asset assetType = AssetTestHelper.createBasicAsset();
         fish.focus.uvms.asset.domain.entity.Asset asset = assetModelMapper.toAssetEntity(assetType);
         asset.setName("Create with national id");
-        Long nationalId = (long) (Math.random() * 10000000d);
+        Long nationalId = ThreadLocalRandom.current().nextLong(10_000_000);
         asset.setNationalId(nationalId);
 
         jmsHelper.upsertAssetUsingMethod(asset);

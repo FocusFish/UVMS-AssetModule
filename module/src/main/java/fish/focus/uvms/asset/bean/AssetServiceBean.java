@@ -226,16 +226,8 @@ public class AssetServiceBean {
         }
     }
 
-    private static boolean isNullOrEmpty(String toCheck) {
+    private boolean isNullOrEmpty(String toCheck) {
         return toCheck == null || toCheck.isEmpty();
-    }
-
-    public Asset upsertAsset(Asset asset, String username) {
-        nullValidation(asset, "No asset to upsert");
-        if (asset.getId() == null) {
-            return createAsset(asset, username);
-        }
-        return updateAsset(asset, username, asset.getComment());
     }
 
     public AssetBO upsertAssetBO(AssetBO assetBo, String username) {
@@ -245,6 +237,9 @@ public class AssetServiceBean {
 
         Asset existingAsset = getExistingAsset(assetBo.getDefaultIdentifier(), assetIds);
         if (existingAsset != null) {
+            LOG.debug("Found existing asset cfr: {} imo: {} nationalID: {} ircs: {} mmsi: {}",
+                    existingAsset.getCfr(), existingAsset.getImo(), existingAsset.getNationalId(),
+                    existingAsset.getIrcs(), existingAsset.getMmsi());
             asset.setId(existingAsset.getId());
 
             // to save values we already have and don't get from the external source
@@ -253,6 +248,8 @@ public class AssetServiceBean {
             asset.setParked(asset.getParked() == null ? existingAsset.getParked() : asset.getParked());
         }
 
+        LOG.debug("Comparing to input asset cfr: {} imo: {} nationalID: {} ircs: {} mmsi: {}",
+                asset.getCfr(), asset.getImo(), asset.getNationalId(), asset.getIrcs(), asset.getMmsi());
         if (!AssetComparator.assetEquals(asset, existingAsset)) {
             asset = upsertAsset(asset, username);
         }
@@ -268,6 +265,14 @@ public class AssetServiceBean {
         }
         addLicenceToAsset(assetId, assetBo.getFishingLicence());
         return assetBo;
+    }
+
+    public Asset upsertAsset(Asset asset, String username) {
+        nullValidation(asset, "No asset to upsert");
+        if (asset.getId() == null) {
+            return createAsset(asset, username);
+        }
+        return updateAsset(asset, username, asset.getComment());
     }
 
     private Asset getExistingAsset(AssetIdentifier defaultIdentifierField, Map<AssetIdentifier, String> assetIds) {
@@ -644,7 +649,7 @@ public class AssetServiceBean {
         return asset;
     }
 
-    // if more than 1 hit put data from ais into fartyg2record
+    // if more than 1 hit put data from AIS into national source record
     // remove the duplicate
     private Asset normalizeAssetOnMmsiIrcs(String mmsi, String ircs, String updatedBy) {
         List<Asset> assets = assetDao.getAssetByMmsiOrIrcs(mmsi, ircs);
@@ -657,39 +662,39 @@ public class AssetServiceBean {
             return assets.get(0);
         }
 
-        Asset fartyg2Asset = null;
-        Asset nonFartyg2Asset = null;
+        Asset nationalSourceAsset = null;
+        Asset aisAsset = null;
 
-        // find the fartyg2 record
+        // find the national source and AIS records
         for (Asset asset : assets) {
-            if ((asset.getSource() != null) && (asset.getSource().equals(CarrierSource.NATIONAL.toString()))) {
-                fartyg2Asset = asset;
+            if (asset.getSource() != null && asset.getSource().equals(CarrierSource.NATIONAL.toString())) {
+                nationalSourceAsset = asset;
             } else {
-                nonFartyg2Asset = asset;
+                aisAsset = asset;
             }
         }
-        if (fartyg2Asset == null || nonFartyg2Asset == null) {
+        if (nationalSourceAsset == null || aisAsset == null) {
             return null;
         }
 
-        nonFartyg2Asset.setMmsi(null);
-        nonFartyg2Asset.setActive(false);
-        String comment = "Found to be a duplicate of another asset with IRCS: " + ircs + " " + (nonFartyg2Asset.getComment() != null ? nonFartyg2Asset.getComment() : "");
-        nonFartyg2Asset.setComment((comment.length() > 255 ? comment.substring(0, 255) : comment));
+        aisAsset.setMmsi(null);
+        aisAsset.setActive(false);
+        String comment = "Found to be a duplicate of another asset with IRCS: " + ircs + " " + (aisAsset.getComment() != null ? aisAsset.getComment() : "");
+        aisAsset.setComment((comment.length() > 255 ? comment.substring(0, 255) : comment));
         // flush is necessary to avoid dumps on MMSI
         em.flush();
 
-        fartyg2Asset.setMmsi(mmsi);
-        fartyg2Asset.setUpdateTime(Instant.now());
-        fartyg2Asset.setUpdatedBy(updatedBy);
-        em.merge(fartyg2Asset);
+        nationalSourceAsset.setMmsi(mmsi);
+        nationalSourceAsset.setUpdateTime(Instant.now());
+        nationalSourceAsset.setUpdatedBy(updatedBy);
+        em.merge(nationalSourceAsset);
 
-        assetDao.createAssetRemapMapping(createAssetRemapMapping(nonFartyg2Asset.getId(), fartyg2Asset.getId()));
-        remapAssetsInMovement(nonFartyg2Asset.getId().toString(), fartyg2Asset.getId().toString());
+        assetDao.createAssetRemapMapping(createAssetRemapMapping(aisAsset.getId(), nationalSourceAsset.getId()));
+        remapAssetsInMovement(aisAsset.getId().toString(), nationalSourceAsset.getId().toString());
 
-        updatedAssetEvent.fire(fartyg2Asset);
+        updatedAssetEvent.fire(nationalSourceAsset);
 
-        return fartyg2Asset;
+        return nationalSourceAsset;
     }
 
     private AssetRemapMapping createAssetRemapMapping(UUID oldAssetId, UUID newAssetId) {
@@ -740,14 +745,14 @@ public class AssetServiceBean {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void assetInformation(Asset assetFromAIS, String user) {
+    public void updateAssetInformation(Asset assetFromAIS, String user) {
         if (assetFromAIS == null) {
             return;
         }
 
         Asset assetFromDB = normalizeAssetOnMmsiIrcs(assetFromAIS.getMmsi(), assetFromAIS.getIrcs(), user);
 
-        // if we have data from fartyg2 then we should not update with data from AIS
+        // if we have data from national source then we should not update with data from AIS
         if (assetFromDB == null || CarrierSource.NATIONAL.toString().equals(assetFromDB.getSource())) {
             return;
         }

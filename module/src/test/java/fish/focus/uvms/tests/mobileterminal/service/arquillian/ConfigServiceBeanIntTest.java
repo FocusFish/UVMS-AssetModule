@@ -11,10 +11,7 @@ import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
 import fish.focus.uvms.tests.TransactionalTests;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
@@ -25,10 +22,9 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class ConfigServiceBeanIntTest extends TransactionalTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
     @EJB
     private ConfigServiceBeanMT configService;
+
     @EJB
     private MobileTerminalPluginDaoBean mobileTerminalPluginDao;
 
@@ -81,43 +77,26 @@ public class ConfigServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void testUpsertPluginsBadServiceName() {
-
-        try {
-            PluginService pluginService = createPluginService();
-            pluginService.setServiceName("");
-            configService.upsertPlugin(pluginService);
-            Assert.fail();  // error if we come here
-        } catch (Throwable t) {
-            Assert.assertTrue(true);
-        }
+        PluginService pluginService = createPluginService();
+        pluginService.setServiceName("");
+        assertThrows(Exception.class, () -> configService.upsertPlugin(pluginService));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void testUpsertPluginsBadLabelName() {
-        try {
-            PluginService pluginService = createPluginService();
-            pluginService.setLabelName("");
+        PluginService pluginService = createPluginService();
+        pluginService.setLabelName("");
 
-            configService.upsertPlugin(pluginService);
-            Assert.fail();
-        } catch (Throwable t) {
-            Assert.assertTrue(true);
-        }
+        assertThrows(Exception.class, () -> configService.upsertPlugin(pluginService));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void testUpsertPluginsBadSatelliteType() {
-        try {
-            PluginService pluginService = createPluginService();
-            pluginService.setSatelliteType("");
-            configService.upsertPlugin(pluginService);
-            // if we end up here we are wrong
-            Assert.fail();
-        } catch (Throwable t) {
-            Assert.assertTrue(true);
-        }
+        PluginService pluginService = createPluginService();
+        pluginService.setSatelliteType("");
+        assertThrows(Exception.class, () -> configService.upsertPlugin(pluginService));
     }
 
     @Test
@@ -133,7 +112,7 @@ public class ConfigServiceBeanIntTest extends TransactionalTests {
 
         List<TerminalSystemType> rs = configService.getTerminalSystems();
         assertNotNull(rs);
-        assertTrue(rs.size() > 0);
+        assertFalse(rs.isEmpty());
         assertTrue(terminalSystemsContains(rs, MobileTerminalTypeEnum.INMARSAT_C.toString()));
     }
 

@@ -18,8 +18,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -36,17 +34,20 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class EventStreamSenderTest extends BuildAssetServiceDeployment {
 
-    private final static Logger LOG = LoggerFactory.getLogger(EventStreamSenderTest.class);
     @Inject
     AssetDao assetDao;
+
     @Inject
     AssetRemapTask assetRemapTask;
+
     JMSHelper jmsHelper;
     MessageConsumer subscriber;
     Topic eventBus;
     Session session;
+
     @Resource(mappedName = "java:/ConnectionFactory")
     private ConnectionFactory connectionFactory;
+
     private Jsonb jsonb;
 
     @Before
@@ -61,7 +62,7 @@ public class EventStreamSenderTest extends BuildAssetServiceDeployment {
         fish.focus.wsdl.asset.types.Asset asset = AssetTestHelper.createBasicAsset();
         jmsHelper.upsertAsset(asset);
         registerSubscriber();
-        TextMessage message = (TextMessage) listenOnEventStream(5000l);
+        TextMessage message = (TextMessage) listenOnEventStream(5000L);
         assertNotNull(message);
 
         assertEquals("Updated Asset", message.getStringProperty(MessageConstants.EVENT_STREAM_EVENT));
@@ -72,7 +73,6 @@ public class EventStreamSenderTest extends BuildAssetServiceDeployment {
         assertEquals(asset.getIrcs(), assetEvent.getIrcs());
         assertEquals(asset.getCfr(), assetEvent.getCfr());
         assertEquals(asset.getName(), assetEvent.getName());
-
     }
 
     @Test
@@ -81,7 +81,7 @@ public class EventStreamSenderTest extends BuildAssetServiceDeployment {
         fish.focus.wsdl.asset.types.Asset asset1 = AssetTestHelper.createBasicAsset();
         jmsHelper.upsertAsset(asset1);
         registerSubscriber();
-        TextMessage message = (TextMessage) listenOnEventStream(5000l);
+        TextMessage message = (TextMessage) listenOnEventStream(5000L);
         assertNotNull(message);
         assertEquals("Updated Asset", message.getStringProperty(MessageConstants.EVENT_STREAM_EVENT));
         Asset oldAsset = jsonb.fromJson(message.getText(), Asset.class);
@@ -89,7 +89,7 @@ public class EventStreamSenderTest extends BuildAssetServiceDeployment {
         fish.focus.wsdl.asset.types.Asset asset2 = AssetTestHelper.createBasicAsset();
         jmsHelper.upsertAsset(asset2);
         registerSubscriber();
-        message = (TextMessage) listenOnEventStream(5000l);
+        message = (TextMessage) listenOnEventStream(5000L);
         assertNotNull(message);
         assertEquals("Updated Asset", message.getStringProperty(MessageConstants.EVENT_STREAM_EVENT));
         Asset newAsset = jsonb.fromJson(message.getText(), Asset.class);
@@ -99,22 +99,20 @@ public class EventStreamSenderTest extends BuildAssetServiceDeployment {
         assetRemapMapping.setNewAssetId(newAsset.getId());
         assetRemapMapping.setCreatedDate(Instant.now().minus(4, ChronoUnit.HOURS));
 
-        assetRemapMapping = assetDao.createAssetRemapMapping(assetRemapMapping);
+        assetDao.createAssetRemapMapping(assetRemapMapping);
 
         registerSubscriber();
         System.setProperty("MovementsRemapped", "0");
         assetRemapTask.remap();
         System.clearProperty("MovementsRemapped");
-        message = (TextMessage) listenOnEventStream(5000l);
+        message = (TextMessage) listenOnEventStream(5000L);
         assertNotNull(message);
         assertEquals("Merged Asset", message.getStringProperty(MessageConstants.EVENT_STREAM_EVENT));
 
         AssetMergeInfo mergeInfo = jsonb.fromJson(message.getText(), AssetMergeInfo.class);
         assertEquals(oldAsset.getId().toString(), mergeInfo.getOldAssetId());
         assertEquals(newAsset.getId().toString(), mergeInfo.getNewAssetId());
-
     }
-
 
     public void registerSubscriber() throws Exception {
         Connection connection = connectionFactory.createConnection();
@@ -124,14 +122,11 @@ public class EventStreamSenderTest extends BuildAssetServiceDeployment {
         subscriber = session.createConsumer(eventBus, null, true);
     }
 
-
     public Message listenOnEventStream(Long timeoutInMillis) throws Exception {
-
         try {
             return subscriber.receive(timeoutInMillis);
         } finally {
             subscriber.close();
         }
     }
-
 }

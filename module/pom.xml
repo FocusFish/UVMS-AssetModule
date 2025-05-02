@@ -9,7 +9,7 @@
     <parent>
         <groupId>fish.focus.uvms.asset</groupId>
         <artifactId>asset</artifactId>
-        <version>6.8.36</version>
+        <version>6.8.37</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -169,7 +169,7 @@
                     <plugin>
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-maven-plugin</artifactId>
-                        <version>5.1.1.Final</version>
+                        <version>5.1.3.Final</version>
                         <executions>
                             <execution>
                                 <id>undeploy</id>

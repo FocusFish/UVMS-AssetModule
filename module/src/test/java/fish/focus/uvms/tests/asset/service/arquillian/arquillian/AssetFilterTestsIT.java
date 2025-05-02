@@ -3,19 +3,15 @@ package fish.focus.uvms.tests.asset.service.arquillian.arquillian;
 import fish.focus.uvms.asset.domain.dao.AssetFilterDao;
 import fish.focus.uvms.asset.domain.entity.AssetFilter;
 import fish.focus.uvms.asset.domain.entity.AssetFilterQuery;
-import fish.focus.uvms.asset.domain.entity.AssetFilterValue;
 import fish.focus.uvms.tests.TransactionalTests;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import java.time.Clock;
 import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -162,8 +158,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
         UUID uuid = assetFilter.getId();
 
         assetFilter.setOwner("NEW OWNER");
-        // List<AssetFilterValue> newLines = createAssetFilterValue( assetFilter,  assetFilter.getUpdateTime(), assetFilter.getOwner(), 17);
-        List<AssetFilterQuery> filterQueryss = createAssetFilterQuery(assetFilter, 17);
+        createAssetFilterQuery(assetFilter, 17);
 
         assetFilterDao.updateAssetFilter(assetFilter);
         em.flush();
@@ -173,10 +168,8 @@ public class AssetFilterTestsIT extends TransactionalTests {
     }
 
     private AssetFilter createAndStoreAssetFilterEntity(String user) {
-
         AssetFilter assetFilterEntity = createAssetFilterEntity(user);
-        AssetFilter createAssetFilterEntity = assetFilterDao.createAssetFilter(assetFilterEntity);
-        return createAssetFilterEntity;
+        return assetFilterDao.createAssetFilter(assetFilterEntity);
     }
 
     private AssetFilter createAssetFilterEntity(String user) {

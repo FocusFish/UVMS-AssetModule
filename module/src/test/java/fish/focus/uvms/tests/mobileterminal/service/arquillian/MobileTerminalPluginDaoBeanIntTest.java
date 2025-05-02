@@ -5,21 +5,20 @@ import fish.focus.uvms.mobileterminal.entity.MobileTerminalPlugin;
 import fish.focus.uvms.tests.TransactionalTests;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.validation.ConstraintViolationException;
 import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.*;
 
 /**
@@ -28,8 +27,6 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class MobileTerminalPluginDaoBeanIntTest extends TransactionalTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
     @EJB
     private MobileTerminalPluginDaoBean mobileTerminalPluginDao;
 
@@ -66,24 +63,21 @@ public class MobileTerminalPluginDaoBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void testCreateMobileTerminalPlugin_persistNullEntityFailsWithTerminalDaoException() {
-        try {
-            mobileTerminalPluginDao.createMobileTerminalPlugin(null);
-            Assert.fail(); // it MUST fail so coming here is ERROR
-        } catch (EJBTransactionRolledbackException e) {
-            Assert.assertTrue(true);
-        }
+        assertThrows(EJBTransactionRolledbackException.class, () -> mobileTerminalPluginDao.createMobileTerminalPlugin(null));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void testCreateMobileTerminalPlugin_nameConstraintViolation() {
-        thrown.expect(ConstraintViolationException.class);
-
         MobileTerminalPlugin mobileTerminalPlugin = createMobileTerminalPluginHelper();
         char[] name = new char[41];
         Arrays.fill(name, 'x');
         mobileTerminalPlugin.setName(new String(name));
 
+        assertThrows(ConstraintViolationException.class, () -> createMobileTerminalPluginAndFlush(mobileTerminalPlugin));
+    }
+
+    private void createMobileTerminalPluginAndFlush(MobileTerminalPlugin mobileTerminalPlugin) {
         mobileTerminalPluginDao.createMobileTerminalPlugin(mobileTerminalPlugin);
         em.flush();
     }
@@ -91,57 +85,45 @@ public class MobileTerminalPluginDaoBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void testCreateMobileTerminalPlugin_descriptionConstraintViolation() {
-        thrown.expect(ConstraintViolationException.class);
-
         MobileTerminalPlugin mobileTerminalPlugin = createMobileTerminalPluginHelper();
         char[] description = new char[81];
         Arrays.fill(description, 'x');
         mobileTerminalPlugin.setDescription(new String(description));
 
-        mobileTerminalPluginDao.createMobileTerminalPlugin(mobileTerminalPlugin);
-        em.flush();
+        assertThrows(ConstraintViolationException.class, () -> createMobileTerminalPluginAndFlush(mobileTerminalPlugin));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void testCreateMobileTerminalPlugin_serviceNameConstraintViolation() {
-        thrown.expect(ConstraintViolationException.class);
-
         MobileTerminalPlugin mobileTerminalPlugin = createMobileTerminalPluginHelper();
         char[] serviceName = new char[501];
         Arrays.fill(serviceName, 'x');
         mobileTerminalPlugin.setPluginServiceName(new String(serviceName));
 
-        mobileTerminalPluginDao.createMobileTerminalPlugin(mobileTerminalPlugin);
-        em.flush();
+        assertThrows(ConstraintViolationException.class, () -> createMobileTerminalPluginAndFlush(mobileTerminalPlugin));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void testCreateMobileTerminalPlugin_satelliteTypeConstraintViolation() {
-        thrown.expect(ConstraintViolationException.class);
-
         MobileTerminalPlugin mobileTerminalPlugin = createMobileTerminalPluginHelper();
         char[] satelliteType = new char[51];
         Arrays.fill(satelliteType, 'x');
         mobileTerminalPlugin.setPluginSatelliteType(new String(satelliteType));
 
-        mobileTerminalPluginDao.createMobileTerminalPlugin(mobileTerminalPlugin);
-        em.flush();
+        assertThrows(ConstraintViolationException.class, () -> createMobileTerminalPluginAndFlush(mobileTerminalPlugin));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void testCreateMobileTerminalPlugin_updateUserConstraintViolation() {
-        thrown.expect(ConstraintViolationException.class);
-
         MobileTerminalPlugin mobileTerminalPlugin = createMobileTerminalPluginHelper();
         char[] updatedBy = new char[61];
         Arrays.fill(updatedBy, 'x');
         mobileTerminalPlugin.setUpdatedBy(new String(updatedBy));
 
-        mobileTerminalPluginDao.createMobileTerminalPlugin(mobileTerminalPlugin);
-        em.flush();
+        assertThrows(ConstraintViolationException.class, () -> createMobileTerminalPluginAndFlush(mobileTerminalPlugin));
     }
 
     @Test
@@ -161,12 +143,8 @@ public class MobileTerminalPluginDaoBeanIntTest extends TransactionalTests {
     @Test()
     @OperateOnDeployment("normal")
     public void testGetPluginByServiceName_wrongServiceNameThrowsNoEntityFoundException() {
-        try {
-            mobileTerminalPluginDao.getPluginByServiceName("thisServiceNameDoesNotExist");
-            Assert.fail();
-        } catch (Throwable t) {
-            Assert.assertTrue(true);
-        }
+        MobileTerminalPlugin nonExistingPlugin = mobileTerminalPluginDao.getPluginByServiceName("thisServiceNameDoesNotExist");
+        assertThat(nonExistingPlugin, is(nullValue()));
     }
 
     @Test
@@ -191,22 +169,16 @@ public class MobileTerminalPluginDaoBeanIntTest extends TransactionalTests {
         MobileTerminalPlugin mobileTerminalPlugin = createMobileTerminalPluginHelper();
 
         MobileTerminalPlugin obj = mobileTerminalPluginDao.updateMobileTerminalPlugin(mobileTerminalPlugin);
-        Assert.assertNotNull(obj);
+        assertNotNull(obj);
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void testUpdatePlugin_persistNullEntityFailsWithTerminalDaoException() {
-        try {
-            mobileTerminalPluginDao.updateMobileTerminalPlugin(null);
-            Assert.fail();
-        } catch (EJBTransactionRolledbackException e) {
-            Assert.assertTrue(true);
-        }
+        assertThrows(EJBTransactionRolledbackException.class, () -> mobileTerminalPluginDao.updateMobileTerminalPlugin(null));
     }
 
     private MobileTerminalPlugin createMobileTerminalPluginHelper() {
-
         MobileTerminalPlugin mobileTerminalPlugin = new MobileTerminalPlugin();
         String testName = UUID.randomUUID().toString();
 

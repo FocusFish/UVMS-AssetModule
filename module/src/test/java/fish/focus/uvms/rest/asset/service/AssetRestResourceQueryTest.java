@@ -32,7 +32,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,6 +39,7 @@ import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
@@ -49,7 +49,6 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
     @Test
     @OperateOnDeployment("normal")
     public void newAssetListQueryTest() {
-
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = sendAssetToCreation(asset);
 
@@ -82,7 +81,6 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
     @Test
     @OperateOnDeployment("normal")
     public void assetListQueryWithMappedSearchFieldsTest() {
-
         String jsonTest = "{\"fields\":[{\"searchField\":\"flagStateCode\",\"searchValue\":\"SWE\"},{\"fields\":[{\"searchField\":\"name\",\"searchValue\":\"*\"},{\"searchField\":\"externalMarking\",\"searchValue\":\"*\"},{\"searchField\":\"CFR\",\"searchValue\":\"*\"},{\"searchField\":\"ircs\",\"searchValue\":\"*\"}],\"logicalAnd\":false}],\"logicalAnd\":true}";
 
         String listResponse = getWebTargetExternal()
@@ -193,7 +191,6 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
     @RunAsClient
     @OperateOnDeployment("normal")
     public void getAssetListQueryTestEmptyResult() {
-
         SearchBranch trunk = new SearchBranch(true);
         SearchLeaf leaf = new SearchLeaf(SearchFields.CFR, "APA");
         trunk.getFields().add(leaf);
@@ -212,8 +209,7 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
     @Test
     @RunAsClient
     @OperateOnDeployment("normal")
-    public void testCaseSensitiveiness() {
-
+    public void testCaseSensitiveness() {
         String cfrValue = UUID.randomUUID().toString().substring(0, 11).toUpperCase();
         Asset asset = AssetHelper.createBasicAsset();
         asset.setCfr(cfrValue);
@@ -243,8 +239,8 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
 
         assertNotNull(listResponse1);
         assertNotNull(listResponse2);
-        assertTrue(listResponse1.getAssetList().size() > 0);
-        assertTrue(listResponse2.getAssetList().size() > 0);
+        assertThat(listResponse1.getAssetList(), is(not(empty())));
+        assertThat(listResponse2.getAssetList(), is(not(empty())));
 
         Asset asset1 = listResponse1.getAssetList().get(0);
         Asset asset2 = listResponse2.getAssetList().get(0);
@@ -255,8 +251,7 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
     @Test
     @RunAsClient
     @OperateOnDeployment("normal")
-    public void testCaseSensitiveinessTwoEntities() {
-
+    public void testCaseSensitivenessTwoEntities() {
         String cfrValue = UUID.randomUUID().toString().substring(0, 11).toUpperCase();
 
         String cfrValue2 = UUID.randomUUID().toString().substring(0, 11).toUpperCase();
@@ -299,14 +294,14 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
         assertNotNull(listResponse2);
         assertEquals(2, listResponse2.getAssetList().size());
 
-        Asset fetched_asset1 = listResponse1.getAssetList().get(0);
-        Asset fetched_asset2 = listResponse2.getAssetList().get(0);
-        String cfrToCompaire = fetched_asset1.getId().equals(fetched_asset2.getId()) ?
+        Asset fetchedAsset1 = listResponse1.getAssetList().get(0);
+        Asset fetchedAsset2 = listResponse2.getAssetList().get(0);
+        String cfrToCompare = fetchedAsset1.getId().equals(fetchedAsset2.getId()) ?
                 listResponse2.getAssetList().get(0).getCfr() :
                 listResponse2.getAssetList().get(1).getCfr();
 
-        assertEquals(fetched_asset1.getCfr(), cfrToCompaire);
-        assertEquals((fetched_asset2.getCfr().equals(fetched_asset1.getCfr()) ?
+        assertEquals(fetchedAsset1.getCfr(), cfrToCompare);
+        assertEquals((fetchedAsset2.getCfr().equals(fetchedAsset1.getCfr()) ?
                         listResponse2.getAssetList().get(1).getCfr() :
                         listResponse2.getAssetList().get(0).getCfr())
                 , cfrValue2);
@@ -316,7 +311,6 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
     @RunAsClient
     @OperateOnDeployment("normal")
     public void testCaseIncompleteCFR() {
-
         String cfrValue = UUID.randomUUID().toString().substring(0, 11).toUpperCase();
         String cfrValue2 = UUID.randomUUID().toString().substring(0, 11).toUpperCase();
 
@@ -354,13 +348,14 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
 
         assertNotNull(listResponse1);
         assertNotNull(listResponse2);
-        assertTrue(listResponse1.getAssetList().size() >= 1);
+        assertThat(listResponse1.getAssetList(), is(not(empty())));
         assertTrue(listResponse2.getAssetList().size() >= 2);
 
         boolean found = false;
         for (Asset asset : listResponse2.getAssetList()) {
             if (asset.getCfr().equals(cfrValue)) {
                 found = true;
+                break;
             }
         }
 
@@ -370,6 +365,7 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
         for (Asset asset : listResponse2.getAssetList()) {
             if (asset.getCfr().equals(cfrValue2)) {
                 found = true;
+                break;
             }
         }
         assertTrue(found);
@@ -378,7 +374,7 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
     @Test
     @RunAsClient
     @OperateOnDeployment("normal")
-    public void getAssetListEmptyCriteriasShouldReturnAllAssets() {
+    public void getAssetListEmptyCriteriaShouldReturnAllAssets() {
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = sendAssetToCreation(asset);
 
@@ -400,13 +396,12 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
     @Test
     @RunAsClient
     @OperateOnDeployment("normal")
-    public void getAssetListEmptyCriteriasShouldReturnAllAssetsOR() {
-
+    public void getAssetListEmptyCriteriaShouldReturnAllAssetsOR() {
         // create an asset
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = sendAssetToCreation(asset);
 
-        // aempty query
+        // empty query
         SearchBranch trunk = new SearchBranch(false);
 
         // ask for everything since query is empty
@@ -426,7 +421,7 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
     @Test
     @RunAsClient
     @OperateOnDeployment("normal")
-    public void getAssetListEmptyCriteriasShouldNotReturnInactivatedAssets() {
+    public void getAssetListEmptyCriteriaShouldNotReturnInactivatedAssets() {
         Asset asset = AssetHelper.createBasicAsset();
         // create an Asset
         Asset createdAsset = sendAssetToCreation(asset);
@@ -648,7 +643,7 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
 
         String updatedName2 = createdAsset.getName() + "UPDATE2";
         updatedAsset.setName(updatedName2);
-        Asset updatedAsset2 = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("asset")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
@@ -719,11 +714,10 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .post(Entity.json(trunk), AssetListResponse.class);
 
-        List<Asset> assetList2 = listResponse.getAssetList();
-
-        assertTrue(listResponse.getAssetList().stream()
+        List<Asset> assetList = listResponse.getAssetList();
+        assertTrue(assetList.stream()
                 .anyMatch(fetchedAsset -> fetchedAsset.getId().equals(createdAsset.getId())));
-        assertTrue(listResponse.getAssetList().stream()
+        assertTrue(assetList.stream()
                 .anyMatch(fetchedAsset -> fetchedAsset.getId().equals(createdAsset2.getId())));
     }
 
@@ -731,7 +725,6 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
     @RunAsClient
     @OperateOnDeployment("normal")
     public void getAssetsAtDateAndIrcsAndFs() {
-
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = sendAssetToCreation(asset);
 
@@ -742,7 +735,7 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
 
         String newIrcs = "F" + AssetHelper.getRandomIntegers(7);
         createdAsset.setIrcs(newIrcs);
-        Asset updatedAsset = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("asset")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
@@ -778,7 +771,7 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
         Asset asset = AssetHelper.createBasicAsset();
         sendAssetToCreation(asset);
 
-        Instant pastDate = ZonedDateTime.now().minus(10, ChronoUnit.YEARS).toInstant();
+        Instant pastDate = ZonedDateTime.now().minusYears(10).toInstant();
 
         SearchBranch trunk = new SearchBranch(true);
         SearchLeaf leaf = new SearchLeaf(SearchFields.IRCS, asset.getIrcs());
@@ -859,7 +852,7 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListByOneFlagstateTest() {
+    public void getAssetListByOneFlagStateTest() {
         Asset assetSwe = AssetHelper.createBasicAsset();
         assetSwe.setFlagStateCode("SWE");
         Asset createdAssetSwe = sendAssetToCreation(assetSwe);
@@ -888,7 +881,7 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListByTwoFlagstateTest() {
+    public void getAssetListByTwoFlagStateTest() {
         Asset assetSwe = AssetHelper.createBasicAsset();
         assetSwe.setFlagStateCode("SWE");
         Asset createdAssetSwe = sendAssetToCreation(assetSwe);
@@ -919,7 +912,7 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListByTwoFlagstateAndAIRCSTest() {
+    public void getAssetListByTwoFlagStateAndAIRCSTest() {
         Asset assetSwe = AssetHelper.createBasicAsset();
         assetSwe.setFlagStateCode("SWE");
         Asset createdAssetSwe = sendAssetToCreation(assetSwe);
@@ -956,7 +949,7 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListByTwoFlagstateAndTwoIRCSTest() {
+    public void getAssetListByTwoFlagStateAndTwoIRCSTest() {
         Asset assetSwe = AssetHelper.createBasicAsset();
         assetSwe.setFlagStateCode("SWE");
         Asset createdAssetSwe = sendAssetToCreation(assetSwe);
@@ -1052,7 +1045,6 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
         Asset createdAsset = sendAssetToCreation(asset);
         MobileTerminal mt = MobileTerminalTestHelper.createRestMobileTerminal(getWebTargetExternal(), createdAsset, getTokenExternal());
         assertEquals(createdAsset.getId(), UUID.fromString(mt.getAssetUUID()));
-        UUID mtHistoryId1 = mt.getHistoryId();
         mt.setAsset(createdAsset);  //this bc of how the serialization works ie it will only send the id of the connected asset in the asset id field
         mt.setComment("Updated comment");
         mt = MobileTerminalTestHelper.restMobileTerminalUpdate(getWebTargetExternal(), mt, getTokenExternal());
@@ -1078,19 +1070,18 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetAfterAttatchingUpdatingAndThenUnattachingAMTTest() {
+    public void getAssetAfterAttachingUpdatingAndThenDetachingAMTTest() {
         String name = UUID.randomUUID().toString();
         Asset asset = AssetHelper.createBasicAsset();
         asset.setName(name);
         Asset createdAsset = sendAssetToCreation(asset);
         MobileTerminal mt = MobileTerminalTestHelper.createRestMobileTerminal(getWebTargetExternal(), createdAsset, getTokenExternal());
         assertEquals(createdAsset.getId(), UUID.fromString(mt.getAssetUUID()));
-        UUID mtHistoryId1 = mt.getHistoryId();
         mt.setComment("Updated comment");
         mt.setAsset(createdAsset);
         mt = MobileTerminalTestHelper.restMobileTerminalUpdate(getWebTargetExternal(), mt, getTokenExternal());
 
-        MobileTerminal responseUnAssign = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("/mobileterminal")
                 .path(mt.getId().toString())
                 .path("unassign")
@@ -1253,22 +1244,19 @@ public class AssetRestResourceQueryTest extends AbstractAssetRestTest {
     }
 
     private Asset sendAssetToCreation(Asset asset) {
-        Asset createdAsset = getWebTargetExternal()
+        return getWebTargetExternal()
                 .path("asset")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .post(Entity.json(asset), Asset.class);
-        return createdAsset;
     }
 
-    private MobileTerminal createMobileTerminal(MobileTerminal mt) {
+    private void createMobileTerminal(MobileTerminal mt) {
         MobileTerminal created = getWebTargetExternal()
                 .path("mobileterminal")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .post(Entity.json(mt), MobileTerminal.class);
         assertNotNull(created);
-
-        return created;
     }
 }

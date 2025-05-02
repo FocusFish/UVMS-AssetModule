@@ -12,13 +12,11 @@ import fish.focus.uvms.mobileterminal.model.constants.TerminalSourceEnum;
 import fish.focus.uvms.tests.TransactionalTests;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.validation.ConstraintViolationException;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -34,23 +32,23 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class PollProgramDaoBeanIT extends TransactionalTests {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-    private Calendar cal = Calendar.getInstance();
-    private int startYear = 1999;
-    private int latestRunYear = 2017;
-    private Random rnd = new Random();
+    private final Calendar cal = Calendar.getInstance();
+    private final int startYear = 1999;
+    private final int latestRunYear = 2017;
+    private final Random rnd = new Random();
+
     @EJB
     private PollProgramDaoBean pollProgramDao;
+
     @EJB
     private TerminalDaoBean terminalDaoBean;
+
     @EJB
     private MobileTerminalPluginDaoBean testDaoBean;
 
     @Test
     @OperateOnDeployment("normal")
     public void createPollProgram() {
-
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();
         Instant stopDate = getStopDate();
@@ -82,8 +80,6 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void createPollProgram_updateUserConstraintViolation() {
-        thrown.expect(ConstraintViolationException.class);
-
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();
         Instant stopDate = getStopDate();
@@ -94,6 +90,10 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
         Arrays.fill(updatedBy, 'x');
         pollProgram.setUpdatedBy(new String(updatedBy));
 
+        assertThrows(ConstraintViolationException.class, () -> createProgramPollAndFlush(pollProgram));
+    }
+
+    private void createProgramPollAndFlush(ProgramPoll pollProgram) {
         pollProgramDao.createProgramPoll(pollProgram);
         em.flush();
     }
@@ -101,18 +101,12 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void createPollProgram_withNullWillFail() {
-        try {
-            pollProgramDao.createProgramPoll(null);
-            Assert.fail();
-        } catch (RuntimeException e) {
-            Assert.assertTrue(true);
-        }
+        assertThrows(EJBTransactionRolledbackException.class, () -> pollProgramDao.createProgramPoll(null));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void updatePollProgram() {
-
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();
         Instant stopDate = getStopDate();
@@ -120,8 +114,7 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
         String mobileTerminalSerialNumber = createSerialNumber();
         ProgramPoll pollProgram = createPollProgramHelper(mobileTerminalSerialNumber, startDate, stopDate, latestRun);
 
-        pollProgramDao.createProgramPoll(pollProgram);
-        em.flush();
+        createProgramPollAndFlush(pollProgram);
 
         pollProgram.setUpdatedBy("update");
         pollProgramDao.updateProgramPoll(pollProgram);
@@ -136,7 +129,6 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void updatePollProgram_WithNonePersistedEntityWillFail() {
-
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();
         Instant stopDate = getStopDate();
@@ -151,7 +143,6 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getProgramPollsAlive() {
-
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();
         Instant stopDate = getStopDate();
@@ -159,8 +150,7 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
         String mobileTerminalSerialNumber = createSerialNumber();
         ProgramPoll pollProgram = createPollProgramHelper(mobileTerminalSerialNumber, startDate, stopDate, latestRun);
 
-        pollProgramDao.createProgramPoll(pollProgram);
-        em.flush();
+        createProgramPollAndFlush(pollProgram);
         List<ProgramPoll> pollsAlive = pollProgramDao.getProgramPollsAlive();
 
         boolean found = pollsAlive.stream().anyMatch(pp -> pollProgram.getId().equals(pp.getId()));
@@ -171,7 +161,6 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getProgramPollsAlive_ShouldFailWithCurrentDateBiggerThenStopDate() {
-
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();
 
@@ -183,8 +172,7 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
         String mobileTerminalSerialNumber = createSerialNumber();
         ProgramPoll pollProgram = createPollProgramHelper(mobileTerminalSerialNumber, startDate, stopDate, latestRun);
 
-        pollProgramDao.createProgramPoll(pollProgram);
-        em.flush();
+        createProgramPollAndFlush(pollProgram);
         List<ProgramPoll> pollsAlive = pollProgramDao.getProgramPollsAlive();
 
         boolean found = pollsAlive.stream().anyMatch(pp -> pollProgram.getId().equals(pp.getId()));
@@ -195,7 +183,6 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getProgramPollsAlive_ShouldFailWithPollStateArchived() {
-
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();
         Instant stopDate = getStopDate();
@@ -204,8 +191,7 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
         ProgramPoll pollProgram = createPollProgramHelper(mobileTerminalSerialNumber, startDate, stopDate, latestRun);
         pollProgram.setPollState(ProgramPollStatus.ARCHIVED);
 
-        pollProgramDao.createProgramPoll(pollProgram);
-        em.flush();
+        createProgramPollAndFlush(pollProgram);
         List<ProgramPoll> pollsAlive = pollProgramDao.getProgramPollsAlive();
 
         boolean found = pollsAlive.stream().anyMatch(pp -> pollProgram.getId().equals(pp.getId()));
@@ -216,7 +202,6 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getPollProgramRunningAndStarted() {
-
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();
         Instant stopDate = getStopDate();
@@ -224,8 +209,7 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
         String mobileTerminalSerialNumber = createSerialNumber();
         ProgramPoll pollProgram = createPollProgramHelper(mobileTerminalSerialNumber, startDate, stopDate, latestRun);
 
-        pollProgramDao.createProgramPoll(pollProgram);
-        em.flush();
+        createProgramPollAndFlush(pollProgram);
 
         List<ProgramPoll> pollPrograms = pollProgramDao.getProgramPollRunningAndStarted();
         boolean found = pollPrograms.stream().anyMatch(pp -> pollProgram.getId().equals(pp.getId()));
@@ -236,7 +220,6 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getPollProgramRunningAndStarted_ShouldFailWhenStartDateBiggerThenNow() {
-
         cal.setTime(new Date(System.currentTimeMillis()));
 
         cal.set(Calendar.DAY_OF_MONTH, 1);
@@ -249,8 +232,7 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
         String mobileTerminalSerialNumber = createSerialNumber();
         ProgramPoll pollProgram = createPollProgramHelper(mobileTerminalSerialNumber, startDate, stopDate, latestRun);
 
-        pollProgramDao.createProgramPoll(pollProgram);
-        em.flush();
+        createProgramPollAndFlush(pollProgram);
 
         List<ProgramPoll> pollPrograms = pollProgramDao.getProgramPollRunningAndStarted();
 
@@ -263,7 +245,6 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getPollProgramRunningAndStarted_ShouldFailWhenPollStateIsNotStarted() {
-
         cal.setTime(new Date(System.currentTimeMillis()));
 
         Instant startDate = getStartDate();
@@ -274,8 +255,7 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
         ProgramPoll pollProgram = createPollProgramHelper(mobileTerminalSerialNumber, startDate, stopDate, latestRun);
         pollProgram.setPollState(ProgramPollStatus.STOPPED);
 
-        pollProgramDao.createProgramPoll(pollProgram);
-        em.flush();
+        createProgramPollAndFlush(pollProgram);
 
         List<ProgramPoll> pollPrograms = pollProgramDao.getProgramPollRunningAndStarted();
 
@@ -288,7 +268,6 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getPollProgramByGuid_ShouldFailWithInvalidGuid() {
-
         Instant startDate = getStartDate();
         Instant latestRun = getLatestRunDate();
         Instant stopDate = getStopDate();
@@ -304,7 +283,6 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
 
     private ProgramPoll createPollProgramHelper(String mobileTerminalSerialNo, Instant startDate,
                                                 Instant stopDate, Instant latestRun) {
-
         ProgramPoll pp = new ProgramPoll();
         MobileTerminal mobileTerminal = createMobileTerminalHelper(mobileTerminalSerialNo);
 
@@ -325,7 +303,6 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
     }
 
     private MobileTerminal createMobileTerminalHelper(String serialNo) {
-
         MobileTerminal mt = new MobileTerminal();
         MobileTerminalPlugin mtp;
         List<MobileTerminalPlugin> plugs = testDaoBean.getPluginList();
@@ -339,9 +316,7 @@ public class PollProgramDaoBeanIT extends TransactionalTests {
         mt.setArchived(false);
         mt.setActive(true);
 
-        MobileTerminal mobileTerminal = terminalDaoBean.createMobileTerminal(mt);
-        if (mobileTerminal != null) return mobileTerminal;
-        else return null;
+        return terminalDaoBean.createMobileTerminal(mt);
     }
 
     // we want to be able to tamper with the dates for proper test coverage

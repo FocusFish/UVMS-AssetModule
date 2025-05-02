@@ -10,14 +10,14 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.asset.message;
 
-import fish.focus.uvms.commons.message.api.MessageConstants;
-import fish.focus.wsdl.asset.module.GetAssetModuleResponse;
-import fish.focus.wsdl.asset.types.Asset;
-import fish.focus.wsdl.asset.types.AssetIdType;
 import fish.focus.uvms.asset.dto.AssetBO;
 import fish.focus.uvms.asset.model.mapper.AssetModuleRequestMapper;
 import fish.focus.uvms.asset.model.mapper.JAXBMarshaller;
 import fish.focus.uvms.asset.util.JsonBConfiguratorAsset;
+import fish.focus.uvms.commons.message.api.MessageConstants;
+import fish.focus.wsdl.asset.module.GetAssetModuleResponse;
+import fish.focus.wsdl.asset.types.Asset;
+import fish.focus.wsdl.asset.types.AssetIdType;
 import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
 import org.apache.activemq.artemis.api.jms.JMSFactoryType;
@@ -37,24 +37,24 @@ public class JMSHelper {
     private static final String ASSET_QUEUE = "UVMSAssetEvent";
     private static final String RESPONSE_QUEUE = "IntegrationTestsResponseQueue";
 
-    public Asset upsertAsset(Asset asset) throws Exception {
+    private static final Jsonb JSONB = JsonbBuilder.create();
+
+    public void upsertAsset(Asset asset) throws Exception {
         String request = AssetModuleRequestMapper.createUpsertAssetModuleRequest(asset, "Test user");
         sendAssetMessage(request);
-        return asset;
     }
 
     public Asset getAssetById(String value, AssetIdType type) throws Exception {
         String msg = AssetModuleRequestMapper.createGetAssetModuleRequest(value, type);
-        String correlationId = sendAssetMessage(msg);
-        Message response = listenForResponse(correlationId);
+        sendAssetMessage(msg);
+        Message response = listenForResponse();
         GetAssetModuleResponse assetModuleResponse = JAXBMarshaller.unmarshallTextMessage((TextMessage) response, GetAssetModuleResponse.class);
         return assetModuleResponse.getAsset();
     }
 
     public String sendAssetMessage(String text) throws Exception {
-        Connection connection = getConnectionFactory().createConnection("test", "test");
-        connection.setClientID(UUID.randomUUID().toString());
-        try {
+        try (Connection connection = getConnectionFactory().createConnection("test", "test")) {
+            connection.setClientID(UUID.randomUUID().toString());
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue responseQueue = session.createQueue(RESPONSE_QUEUE);
             Queue assetQueue = session.createQueue(ASSET_QUEUE);
@@ -66,19 +66,16 @@ public class JMSHelper {
             session.createProducer(assetQueue).send(message);
 
             return message.getJMSMessageID();
-        } finally {
-            connection.close();
         }
     }
 
-    public String sendAssetMessageWithFunction(String text, String function) throws Exception {
-        return sendAssetMessage(text, MessageConstants.JMS_FUNCTION_PROPERTY, function);
+    public void sendAssetMessageWithFunction(String text, String function) throws Exception {
+        sendAssetMessage(text, MessageConstants.JMS_FUNCTION_PROPERTY, function);
     }
 
-    public String sendAssetMessage(String text, String jmsStringProperty, String jmsStringPropertyValue) throws Exception {
-        Connection connection = getConnectionFactory().createConnection("test", "test");
-        connection.setClientID(UUID.randomUUID().toString());
-        try {
+    public void sendAssetMessage(String text, String jmsStringProperty, String jmsStringPropertyValue) throws Exception {
+        try (Connection connection = getConnectionFactory().createConnection("test", "test")) {
+            connection.setClientID(UUID.randomUUID().toString());
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue responseQueue = session.createQueue(RESPONSE_QUEUE);
             Queue assetQueue = session.createQueue(ASSET_QUEUE);
@@ -89,24 +86,17 @@ public class JMSHelper {
             message.setText(text);
 
             session.createProducer(assetQueue).send(message);
-
-            return message.getJMSMessageID();
-        } finally {
-            connection.close();
         }
     }
 
-    public Message listenForResponse(String correlationId) throws Exception {
-        Connection connection = getConnectionFactory().createConnection("test", "test");
-        connection.setClientID(UUID.randomUUID().toString());
-        try {
+    public Message listenForResponse() throws Exception {
+        try (Connection connection = getConnectionFactory().createConnection("test", "test")) {
+            connection.setClientID(UUID.randomUUID().toString());
             connection.start();
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             Queue responseQueue = session.createQueue(RESPONSE_QUEUE);
 
             return session.createConsumer(responseQueue).receive(TIMEOUT);
-        } finally {
-            connection.close();
         }
     }
 
@@ -118,17 +108,12 @@ public class JMSHelper {
         return ActiveMQJMSClient.createConnectionFactoryWithoutHA(JMSFactoryType.CF, transportConfiguration);
     }
 
-    public void assetInfo(List<fish.focus.uvms.asset.domain.entity.Asset> asset) throws Exception {
-
-        //Jsonb jsonb = new JsonBConfigurator().getContext(null);
-        Jsonb jsonb = JsonbBuilder.create();
-
-        String json = jsonb.toJson(asset);
+    public void updateAssetInfo(List<fish.focus.uvms.asset.domain.entity.Asset> asset) throws Exception {
+        String json = JSONB.toJson(asset);
         sendAssetMessageWithFunction(json, "ASSET_INFORMATION");
     }
 
     public void upsertAssetUsingMethod(fish.focus.uvms.asset.domain.entity.Asset asset) throws Exception {
-
         AssetBO abo = new AssetBO();
         abo.setAsset(asset);
 
@@ -137,6 +122,4 @@ public class JMSHelper {
 
         sendAssetMessage(json, "METHOD", "UPSERT_ASSET");
     }
-
-
 }

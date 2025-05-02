@@ -28,13 +28,14 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 
 import static junit.framework.TestCase.assertNotNull;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
@@ -116,7 +117,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = restCreateAsset(asset);
 
-        List<String> idList = Arrays.asList(createdAsset.getId().toString());
+        List<String> idList = List.of(createdAsset.getId().toString());
         List<Asset> fetchedAssets = getWebTargetExternal()
                 .path("asset")
                 .path("assetList")
@@ -214,7 +215,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         Asset asset = AssetHelper.createBasicAsset();
         String vesselType = "VesselTypeTest";
         asset.setVesselType(vesselType);
-        Asset createdAsset = restCreateAsset(asset);
+        restCreateAsset(asset);
 
         List<String> vesselTypes = getWebTargetExternal()
                 .path("asset")
@@ -231,7 +232,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetWithAttachedMTTest() throws IOException {
+    public void getAssetWithAttachedMTTest() {
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = restCreateAsset(asset);
 
@@ -255,7 +256,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
 
         Asset fetchedAsset = jsonb.fromJson(fetchedAssetString, Asset.class);
         assertNotNull(fetchedAsset);
-        assertTrue(fetchedAsset.getMobileTerminalUUIDList().size() == 1);
+        assertEquals(1, fetchedAsset.getMobileTerminalUUIDList().size());
         assertEquals(createdMT.getId(), UUID.fromString(fetchedAsset.getMobileTerminalUUIDList().get(0)));
 
     }
@@ -263,7 +264,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetWithAttachedMTUpdateTheMTACoupleOfTimesTest() throws IOException {
+    public void getAssetWithAttachedMTUpdateTheMTACoupleOfTimesTest() {
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = restCreateAsset(asset);
 
@@ -277,7 +278,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
 
         createdMT.setAsset(createIdOnlyAsset(createdMT.getAssetUUID()));
         createdMT.setComment("Updated comment 1");
-        MobileTerminal updated = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("mobileterminal")
                 .queryParam("comment", "Updated comment 1")
                 .request(MediaType.APPLICATION_JSON)
@@ -285,7 +286,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .put(Entity.json(createdMT), MobileTerminal.class);
 
         createdMT.setComment("Updated comment 2");
-        updated = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("mobileterminal")
                 .queryParam("comment", "Updated comment 2")
                 .request(MediaType.APPLICATION_JSON)
@@ -293,7 +294,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .put(Entity.json(createdMT), MobileTerminal.class);
 
         createdMT.setComment("Updated comment 3");
-        updated = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("mobileterminal")
                 .queryParam("comment", "Updated comment 3")
                 .request(MediaType.APPLICATION_JSON)
@@ -312,14 +313,14 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
 
         Asset fetchedAsset = jsonb.fromJson(fetchedAssetString, Asset.class);
         assertNotNull(fetchedAsset);
-        assertTrue(fetchedAsset.getMobileTerminalUUIDList().size() == 1);
+        assertEquals(1, fetchedAsset.getMobileTerminalUUIDList().size());
         assertEquals(createdMT.getId(), UUID.fromString(fetchedAsset.getMobileTerminalUUIDList().get(0)));
     }
 
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetWithAttachedMTUpdateTheMTAndAssetACoupleOfTimesTest() throws IOException {
+    public void getAssetWithAttachedMTUpdateTheMTAndAssetACoupleOfTimesTest() {
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = restCreateAsset(asset);
 
@@ -333,7 +334,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
 
         createdMT.setAsset(createIdOnlyAsset(createdMT.getAssetUUID()));
         createdMT.setComment("Updated comment 1");
-        MobileTerminal updatedMT = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("mobileterminal")
                 .queryParam("comment", "Updated comment 1")
                 .request(MediaType.APPLICATION_JSON)
@@ -341,7 +342,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .put(Entity.json(createdMT), MobileTerminal.class);
 
         createdMT.setComment("Updated comment 2");
-        updatedMT = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("mobileterminal")
                 .queryParam("comment", "Updated comment 2")
                 .request(MediaType.APPLICATION_JSON)
@@ -363,7 +364,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         Asset updatedAsset = restUpdateAsset(fetchedAsset);
 
         createdMT.setComment("Updated comment 3");
-        updatedMT = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("mobileterminal")
                 .queryParam("comment", "Updated comment 3")
                 .request(MediaType.APPLICATION_JSON)
@@ -383,7 +384,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         fetchedAsset = jsonb.fromJson(fetchedAssetString, Asset.class);
 
         assertNotNull(fetchedAsset);
-        assertTrue(fetchedAsset.getMobileTerminalUUIDList().size() == 1);
+        assertEquals(1, fetchedAsset.getMobileTerminalUUIDList().size());
         assertEquals(createdMT.getId(), UUID.fromString(fetchedAsset.getMobileTerminalUUIDList().get(0)));
         assertEquals(updatedAsset.getOwnerName(), fetchedAsset.getOwnerName());
     }
@@ -476,7 +477,6 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         assertNotNull(response);
         // You really could argue that this should be a bad request but the server was returning 400 for everything,
         // if there is only one thing returned for every error it is better if it is a 500
-//        assertThat(response.getStatus(), is(Status.INTERNAL_SERVER_ERROR.getStatusCode()));
         Integer code = response.readEntity(AppError.class).code;
         assertThat(code, is(Status.INTERNAL_SERVER_ERROR.getStatusCode()));
         assertThat(response.getStatus(), is(Status.OK.getStatusCode()));
@@ -537,7 +537,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .get(Asset.class);
 
-        assertTrue(fetchedAsset.getMobileTerminalUUIDList().size() > 0);
+        assertThat(fetchedAsset.getMobileTerminalUUIDList(), is(not(empty())));
         fetchedAsset.setMobileTerminals(createListOfIdOnlyMTs(fetchedAsset.getMobileTerminalUUIDList()));
 
         Asset archivedAsset = getWebTargetExternal()
@@ -705,7 +705,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         MobileTerminal mobileTerminal1 = MobileTerminalTestHelper.createBasicMobileTerminal();
         mobileTerminal1.setAsset(createdAsset);
 
-        String response = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("mobileterminal")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
@@ -717,13 +717,13 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         mobileTerminal2.setAsset(createdAsset);
         mobileTerminal2.setActive(false);
 
-        String response2 = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("mobileterminal")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .post(Entity.json(mobileTerminal2), String.class);
 
-        Asset presentAsset = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("asset")
                 .path(createdAsset.getId().toString())
                 .request(MediaType.APPLICATION_JSON)
@@ -767,7 +767,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .get(Asset.class);
 
         assertNotNull(fetchedAsset);
-        assertTrue(fetchedAsset.getMobileTerminalUUIDList().size() > 0);
+        assertThat(fetchedAsset.getMobileTerminalUUIDList(), is(not(empty())));
     }
 
     @Test
@@ -862,7 +862,6 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
     @Test
     @OperateOnDeployment("normal")
     public void getAssetHistory_ThenVerifyItHoldsMobileTerminalHistory() {
-
         // Create Asset
         Asset asset = AssetHelper.createBasicAsset();
         String cfr = asset.getCfr();
@@ -899,7 +898,6 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .get(Asset.class);
 
-        //List<MobileTerminal> mtList = assetHistory1.getMobileTerminals();
         assertEquals(1, assetHistory1.getMobileTerminalUUIDList().size());
 
         // Update MobileTerminal
@@ -1106,8 +1104,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void createAssetAndContactInfoAndCompareHistoryItemsTest() throws InterruptedException {
-
+    public void createAssetAndContactInfoAndCompareHistoryItemsTest() {
         // CREATE AN ASSET
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = restCreateAsset(asset);
@@ -1122,8 +1119,6 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .post(Entity.json(contactInfo), ContactInfo.class);
-
-        Thread.sleep(3000);
 
         // UPDATE THE ASSET
         final String newAssetName = "NewAssetName";
@@ -1181,7 +1176,6 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
     @Test
     @OperateOnDeployment("normal")
     public void updateAssetsSeveralTimesAndCheckAssetChangeHistoryTest() {
-
         // CREATE AN ASSET
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = restCreateAsset(asset);
@@ -1196,8 +1190,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         String updateOwner = "new owner";
         updatedAsset.setName(updatedName2);
         updatedAsset.setOwnerName(updateOwner);
-        Asset updatedAsset2 = restUpdateAsset(updatedAsset);
-
+        restUpdateAsset(updatedAsset);
 
         // GET ASSET HISTORY
         Response response = getWebTargetExternal()
@@ -1226,14 +1219,12 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         assertTrue(assetChanges.get(1).getChanges().stream().anyMatch(item -> item.getNewValue().equals(updateOwner)));
         assertTrue(assetChanges.get(1).getChanges().stream().anyMatch(item -> item.getOldValue().equals(updatedName)));
         assertTrue(assetChanges.get(1).getChanges().stream().anyMatch(item -> item.getNewValue().equals(updatedName2)));
-
     }
 
 
     @Test
     @OperateOnDeployment("normal")
     public void updateAssetsSeveralTimesAndAddAnMTAndCheckAssetChangeHistoryTest() {
-
         // CREATE AN ASSET
         Asset asset = AssetHelper.createBasicAsset();
         Asset createdAsset = restCreateAsset(asset);
@@ -1254,7 +1245,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         assertNotNull(createdMT.getId());
 
         // Assign MobileTerminal
-        MobileTerminal assignedMT = getWebTargetExternal()
+        getWebTargetExternal()
                 .path("mobileterminal")
                 .path(createdMT.getId().toString())
                 .path("assign")
@@ -1267,8 +1258,7 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
 
         String updatedName2 = "NewerAssetName";
         updatedAsset.setName(updatedName2);
-        Asset updatedAsset2 = restUpdateAsset(updatedAsset);
-
+        restUpdateAsset(updatedAsset);
 
         // GET ASSET HISTORY
         Response response = getWebTargetExternal()
@@ -1291,34 +1281,22 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         assertEquals("user", assetChanges.get(2).getUpdatedBy());
         assertEquals(2, assetChanges.get(2).getChanges().size());
         assertTrue(assetChanges.get(2).getChanges().stream().anyMatch(item -> item.getNewValue().equals(updatedName2)));
-
     }
 
     private Asset restCreateAsset(Asset asset) {
-        Asset createdAsset = getWebTargetExternal()
+        return getWebTargetExternal()
                 .path("asset")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .post(Entity.json(asset), Asset.class);
-        return createdAsset;
-    }
-
-    private Asset restCreateAssetInternal(Asset asset) {
-        Asset createdAsset = getWebTargetInternal()
-                .path("asset")
-                .request(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, getTokenInternal())
-                .post(Entity.json(asset), Asset.class);
-        return createdAsset;
     }
 
     private Asset restUpdateAsset(Asset asset) {
-        Asset updatedAsset = getWebTargetExternal()
+        return getWebTargetExternal()
                 .path("asset")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, getTokenExternal())
                 .put(Entity.json(asset), Asset.class);
-        return updatedAsset;
     }
 
     private Asset createIdOnlyAsset(String id) {
@@ -1336,5 +1314,4 @@ public class AssetRestResourceTest extends AbstractAssetRestTest {
         }
         return mtList;
     }
-
 }

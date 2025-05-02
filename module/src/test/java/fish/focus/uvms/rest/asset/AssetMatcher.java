@@ -10,16 +10,16 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.rest.asset;
 
+import fish.focus.uvms.asset.domain.entity.Asset;
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeDiagnosingMatcher;
+
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeDiagnosingMatcher;
-import fish.focus.uvms.asset.domain.entity.Asset;
-
 public class AssetMatcher extends TypeSafeDiagnosingMatcher<Asset> {
 
-    private Asset asset;
+    private final Asset asset;
 
     public AssetMatcher(Asset asset) {
         this.asset = asset;
@@ -80,5 +80,4 @@ public class AssetMatcher extends TypeSafeDiagnosingMatcher<Asset> {
         }
         return equals;
     }
-
 }

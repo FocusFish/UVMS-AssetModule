@@ -10,8 +10,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.asset.message.event;
 
-import fish.focus.wsdl.asset.module.PingResponse;
-import fish.focus.wsdl.asset.types.AssetId;
 import fish.focus.uvms.asset.bean.AssetServiceBean;
 import fish.focus.uvms.asset.domain.constant.AssetIdentifier;
 import fish.focus.uvms.asset.domain.entity.Asset;
@@ -21,6 +19,8 @@ import fish.focus.uvms.asset.model.constants.FaultCode;
 import fish.focus.uvms.asset.model.exception.AssetException;
 import fish.focus.uvms.asset.model.mapper.AssetModuleResponseMapper;
 import fish.focus.uvms.asset.model.mapper.JAXBMarshaller;
+import fish.focus.wsdl.asset.module.PingResponse;
+import fish.focus.wsdl.asset.types.AssetId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,18 +34,21 @@ import javax.jms.TextMessage;
 public class AssetMessageEventBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(AssetMessageEventBean.class);
+
     @Inject
     @AssetMessageErrorEvent
     Event<AssetMessageEvent> assetErrorEvent;
+
     @Inject
     private AssetServiceBean assetService;
+
     @Inject
     private AssetProducer assetMessageProducer;
+
     @Inject
     private AssetModelMapper assetMapper;
 
     public void getAsset(TextMessage textMessage, AssetId assetId) {
-
         Asset asset;
         boolean messageSent = false;
 

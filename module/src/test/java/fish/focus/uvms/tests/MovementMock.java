@@ -14,7 +14,6 @@ public class MovementMock {
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Path("/remapMovementConnectInMovement")
     public Response remapMovementConnectInMovement(@QueryParam(value = "MovementConnectFrom") String movementConnectFrom, @QueryParam(value = "MovementConnectTo") String movementConnectTo) {
-
         String movementsRemapped = System.getProperty("MovementsRemapped", "5");
         return Response.ok(movementsRemapped).build();
     }
@@ -24,7 +23,6 @@ public class MovementMock {
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Path("/removeMovementConnect")
     public Response removeMovementConnect(@QueryParam(value = "MovementConnectId") String movementConnectId) {
-
         return Response.ok().build();
     }
 }

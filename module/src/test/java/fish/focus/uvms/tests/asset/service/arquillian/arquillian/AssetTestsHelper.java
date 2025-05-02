@@ -13,7 +13,7 @@ import java.util.Random;
 
 public class AssetTestsHelper {
 
-    private static Random rnd = new Random();
+    private static final Random rnd = new Random();
 
     public static Asset createBasicAsset() {
         Asset assetEntity = new Asset();
@@ -49,10 +49,8 @@ public class AssetTestsHelper {
     }
 
     public static Asset createBiggerAsset() {
-
         Asset assetEntity = new Asset();
         Instant now = Instant.now();
-
 
         assetEntity.setName("Test asset");
         assetEntity.setActive(true);
@@ -131,7 +129,7 @@ public class AssetTestsHelper {
         ContactInfo contactInfo = new ContactInfo();
         contactInfo.setName("Fantomen " + getRandomIntegers(5));
         contactInfo.setEmail("fantomen@mail.com");
-        contactInfo.setPhoneNumber("" + getRandomIntegers(9));
+        contactInfo.setPhoneNumber(getRandomIntegers(9));
         contactInfo.setCountry("SWE");
         return contactInfo;
     }
@@ -139,7 +137,7 @@ public class AssetTestsHelper {
     public static String getRandomIntegers(int length) {
         return new Random()
                 .ints(0, 9)
-                .mapToObj(i -> String.valueOf(i))
+                .mapToObj(String::valueOf)
                 .limit(length)
                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
                 .toString();
