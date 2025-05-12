@@ -709,8 +709,8 @@ public class AssetServiceBean {
     public int remapAssetsInMovement(String oldAssetId, String newAssetId) {
         Client client = ClientBuilder.newBuilder()
                 .connectTimeout(30, TimeUnit.SECONDS)
-                //.readTimeout(30, TimeUnit.MINUTES) //what should this number be
-                .newClient();
+                .readTimeout(3, TimeUnit.MINUTES)
+                .build();
 
         Response remapResponse = client.target(movementEndpoint)
                 .path("internal/remapMovementConnectInMovement")
@@ -730,8 +730,8 @@ public class AssetServiceBean {
     public void removeMovementConnectInMovement(String assetId) {
         Client client = ClientBuilder.newBuilder()
                 .connectTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .newClient();
+                .readTimeout(3, TimeUnit.MINUTES)
+                .build();
 
         Response remapResponse = client.target(movementEndpoint)
                 .path("internal/removeMovementConnect")
