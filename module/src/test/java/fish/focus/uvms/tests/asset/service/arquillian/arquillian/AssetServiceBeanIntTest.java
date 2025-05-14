@@ -25,6 +25,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.inject.Inject;
 import java.time.Clock;
 import java.time.Instant;
@@ -298,38 +299,27 @@ public class AssetServiceBeanIntTest extends BuildAssetServiceDeployment {
         assetBO.setAsset(assetUpdates);
         assetBO.setDefaultIdentifier(AssetIdentifier.IRCS);
 
-        assetService.upsertAssetBO(assetBO, "Test");
-
-        Asset updatedAsset = assetService.getAssetById(createdAsset.getId());
-
-        assertThat(updatedAsset.getIrcs(), is(createdAsset.getIrcs()));
-        assertThat(updatedAsset.getCfr(), is(assetUpdates.getCfr()));
-        assertThat(updatedAsset.getMmsi(), is(assetUpdates.getMmsi()));
-        assertThat(updatedAsset.getName(), is(assetUpdates.getName()));
+        // asset and assetUpdates have differing IMO, CFR and national id
+        // trying to create two active assets with the same IRCS should fail.
+        assertThrows(EJBTransactionRolledbackException.class, () -> assetService.upsertAssetBO(assetBO, "Test"));
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void updateAssetBOWithIdentifierNullCFR() {
+    public void updateAssetBOWithIdentifierNullCFRShouldFail() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         Asset createdAsset = assetService.createAsset(asset, "Test");
 
         Asset assetUpdates = AssetTestsHelper.createBasicAsset();
         assetUpdates.setCfr(null);
+        // asset and assetUpdates have differing IMO, trying to create two active assets with the same IRCS should fail
         assetUpdates.setIrcs(createdAsset.getIrcs());
 
         AssetBO assetBO = new AssetBO();
         assetBO.setAsset(assetUpdates);
         assetBO.setDefaultIdentifier(AssetIdentifier.CFR);
 
-        assetService.upsertAssetBO(assetBO, "Test");
-
-        Asset updatedAsset = assetService.getAssetById(createdAsset.getId());
-
-        assertThat(updatedAsset.getIrcs(), is(createdAsset.getIrcs()));
-        assertThat(updatedAsset.getCfr(), is(assetUpdates.getCfr()));
-        assertThat(updatedAsset.getMmsi(), is(assetUpdates.getMmsi()));
-        assertThat(updatedAsset.getName(), is(assetUpdates.getName()));
+        assertThrows(EJBTransactionRolledbackException.class, () -> assetService.upsertAssetBO(assetBO, "Test"));
     }
 
     @Test
