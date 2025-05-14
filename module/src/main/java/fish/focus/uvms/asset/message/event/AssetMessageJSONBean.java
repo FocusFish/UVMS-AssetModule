@@ -10,15 +10,15 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.asset.message.event;
 
-import fish.focus.uvms.commons.date.JsonBConfigurator;
 import fish.focus.uvms.asset.bean.AssetServiceBean;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.dto.AssetBO;
-import org.hibernate.exception.ConstraintViolationException;
+import fish.focus.uvms.commons.date.JsonBConfigurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jms.JMSException;
@@ -46,22 +46,35 @@ public class AssetMessageJSONBean {
     public void upsertAsset(TextMessage message) throws IOException, JMSException {
         AssetBO assetBo = jsonb.fromJson(message.getText(), AssetBO.class);
         try {
-            assetService.upsertAssetBO(assetBo, assetBo.getAsset().getUpdatedBy() == null ? "UVMS (JMS)" : assetBo.getAsset().getUpdatedBy());
-        } catch (ConstraintViolationException e) {
-            if (assetBo.getAsset() == null) {
-                LOG.error("cannot update asset");
-            } else {
-                LOG.error("cannot update asset with id={}, ircs={}, mmsi={} and nationalId={}", assetBo.getAsset().getId(), assetBo.getAsset().getIrcs(), assetBo.getAsset().getMmsi(), assetBo.getAsset().getNationalId());
-            }
+            String updatedBy = assetBo.getAsset().getUpdatedBy() == null ? "UVMS (JMS)" : assetBo.getAsset().getUpdatedBy();
+            assetService.upsertAssetBO(assetBo, updatedBy);
+        } catch (EJBTransactionRolledbackException ex) {
+            Asset asset = assetBo.getAsset();
+            LOG.error("Got error in upsertAsset for {} : {}", asset, getRootCause(ex).getMessage());
         }
     }
 
     public void updateAssetInformation(TextMessage message) throws IOException, JMSException {
         List<Asset> assetBos = jsonb.fromJson(message.getText(), new ArrayList<Asset>() {
         }.getClass().getGenericSuperclass());
+
         for (Asset oneAsset : assetBos) {
             assetService.updateAssetInformation(oneAsset, oneAsset.getUpdatedBy() == null ? "UVMS (JMS)" : oneAsset.getUpdatedBy());
         }
-        LOG.info("Processed update asset list of size: " + assetBos.size());
+
+        LOG.info("Processed update asset list of size: {}", assetBos.size());
+    }
+
+    private Throwable getRootCause(Throwable e) {
+        // simple cause loop breaker
+        List<Throwable> allCauses = new ArrayList<>();
+
+        Throwable cause = e;
+        while (cause != null && !allCauses.contains(cause)) {
+            allCauses.add(cause);
+            cause = cause.getCause();
+        }
+
+        return allCauses.get(allCauses.size() - 1);
     }
 }
