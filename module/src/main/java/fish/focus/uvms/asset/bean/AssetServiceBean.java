@@ -235,11 +235,13 @@ public class AssetServiceBean {
         Asset asset = assetBo.getAsset();
         Map<AssetIdentifier, String> assetIds = getAssetIds(asset);
 
-        Asset existingAsset = getExistingAsset(assetBo.getDefaultIdentifier(), assetIds);
+        String flagStateCode = asset.getFlagStateCode();
+
+        Asset existingAsset = getExistingAsset(assetIds, asset.getUpdatedBy(), flagStateCode, assetBo.getDefaultIdentifier());
         if (existingAsset != null) {
-            LOG.debug("Found existing asset cfr: {} imo: {} nationalID: {} ircs: {} mmsi: {}",
+            LOG.debug("Found existing asset cfr: {} imo: {} nationalID: {} ircs: {} mmsi: {}, flag state: {}",
                     existingAsset.getCfr(), existingAsset.getImo(), existingAsset.getNationalId(),
-                    existingAsset.getIrcs(), existingAsset.getMmsi());
+                    existingAsset.getIrcs(), existingAsset.getMmsi(), existingAsset.getFlagStateCode());
             asset.setId(existingAsset.getId());
 
             // to save values we already have and don't get from the external source
@@ -248,8 +250,7 @@ public class AssetServiceBean {
             asset.setParked(asset.getParked() == null ? existingAsset.getParked() : asset.getParked());
         }
 
-        LOG.debug("Comparing to input asset cfr: {} imo: {} nationalID: {} ircs: {} mmsi: {}",
-                asset.getCfr(), asset.getImo(), asset.getNationalId(), asset.getIrcs(), asset.getMmsi());
+        LOG.debug("Comparing input asset {} to existing asset {}", asset, existingAsset);
         if (!AssetComparator.assetEquals(asset, existingAsset)) {
             asset = upsertAsset(asset, username);
         }
@@ -270,23 +271,37 @@ public class AssetServiceBean {
     public Asset upsertAsset(Asset asset, String username) {
         nullValidation(asset, "No asset to upsert");
         if (asset.getId() == null) {
+            LOG.debug("Creating new asset {}", asset);
             return createAsset(asset, username);
         }
+        LOG.debug("Updating asset to {}", asset);
         return updateAsset(asset, username, asset.getComment());
     }
 
-    private Asset getExistingAsset(AssetIdentifier defaultIdentifierField, Map<AssetIdentifier, String> assetIds) {
-        Asset existingAsset = null;
 
-        if (assetIds.get(defaultIdentifierField) != null) {
-            existingAsset = getAssetById(defaultIdentifierField, assetIds.get(defaultIdentifierField));
+    /*
+    IMO = unique - follows vessel
+    CFR = unique - follows vessel while inside EU
+    NATIONAL = unique per country - follows vessel. Might be reused, at least in test envs.
+
+    IRCS = should be unique (per country) but reuse has happened in the past, might not follow vessel when sold
+    MMSI = unique (per country), follows the owner and not the vessel, but might be taken over by new owner
+
+    IRCS and MMSI are used for finding assets that might have been added through e.g. an AIS static/position report
+     */
+    private Asset getExistingAsset(Map<AssetIdentifier, String> assetIds, String updatedBy, String flagStateCode, AssetIdentifier defaultIdentifier) {
+        if (assetIds == null || assetIds.isEmpty()) {
+            LOG.warn("No asset information exists!");
+            return null;
         }
 
-        if (existingAsset == null) {
-            existingAsset = getAssetByCfrIrcsOrMmsi(assetIds);
-        }
+        List<Asset> assets = assetDao.getActiveAssetByAnyId(assetIds, flagStateCode);
 
-        return existingAsset;
+        String ircs = assetIds.getOrDefault(AssetIdentifier.IRCS, null);
+        String mmsi = assetIds.getOrDefault(AssetIdentifier.MMSI, null);
+        String defaultIdentifierValue = assetIds.getOrDefault(defaultIdentifier, null);
+
+        return normalizeAssets(assets, mmsi, ircs, updatedBy, defaultIdentifier, defaultIdentifierValue, flagStateCode);
     }
 
     public Asset getAssetById(AssetIdentifier assetId, String value) {
@@ -431,13 +446,14 @@ public class AssetServiceBean {
     }
 
     public AssetMTEnrichmentResponse collectAssetMT(AssetMTEnrichmentRequest request) {
+        // AIS position flow
         // Get Mobile Terminal if it exists
         MobileTerminal terminal = mobileTerminalService.getMobileTerminalByAssetMTEnrichmentRequest(request);
 
         Asset asset = terminal == null ? null : terminal.getAsset();
 
         if (asset == null) {
-            asset = getAssetByCfrIrcsOrMmsi(getAssetIds(request));
+            asset = getAssetByAnyMatchingId(getAssetIds(request));
         }
 
         MobileTerminalTypeEnum transponderType = getTransponderType(request);
@@ -451,6 +467,15 @@ public class AssetServiceBean {
         enrichAssetFilter(assetMTEnrichmentResponse, asset);
 
         return assetMTEnrichmentResponse;
+    }
+
+    private Asset getAssetByAnyMatchingId(Map<AssetIdentifier, String> assetIds) {
+        if (assetIds == null || assetIds.isEmpty()) {
+            LOG.warn("No asset information exists in order to find an asset by id");
+            return null;
+        }
+
+        return assetDao.getAssetByAnyId(assetIds);
     }
 
     private boolean shouldANewShipBeCreated(AssetMTEnrichmentRequest request, Asset asset, MobileTerminalTypeEnum transponderType) {
@@ -620,41 +645,13 @@ public class AssetServiceBean {
         return assetId;
     }
 
-    private Asset getAssetByCfrIrcsOrMmsi(Map<AssetIdentifier, String> assetId) {
-        // If no asset information exists, don't look for one
-        if (assetId == null || assetId.isEmpty()) {
-            LOG.warn("No asset information exists!");
-            return null;
-        }
-
-        // Get possible search parameters
-        String cfr = assetId.getOrDefault(AssetIdentifier.CFR, null);
-        String ircs = assetId.getOrDefault(AssetIdentifier.IRCS, null);
-        String mmsi = assetId.getOrDefault(AssetIdentifier.MMSI, null);
-
-        Asset asset = null;
-
-        if (cfr != null) {
-            asset = getAssetById(AssetIdentifier.CFR, cfr);
-        }
-
-        if (asset == null && ircs != null) {
-            asset = getAssetById(AssetIdentifier.IRCS, ircs);
-        }
-
-        if (asset == null && mmsi != null) {
-            asset = getAssetById(AssetIdentifier.MMSI, mmsi);
-        }
-
-        return asset;
-    }
-
-    // if more than 1 hit put data from AIS into national source record
-    // remove the duplicate
-    private Asset normalizeAssetOnMmsiIrcs(String mmsi, String ircs, String updatedBy) {
-        List<Asset> assets = assetDao.getAssetByMmsiOrIrcs(mmsi, ircs);
-
+    private Asset normalizeAssets(List<Asset> assets, String mmsi, String ircs, String updatedBy,
+                                  AssetIdentifier defaultIdentifier, String defaultIdentifierValue,
+                                  String flagStateCode) {
         int assetsSize = assets.size();
+        LOG.debug("Found {} results for mmsi: {}, ircs: {}, {}: {}, flagStateCode: {}, assets = {}",
+                assetsSize, mmsi, ircs, defaultIdentifier, defaultIdentifierValue, flagStateCode, assets);
+
         if (assetsSize == 0) {
             return null;
         }
@@ -666,35 +663,114 @@ public class AssetServiceBean {
         Asset aisAsset = null;
 
         // find the national source and AIS records
+        // note that we might find multiple national source records and/or internal source records
         for (Asset asset : assets) {
-            if (asset.getSource() != null && asset.getSource().equals(CarrierSource.NATIONAL.toString())) {
+            if (isFromNationalSource(asset)) {
                 nationalSourceAsset = asset;
             } else {
                 aisAsset = asset;
             }
         }
-        if (nationalSourceAsset == null || aisAsset == null) {
+
+        if (nationalSourceAsset != null && aisAsset != null && assetsSize == 2) {
+            // found exactly one of each
+            mergeAssets(nationalSourceAsset, aisAsset, mmsi, ircs, updatedBy);
+
+            return nationalSourceAsset;
+        }
+
+        // got > 3 records with overlapping IDs
+        // merge them into one record, null out IDs for the others and remop any old reported positions
+        // Treat the one that has the default identifier set as the record to keep
+
+        // With multiple internal assets with overlapping IDs the cause can be AIS flow creating new assets when trying
+        // to get MT and not finding an asset e.g. when a vessel is still configuring the equipment and a position is sent
+
+        Asset assetWithMainIdSet;
+        if (nationalSourceAsset != null &&
+                hasMainIdentifierSet(nationalSourceAsset, defaultIdentifier, defaultIdentifierValue, flagStateCode)) {
+            assetWithMainIdSet = nationalSourceAsset;
+        } else {
+            assetWithMainIdSet = assets.stream()
+                    .filter(asset -> hasMainIdentifierSet(asset, defaultIdentifier, defaultIdentifierValue, flagStateCode))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        if (assetWithMainIdSet == null) {
+            LOG.warn("No asset with main ID set found ({} entries). IRCS {}, MMSI {}, defaultID {}: {}",
+                    assetsSize, ircs, mmsi, defaultIdentifier, defaultIdentifierValue);
+            // The update most likely won't work due to unique constraints. A future update from national source might
+            // sort it out
             return null;
         }
 
-        aisAsset.setMmsi(null);
-        aisAsset.setActive(false);
-        String comment = "Found to be a duplicate of another asset with IRCS: " + ircs + " " + (aisAsset.getComment() != null ? aisAsset.getComment() : "");
-        aisAsset.setComment((comment.length() > 255 ? comment.substring(0, 255) : comment));
-        // flush is necessary to avoid dumps on MMSI
-        em.flush();
+        // the rest should be merged into the record that has the main ID set
+        assets.stream()
+                .filter(asset -> !asset.equals(assetWithMainIdSet))
+                // The asset update will most likely fail due to unique constraints if assetWithMainIdSet is an internal
+                // one and assets list contains an entry from national source. We do however don't want to merge the
+                // national source entry into another entry since national source is considered prime. It's better this
+                // update fails and then update the national source and await a new sync to UVMS.
+                .filter(asset -> !isFromNationalSource(asset))
+                .forEach(asset -> mergeAssets(assetWithMainIdSet, asset, mmsi, ircs, updatedBy));
 
-        nationalSourceAsset.setMmsi(mmsi);
-        nationalSourceAsset.setUpdateTime(Instant.now());
-        nationalSourceAsset.setUpdatedBy(updatedBy);
-        em.merge(nationalSourceAsset);
+        return assetWithMainIdSet;
+    }
 
-        assetDao.createAssetRemapMapping(createAssetRemapMapping(aisAsset.getId(), nationalSourceAsset.getId()));
-        remapAssetsInMovement(aisAsset.getId().toString(), nationalSourceAsset.getId().toString());
+    private boolean isFromNationalSource(Asset asset) {
+        return asset.getSource() != null &&
+                asset.getSource().equals(CarrierSource.NATIONAL.toString());
+    }
 
-        updatedAssetEvent.fire(nationalSourceAsset);
+    private boolean hasMainIdentifierSet(Asset aisAsset, AssetIdentifier defaultIdentifier, String defaultIdentifierValue, String flagStateCode) {
+        if (defaultIdentifier == null || defaultIdentifierValue == null) {
+            return false;
+        }
 
-        return nationalSourceAsset;
+        switch (defaultIdentifier) {
+            case IMO:
+                return Objects.equals(aisAsset.getImo(), defaultIdentifierValue);
+            case CFR:
+                return Objects.equals(aisAsset.getCfr(), defaultIdentifierValue);
+            case NATIONAL:
+                return Objects.equals(aisAsset.getNationalId(), Long.valueOf(defaultIdentifierValue)) &&
+                        Objects.equals(aisAsset.getFlagStateCode(), flagStateCode);
+            default:
+                return false;
+        }
+    }
+
+    private void mergeAssets(Asset assetToKeep, Asset assetToRemove, String mmsi, String ircs, String updatedBy) {
+        LOG.info("Merging {} into {}", assetToRemove, assetToKeep);
+
+        String mmsiFromAssetToRemove = assetToRemove.getMmsi();
+
+        setIdentifiersToNull(assetToRemove);
+        assetToRemove.setActive(false);
+        String oldComment = assetToRemove.getComment() != null ? assetToRemove.getComment() : "";
+        String comment = "Found to be a duplicate of another asset with IRCS: " + ircs + " and mmsi: " + mmsi + " " + oldComment;
+        assetToRemove.setComment((comment.length() > 255 ? comment.substring(0, 255) : comment));
+        Asset updatedAssetToRemove = assetDao.updateAsset(assetToRemove);
+
+        assetToKeep.setMmsi(assetToKeep.getMmsi() == null ? mmsiFromAssetToRemove : assetToKeep.getMmsi());
+        assetToKeep.setUpdateTime(Instant.now());
+        assetToKeep.setUpdatedBy(updatedBy);
+        Asset updatedAssetToKeep = assetDao.updateAsset(assetToKeep);
+
+        assetDao.createAssetRemapMapping(createAssetRemapMapping(updatedAssetToRemove.getId(), updatedAssetToKeep.getId()));
+        int numberOfUpdatedPositions = remapAssetsInMovement(updatedAssetToRemove.getId().toString(), updatedAssetToKeep.getId().toString());
+        LOG.info("{} positions remapped to asset {}", numberOfUpdatedPositions, updatedAssetToKeep);
+
+        updatedAssetEvent.fire(updatedAssetToKeep);
+    }
+
+    private void setIdentifiersToNull(Asset asset) {
+        asset.setImo(null);
+        asset.setCfr(null);
+        asset.setNationalId(null);
+        asset.setIrcs(null);
+        asset.setMmsi(null);
     }
 
     private AssetRemapMapping createAssetRemapMapping(UUID oldAssetId, UUID newAssetId) {
@@ -747,26 +823,37 @@ public class AssetServiceBean {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateAssetInformation(Asset assetFromAIS, String user) {
         if (assetFromAIS == null) {
+            LOG.info("Asset is null, returning");
             return;
         }
 
-        Asset assetFromDB = normalizeAssetOnMmsiIrcs(assetFromAIS.getMmsi(), assetFromAIS.getIrcs(), user);
+        String mmsi = assetFromAIS.getMmsi();
+        String ircs = assetFromAIS.getIrcs();
+
+        // Due to unique constraints on mmsi and ircs the query can never find two entries that share the same mmsi / ircs.
+        // It can however find entries that share mmsi and ircs with the input asset
+        List<Asset> assets = assetDao.getAssetByMmsiOrIrcs(mmsi, ircs);
+
+        Asset assetFromDB = normalizeAssets(assets, mmsi, ircs, user,
+                null, null, assetFromAIS.getFlagStateCode());
 
         // if we have data from national source then we should not update with data from AIS
+        // Does not create a new entry. In order to update; an entry with the same IRCS or MMSI needs to exist.
         if (assetFromDB == null || CarrierSource.NATIONAL.toString().equals(assetFromDB.getSource())) {
+            LOG.info("Asset from db for IRCS {} and MMSI {} is null or it's national source, returning", ircs, mmsi);
             return;
         }
 
         boolean shouldUpdate = false;
-        if ((assetFromDB.getMmsi() == null || !assetFromDB.getMmsi().equals(assetFromAIS.getMmsi()))
-                && assetFromAIS.getMmsi() != null) {
+        if ((assetFromDB.getMmsi() == null || !assetFromDB.getMmsi().equals(mmsi))
+                && mmsi != null) {
             shouldUpdate = true;
-            assetFromDB.setMmsi(assetFromAIS.getMmsi());
+            assetFromDB.setMmsi(mmsi);
         }
-        if (assetFromAIS.getIrcs() != null
-                && (assetFromDB.getIrcs() == null || !assetFromDB.getIrcs().equals(assetFromAIS.getIrcs().replace(" ", "")))) {
+        if (ircs != null
+                && (assetFromDB.getIrcs() == null || !assetFromDB.getIrcs().equals(ircs.replace(" ", "")))) {
             shouldUpdate = true;
-            assetFromDB.setIrcs(assetFromAIS.getIrcs().replace(" ", ""));
+            assetFromDB.setIrcs(ircs.replace(" ", ""));
         }
         if ((assetFromDB.getVesselType() == null || !assetFromDB.getVesselType().equals(assetFromAIS.getVesselType()))
                 && assetFromAIS.getVesselType() != null) {
@@ -795,8 +882,8 @@ public class AssetServiceBean {
             assetFromDB.setUpdatedBy(user);
             assetFromDB.setUpdateTime(Instant.now());
             assetFromDB.setSource(CarrierSource.INTERNAL.toString());
-            em.merge(assetFromDB);
-            updatedAssetEvent.fire(assetFromDB);
+            Asset updatedAsset = assetDao.updateAsset(assetFromDB);
+            updatedAssetEvent.fire(updatedAsset);
         }
     }
 
