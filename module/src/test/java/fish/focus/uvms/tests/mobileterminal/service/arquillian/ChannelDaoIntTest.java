@@ -6,7 +6,7 @@ import fish.focus.uvms.mobileterminal.dao.ChannelDaoBean;
 import fish.focus.uvms.mobileterminal.dao.TerminalDaoBean;
 import fish.focus.uvms.mobileterminal.entity.Channel;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import fish.focus.uvms.tests.asset.service.arquillian.arquillian.AssetTestsHelper;
 import fish.focus.uvms.tests.mobileterminal.service.arquillian.helper.TestPollHelper;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -14,16 +14,17 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
 import javax.ejb.EJB;
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class ChannelDaoIntTest extends TransactionalTests {
+public class ChannelDaoIntTest extends BuildAssetServiceDeployment {
 
     @Inject
     private ChannelDaoBean channelDao;

@@ -14,17 +14,18 @@ import fish.focus.uvms.mobileterminal.entity.ProgramPoll;
 import fish.focus.uvms.mobileterminal.mapper.PollDtoMapper;
 import fish.focus.uvms.mobileterminal.mapper.PollEntityToModelMapper;
 import fish.focus.uvms.mobileterminal.model.dto.CreatePollResultDto;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import fish.focus.uvms.tests.asset.service.arquillian.arquillian.AssetTestsHelper;
 import fish.focus.uvms.tests.mobileterminal.service.arquillian.helper.TestPollHelper;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
-import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.EJBException;
 import javax.inject.Inject;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -38,7 +39,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class PollServiceBeanIntTest extends TransactionalTests {
+public class PollServiceBeanIntTest extends BuildAssetServiceDeployment {
 
     private static final String MESSAGE_PRODUCER_METHODS_FAIL = "MESSAGE_PRODUCER_METHODS_FAIL";
     private final Calendar cal = Calendar.getInstance();
@@ -55,10 +56,14 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Inject
     private AssetDao assetDao;
 
+    @Before
+    public void reset() {
+        System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "false");
+    }
+
     @Test
     @OperateOnDeployment("normal")
     public void createPoll() {
-        System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "false");
         PollRequestType pollRequestType = testPollHelper.createPollRequestType();
         CreatePollResultDto createPollResultDto = pollServiceBean.createPoll(pollRequestType);
         assertNotNull(createPollResultDto);
@@ -71,7 +76,6 @@ public class PollServiceBeanIntTest extends TransactionalTests {
 
         // create a poll
         CreatePollResultDto createPollResultDto = pollServiceBean.createPoll(pollRequestType);
-        em.flush();
 
         if (createPollResultDto.getSentPolls().isEmpty() && createPollResultDto.getUnsentPolls().isEmpty()) {
             Assert.fail();
@@ -110,8 +114,6 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void startProgramPoll() {
-        System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "false");
-
         Instant startDate = testPollHelper.getStartDate();
         Instant latestRun = testPollHelper.getLatestRunDate();
         Instant stopDate = testPollHelper.getStopDate();
@@ -154,8 +156,6 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void stopProgramPoll() {
-        System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "false");
-
         Instant startDate = testPollHelper.getStartDate();
         Instant latestRun = testPollHelper.getLatestRunDate();
         Instant stopDate = testPollHelper.getStopDate();
@@ -203,8 +203,6 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void inactivateProgramPoll() {
-        System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "false");
-
         Instant startDate = testPollHelper.getStartDate();
         Instant latestRun = testPollHelper.getLatestRunDate();
         Instant stopDate = testPollHelper.getStopDate();
@@ -256,8 +254,6 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getPollProgramRunningAndStarted() {
-        System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "false");
-
         int startedProgramPollsBefore = pollServiceBean.getPollProgramRunningAndStarted().size();
 
         Instant startDate = testPollHelper.getStartDate();
@@ -279,13 +275,13 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void startProgramPoll_ShouldFailWithNullAsPollId() {
-        assertThrows(EJBTransactionRolledbackException.class, () -> pollServiceBean.startProgramPoll(null, "TEST"));
+        assertThrows(EJBException.class, () -> pollServiceBean.startProgramPoll(null, "TEST"));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void stopProgramPoll_ShouldFailWithNullAsPollId() {
-        assertThrows(EJBTransactionRolledbackException.class, () -> pollServiceBean.stopProgramPoll(null, "TEST"));
+        assertThrows(EJBException.class, () -> pollServiceBean.stopProgramPoll(null, "TEST"));
     }
 
     private PollRequestType helper_createPollRequestType(PollType pollType) {

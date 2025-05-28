@@ -2,7 +2,7 @@ package fish.focus.uvms.asset.message;
 
 import fish.focus.uvms.asset.domain.dao.AssetDao;
 import fish.focus.uvms.asset.domain.entity.AssetRemapMapping;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import fish.focus.wsdl.asset.types.Asset;
 import fish.focus.wsdl.asset.types.AssetIdType;
 import fish.focus.wsdl.asset.types.CarrierSource;
@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class AssetReMappingTest extends TransactionalTests {
+public class AssetReMappingTest extends BuildAssetServiceDeployment {
 
     private final JMSHelper jmsHelper = new JMSHelper();
 
@@ -51,6 +51,7 @@ public class AssetReMappingTest extends TransactionalTests {
         fish.focus.uvms.asset.domain.entity.Asset mmsiEntity = assetDao.getAssetByMmsi(assetWithsMMSI.getMmsiNo());
         mmsiEntity.setComment("Comment at length 255!Comment at length 255!Comment at length 255!Comment at length 255!Comment at length 255!Comment at length 255!Comment at length 255!Comment at length 255!Comment at length 255!Comment at length 255!Comment at length 255!");
         UUID mmsiEntityId = mmsiEntity.getId();
+        assetDao.updateAsset(mmsiEntity);
 
         Asset assetWithsIRCS = AssetTestHelper.createBasicAsset();
         assetWithsIRCS.setMmsiNo(null);
@@ -66,9 +67,6 @@ public class AssetReMappingTest extends TransactionalTests {
                 });
 
         fish.focus.uvms.asset.domain.entity.Asset ircsEntity = assetDao.getAssetByIrcs(assetWithsIRCS.getIrcs());
-
-        userTransaction.commit();
-        userTransaction.begin();
 
         fish.focus.uvms.asset.domain.entity.Asset newAsset = new fish.focus.uvms.asset.domain.entity.Asset();
         newAsset.setMmsi(assetWithsMMSI.getMmsiNo());
@@ -97,8 +95,5 @@ public class AssetReMappingTest extends TransactionalTests {
 
         assetDao.deleteAsset(mmsiEntity);
         assetDao.deleteAsset(ircsEntity);
-
-        userTransaction.commit();
-        userTransaction.begin();
     }
 }

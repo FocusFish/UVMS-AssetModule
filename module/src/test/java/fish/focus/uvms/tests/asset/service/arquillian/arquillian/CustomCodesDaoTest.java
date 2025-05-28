@@ -3,7 +3,7 @@ package fish.focus.uvms.tests.asset.service.arquillian.arquillian;
 import fish.focus.uvms.asset.domain.dao.CustomCodeDao;
 import fish.focus.uvms.asset.domain.entity.CustomCode;
 import fish.focus.uvms.asset.domain.entity.CustomCodesPK;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Assert;
@@ -20,7 +20,7 @@ import java.util.Random;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class CustomCodesDaoTestIT extends TransactionalTests {
+public class CustomCodesDaoTest extends BuildAssetServiceDeployment {
 
     private static final String CONSTANT = "TESTcarrieractiveTEST";
 
@@ -79,12 +79,10 @@ public class CustomCodesDaoTestIT extends TransactionalTests {
             CustomCode customCode = createHelper(CONSTANT, "kod" + i, "description" + i);
             customCodesDao.create(customCode);
         }
-        em.flush();
         for (int i = 0; i < 10; i++) {
             CustomCode customCode = createHelper(CONSTANT + "2", "kod" + i, "description" + i);
             customCodesDao.create(customCode);
         }
-        em.flush();
         List<CustomCode> rs1 = customCodesDao.getAllFor(CONSTANT);
         List<CustomCode> rs2 = customCodesDao.getAllFor(CONSTANT + "2");
         assertEquals(10, rs1.size());
@@ -109,7 +107,6 @@ public class CustomCodesDaoTestIT extends TransactionalTests {
 
         created.setDescription("CHANGED");
         customCodesDao.update(created.getPrimaryKey(), "CHANGED");
-        em.flush();
 
         CustomCode fetched = customCodesDao.get(created.getPrimaryKey());
 
@@ -131,7 +128,6 @@ public class CustomCodesDaoTestIT extends TransactionalTests {
         aNewCustomCode.setDescription("STORE_LATEST");
 
         customCodesDao.replace(aNewCustomCode);
-        em.flush();
 
         CustomCode fetched = customCodesDao.get(created.getPrimaryKey());
         assertNotNull(fetched);

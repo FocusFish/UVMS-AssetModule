@@ -6,7 +6,7 @@ import fish.focus.uvms.mobileterminal.entity.types.PollTypeEnum;
 import fish.focus.uvms.mobileterminal.search.PollSearchField;
 import fish.focus.uvms.mobileterminal.search.PollSearchKeyValue;
 import fish.focus.uvms.mobileterminal.search.poll.PollSearchMapper;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import fish.focus.uvms.tests.mobileterminal.service.arquillian.helper.TestPollHelper;
 import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -15,9 +15,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -27,7 +27,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class PollDaoBeanIntTest extends TransactionalTests {
+public class PollDaoBeanIntTest extends BuildAssetServiceDeployment {
 
     @EJB
     private PollDaoBean pollDao;
@@ -39,14 +39,9 @@ public class PollDaoBeanIntTest extends TransactionalTests {
     @OperateOnDeployment("normal")
     public void testCreatePoll() {
         PollBase poll = createPollHelper();
-        createPollAndFlush(poll);
+        pollDao.createPoll(poll);
 
         assertNotNull(poll.getId());
-    }
-
-    private void createPollAndFlush(PollBase poll) {
-        pollDao.createPoll(poll);
-        em.flush();
     }
 
     @Test
@@ -57,13 +52,13 @@ public class PollDaoBeanIntTest extends TransactionalTests {
         Arrays.fill(updatedBy, 'x');
         poll.setUpdatedBy(new String(updatedBy));
 
-        assertThrows(ConstraintViolationException.class, () -> createPollAndFlush(poll));
+        assertThrows(EJBException.class, () -> pollDao.createPoll(poll));
     }
 
     @Test
     @OperateOnDeployment("normal")
     public void testCreatePoll_WithNull() {
-        assertThrows(EJBTransactionRolledbackException.class, () -> createPollAndFlush(null));
+        assertThrows(EJBException.class, () -> pollDao.createPoll(null));
     }
 
     @Test
@@ -71,7 +66,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
     public void testCreatePoll_WithDefaultGuidGeneration() {
         PollBase poll = createPollHelper();
         poll.setId(null);
-        createPollAndFlush(poll);
+        pollDao.createPoll(poll);
 
         assertNotNull(poll.getId());
     }
@@ -80,7 +75,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
     @OperateOnDeployment("normal")
     public void testGetPollById() {
         PollBase poll = createPollHelper();
-        createPollAndFlush(poll);
+        pollDao.createPoll(poll);
 
         PollBase found = pollDao.getPollById(poll.getId());
         assertNotNull(found);
@@ -257,7 +252,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
         String emptySql = "";
         List<PollSearchKeyValue> listOfPollSearchKeyValue = new ArrayList<>();
 
-        Exception exception = assertThrows(EJBTransactionRolledbackException.class, () -> pollDao.getPollListSearchCount(emptySql, listOfPollSearchKeyValue));
+        Exception exception = assertThrows(EJBException.class, () -> pollDao.getPollListSearchCount(emptySql, listOfPollSearchKeyValue));
         assertThat(exception.getMessage(), containsString("unexpected end of subtree []"));
     }
 
@@ -267,7 +262,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
         String sql = "SELECT * FROM PollBase p";
         List<PollSearchKeyValue> listOfPollSearchKeyValue = new ArrayList<>();
 
-        Exception exception = assertThrows(EJBTransactionRolledbackException.class, () -> pollDao.getPollListSearchCount(sql, listOfPollSearchKeyValue));
+        Exception exception = assertThrows(EJBException.class, () -> pollDao.getPollListSearchCount(sql, listOfPollSearchKeyValue));
         assertThat(exception.getMessage(), containsString("unexpected token: * near line"));
     }
 
@@ -310,7 +305,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
     @OperateOnDeployment("normal")
     public void testGetPollListSearchPaginated_PollSearchField_POLL_ID() {
         PollBase poll = createPollHelper();
-        createPollAndFlush(poll);
+        pollDao.createPoll(poll);
 
         String testValue1 = UUID.randomUUID().toString();
         String testValue2 = UUID.randomUUID().toString();
@@ -399,7 +394,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
     public void findByAssetInTimespan() {
         PollBase poll = createPollHelper();
         poll.setAssetId(UUID.randomUUID());
-        createPollAndFlush(poll);
+        pollDao.createPoll(poll);
 
         List<PollBase> byAssetInTimespan = pollDao.findByAssetInTimespan(poll.getAssetId(), Instant.now().minus(1, ChronoUnit.DAYS), Instant.now());
         assertEquals(1, byAssetInTimespan.size());
@@ -412,7 +407,7 @@ public class PollDaoBeanIntTest extends TransactionalTests {
         PollBase poll = createPollHelper();
         poll.setAssetId(UUID.randomUUID());
         poll.setCreateTime(Instant.now().minus(25, ChronoUnit.HOURS));
-        createPollAndFlush(poll);
+        pollDao.createPoll(poll);
 
         List<PollBase> byAssetInTimespan = pollDao.findByAssetInTimespan(poll.getAssetId(), Instant.now().minus(1, ChronoUnit.DAYS), Instant.now());
         assertEquals(0, byAssetInTimespan.size());

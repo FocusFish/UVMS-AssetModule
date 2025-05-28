@@ -18,11 +18,11 @@ import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.mobileterminal.bean.PollServiceBean;
 import fish.focus.uvms.mobileterminal.dao.PollProgramDaoBean;
 import fish.focus.uvms.mobileterminal.entity.ProgramPoll;
+import fish.focus.uvms.mobileterminal.timer.AssetExecutorServiceBean;
 import fish.focus.uvms.mobileterminal.timer.PollTimerTask;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import fish.focus.uvms.tests.asset.service.arquillian.arquillian.AssetTestsHelper;
 import fish.focus.uvms.tests.mobileterminal.service.arquillian.helper.TestPollHelper;
-import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
@@ -34,11 +34,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Arquillian.class)
-public class PollTimerTaskTest extends TransactionalTests {
+public class PollTimerTaskTest extends BuildAssetServiceDeployment {
 
     @Inject
     private TestPollHelper pollHelper;
@@ -51,6 +53,9 @@ public class PollTimerTaskTest extends TransactionalTests {
 
     @Inject
     private PollProgramDaoBean pollDao;
+
+    @Inject
+    private AssetExecutorServiceBean assetExecutorServiceBean;
 
     @Test
     @OperateOnDeployment("normal")
@@ -127,10 +132,11 @@ public class PollTimerTaskTest extends TransactionalTests {
                 Instant.now().minus(1, ChronoUnit.HOURS), Instant.now().plus(1, ChronoUnit.HOURS), null);
         pollDao.createProgramPoll(pollProgram);
 
-        new PollTimerTask(pollService).run();
+        assetExecutorServiceBean.initPollTimer();
 
-        ProgramPoll fetchedPollProgram = pollDao.getProgramPollByGuid(pollProgram.getId().toString());
-        assertThat(fetchedPollProgram.getLatestRun(), CoreMatchers.is(CoreMatchers.notNullValue()));
+        String pollGuid = pollProgram.getId().toString();
+        ProgramPoll fetchedPollProgram = pollDao.getProgramPollByGuid(pollGuid);
+        assertThat(pollGuid + " poll should have run", fetchedPollProgram.getLatestRun(), is(notNullValue()));
     }
 
     @Test
@@ -144,7 +150,7 @@ public class PollTimerTaskTest extends TransactionalTests {
         new PollTimerTask(pollService).run();
 
         ProgramPoll fetchedPollProgram = pollDao.getProgramPollByGuid(pollProgram.getId().toString());
-        assertThat(fetchedPollProgram.getPollState(), CoreMatchers.is(ProgramPollStatus.ARCHIVED));
+        assertThat(fetchedPollProgram.getPollState(), is(ProgramPollStatus.ARCHIVED));
     }
 
     private List<PollResponseType> getAllPolls(UUID connectId) {

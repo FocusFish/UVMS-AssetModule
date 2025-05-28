@@ -3,14 +3,14 @@ package fish.focus.uvms.tests.asset.service.arquillian.arquillian;
 import fish.focus.uvms.asset.bean.CustomCodesServiceBean;
 import fish.focus.uvms.asset.domain.entity.CustomCode;
 import fish.focus.uvms.asset.domain.entity.CustomCodesPK;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
-import javax.transaction.*;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -20,14 +20,22 @@ import java.util.Random;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class CustomCodesServiceIntTest extends TransactionalTests {
+public class CustomCodesServiceIntTest extends BuildAssetServiceDeployment {
 
+    public static final String TEST_CONSTANT_TEST = "TEST_constant_TEST";
     private static final String CONSTANT = "testconstant";
     private static final String CODE = "testcode";
     private final Random rnd = new Random();
 
     @EJB
     private CustomCodesServiceBean service;
+
+    @Before
+    public void cleanup() {
+        service.deleteAllFor(CONSTANT);
+        service.deleteAllFor(CONSTANT + "2");
+        service.deleteAllFor(TEST_CONSTANT_TEST);
+    }
 
     @Test
     @OperateOnDeployment("normal")
@@ -41,7 +49,6 @@ public class CustomCodesServiceIntTest extends TransactionalTests {
         service.create(CONSTANT, CODE, fromDate, toDate, CODE + "Description");
         CustomCode fetchedCustomCode = service.get(CONSTANT, CODE, fromDate, toDate);
         assertNotNull(fetchedCustomCode);
-        service.delete(CONSTANT, CODE, fromDate, toDate);
     }
 
     @Test
@@ -69,12 +76,11 @@ public class CustomCodesServiceIntTest extends TransactionalTests {
         service.create(CONSTANT, CODE, fromDate, toDate, CODE + "Description");
         Boolean exist = service.exists(CONSTANT, CODE, fromDate, toDate);
         assertNotNull(exist);
-        service.delete(CONSTANT, CODE, fromDate, toDate);
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAllFor() throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
+    public void getAllFor() {
         int n = rnd.nextInt(10);
         int duration = rnd.nextInt(90);
 
@@ -96,13 +102,7 @@ public class CustomCodesServiceIntTest extends TransactionalTests {
         assertEquals(10, rs1.size());
         assertEquals(10, rs2.size());
 
-        userTransaction.commit();
-        userTransaction.begin();
-
         service.deleteAllFor(CONSTANT + "2");
-
-        userTransaction.commit();
-        userTransaction.begin();
 
         rs1 = service.getAllFor(CONSTANT);
         rs2 = service.getAllFor(CONSTANT + "2");
@@ -110,8 +110,6 @@ public class CustomCodesServiceIntTest extends TransactionalTests {
         assertEquals(0, rs2.size());
 
         service.deleteAllFor(CONSTANT);
-        userTransaction.commit();
-        userTransaction.begin();
 
         rs1 = service.getAllFor(CONSTANT);
         rs2 = service.getAllFor(CONSTANT + "2");
@@ -121,7 +119,7 @@ public class CustomCodesServiceIntTest extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void updateDescription() throws HeuristicRollbackException, RollbackException, HeuristicMixedException, SystemException, NotSupportedException {
+    public void updateDescription() {
         int n = rnd.nextInt(10);
         int duration = rnd.nextInt(90);
 
@@ -133,17 +131,11 @@ public class CustomCodesServiceIntTest extends TransactionalTests {
 
         createdCustomCode.setDescription("CHANGED");
         service.update(createdCustomCode.getPrimaryKey().getConstant(), createdCustomCode.getPrimaryKey().getCode(), fromDate, toDate, "CHANGED");
-        userTransaction.commit();
-        userTransaction.begin();
 
         CustomCode fetchedCustomCode = service.get(createdCustomCode.getPrimaryKey().getConstant(), createdCustomCode.getPrimaryKey().getCode(), fromDate, toDate);
 
         assertNotEquals(createdDescription, fetchedCustomCode.getDescription());
         assertEquals("CHANGED", fetchedCustomCode.getDescription());
-
-        service.deleteAllFor(CONSTANT);
-        userTransaction.commit();
-        userTransaction.begin();
     }
 
     private CustomCodesPK createPrimaryKey() {
@@ -180,7 +172,5 @@ public class CustomCodesServiceIntTest extends TransactionalTests {
         CustomCode fetchedCustomCode = service.get(primaryKey);
 
         assertEquals(createdASecond, fetchedCustomCode);
-
-        service.deleteAllFor("TEST_constant_TEST");
     }
 }

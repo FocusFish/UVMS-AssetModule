@@ -5,7 +5,7 @@ import fish.focus.schema.mobileterminal.polltypes.v1.*;
 import fish.focus.uvms.mobileterminal.bean.PluginServiceBean;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import fish.focus.uvms.mobileterminal.mapper.MobileTerminalEntityToModelMapper;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import fish.focus.uvms.tests.mobileterminal.service.arquillian.helper.TestPollHelper;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -20,7 +20,7 @@ import java.util.UUID;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(Arquillian.class)
-public class PluginServiceBeanIntTest extends TransactionalTests {
+public class PluginServiceBeanIntTest extends BuildAssetServiceDeployment {
 
     private final String USERNAME = "TEST_USERNAME";
 
