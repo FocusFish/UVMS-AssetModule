@@ -289,12 +289,12 @@ public class PollServiceBeanIntTest extends TransactionalTests {
     }
 
     private PollRequestType helper_createPollRequestType(PollType pollType) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, 2015);
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, 2015);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-        String startDate = format.format(cal.getTime());
-        cal.set(Calendar.YEAR, 2020);
-        String endDate = format.format(cal.getTime());
+        String startDate = format.format(calendar.getTime());
+        calendar.set(Calendar.YEAR, 2020);
+        String endDate = format.format(calendar.getTime());
 
         PollRequestType prt = new PollRequestType();
         prt.setComment("aComment" + UUID.randomUUID());

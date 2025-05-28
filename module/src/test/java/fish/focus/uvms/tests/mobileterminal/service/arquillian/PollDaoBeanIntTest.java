@@ -420,11 +420,13 @@ public class PollDaoBeanIntTest extends TransactionalTests {
 
     private PollBase createPollHelper() {
         PollBase poll = new PollBase();
+
         poll.setCreateTime(Instant.now());
         poll.setUpdatedBy("testUser");
         poll.setChannelId(UUID.randomUUID());
         poll.setMobileterminal(testPollHelper.createAndPersistMobileTerminal(null));
         poll.setComment("test comment");
+
         return poll;
     }
 }

@@ -11,10 +11,10 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.mobileterminal.timer;
 
-import fish.focus.uvms.commons.date.DateUtils;
 import fish.focus.uvms.mobileterminal.bean.PollServiceBean;
 import fish.focus.uvms.mobileterminal.entity.ProgramPoll;
 import fish.focus.uvms.mobileterminal.mapper.PollDataSourceRequestMapper;
+import fish.focus.uvms.mobileterminal.model.dto.CreatePollResultDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,8 +25,9 @@ import java.util.List;
 
 public class PollTimerTask implements Runnable {
 
-    private final static Logger LOG = LoggerFactory.getLogger(PollTimerTask.class);
-    private PollServiceBean pollService;
+    private static final Logger LOG = LoggerFactory.getLogger(PollTimerTask.class);
+
+    private final PollServiceBean pollService;
 
     public PollTimerTask(PollServiceBean pollService) {
         this.pollService = pollService;
@@ -34,12 +35,12 @@ public class PollTimerTask implements Runnable {
 
     @Override
     public void run() {
-        LOG.debug("PollProgram collected from DB at " + DateUtils.dateToEpochMilliseconds(Instant.now()));
+        LOG.debug("PollProgram collected from DB at {}", Instant.now());
         try {
-            List<ProgramPoll> pollPrograms = pollService.getPollProgramRunningAndStarted();
-            pollPrograms = filterOutProgramPollsThatAreOverdue(pollPrograms);
+            List<ProgramPoll> allPollPrograms = pollService.getPollProgramRunningAndStarted();
+            List<ProgramPoll> overduePollPrograms = filterOutProgramPollsThatAreOverdue(allPollPrograms);
 
-            for (ProgramPoll pollProgram : pollPrograms) {
+            for (ProgramPoll pollProgram : overduePollPrograms) {
                 String guid = pollProgram.getId().toString();
                 Instant endDate = pollProgram.getStopDate();
 
@@ -48,12 +49,13 @@ public class PollTimerTask implements Runnable {
                     pollService.inactivateProgramPoll(guid, "MobileTerminalPollTimer");
                     LOG.info("Poll program {} has expired. Status set to ARCHIVED.", guid);
                 } else {
-                    pollService.createPoll(PollDataSourceRequestMapper.createPollFromProgram(pollProgram));
-                    LOG.info("Poll created by poll program {}", guid);
+                    CreatePollResultDto pollResult = pollService.createPoll(PollDataSourceRequestMapper.createPollFromProgram(pollProgram));
+                    LOG.info("Poll created by poll program {}. #unset polls: {}, #sent polls: {}",
+                            guid, pollResult.getUnsentPolls().size(), pollResult.getSentPolls().size());
                 }
             }
         } catch (Exception e) {
-            LOG.error("[ Poll scheduler failed. ] " + e);
+            LOG.error("[ Poll scheduler failed. ] ", e);
         }
     }
 

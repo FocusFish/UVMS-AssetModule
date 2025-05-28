@@ -135,7 +135,6 @@ public class PollServiceBean {
     }
 
     public CreatePollResultDto createPoll(PollRequestType poll) {
-
         List<PollResponseType> createdPolls = validateAndCreatePolls(poll);
 
         List<String> unsentPolls = new ArrayList<>();

@@ -34,7 +34,9 @@ import java.util.UUID;
 public class MobileTerminalPlugin implements Serializable {
     public static final String FIND_ALL = "Plugin.findAll";
     public static final String FIND_BY_SERVICE_NAME = "Plugin.findByServiceName";
+
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "MOBILETERMINALPLUGIN_UUID")
     @GenericGenerator(name = "MOBILETERMINALPLUGIN_UUID", strategy = "org.hibernate.id.UUIDGenerator")
