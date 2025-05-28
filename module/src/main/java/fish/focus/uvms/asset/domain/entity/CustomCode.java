@@ -1,14 +1,14 @@
 package fish.focus.uvms.asset.domain.entity;
 
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 import static fish.focus.uvms.asset.domain.entity.CustomCode.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Entity
-@Table(name = "customcode"/*, indexes = { @Index(columnList = "id", name = "customcodes00", unique = true),}*/)
+@Table(name = "customcode")
 @NamedQueries({
         @NamedQuery(name = CUSTOMCODES_GETALLFOR, query = "SELECT m FROM CustomCode m WHERE UPPER(m.primaryKey.constant) LIKE UPPER(:constant)"),
         @NamedQuery(name = CUSTOMCODES_GETALLCONSTANTS, query = "SELECT distinct m.primaryKey.constant FROM CustomCode m "),
@@ -19,10 +19,13 @@ public class CustomCode {
     public static final String CUSTOMCODES_GETALLFOR = "CUSTOMCODES.GETALLFOR";
     public static final String CUSTOMCODES_GETALLCONSTANTS = "CUSTOMCODES.GETALLCONSTANTS";
     public static final String CUSTOMCODES_GETCUSTOMCODE_FOR_SPECIFIC_DATE = "CUSTOMCODES.GETCUSTOMCODE_FOR_SPECIFIC_DATE";
+
     @EmbeddedId
     CustomCodesPK primaryKey;
+
     @Column(name = "description")
     private String description;
+
     @Column(name = "namevalue")
     private Map<String, String> nameValue = new HashMap<>();
 
@@ -56,5 +59,23 @@ public class CustomCode {
 
     public void setNameValue(Map<String, String> nameValue) {
         this.nameValue = nameValue;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CustomCode that = (CustomCode) o;
+        return Objects.equals(primaryKey, that.primaryKey) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(nameValue, that.nameValue);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(primaryKey);
+        result = 31 * result + Objects.hashCode(description);
+        result = 31 * result + Objects.hashCode(nameValue);
+        return result;
     }
 }

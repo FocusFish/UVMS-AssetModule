@@ -13,27 +13,26 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 @RunWith(Arquillian.class)
 public class PluginServiceBeanIntTest extends TransactionalTests {
 
     private final String USERNAME = "TEST_USERNAME";
+
     @EJB
     private PluginServiceBean pluginService;
+
     @EJB
     private TestPollHelper testPollHelper;
 
     @Test
     @OperateOnDeployment("normal")
     public void sendPoll() {
-
         PollResponseType pollResponseType = createPollResponseType();
 
         AcknowledgeTypeType ack = pluginService.sendPoll(pollResponseType);
@@ -47,7 +46,6 @@ public class PluginServiceBeanIntTest extends TransactionalTests {
     }
 
     private PollResponseType createPollResponseType() {
-
         PollId pollId = new PollId();
         pollId.setGuid(UUID.randomUUID().toString());
 

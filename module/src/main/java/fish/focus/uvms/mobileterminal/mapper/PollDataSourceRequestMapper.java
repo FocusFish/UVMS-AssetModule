@@ -13,11 +13,14 @@ package fish.focus.uvms.mobileterminal.mapper;
 
 import fish.focus.schema.mobileterminal.polltypes.v1.PollMobileTerminal;
 import fish.focus.schema.mobileterminal.polltypes.v1.PollRequestType;
-import fish.focus.schema.mobileterminal.polltypes.v1.PollResponseType;
 import fish.focus.schema.mobileterminal.polltypes.v1.PollType;
 import fish.focus.uvms.mobileterminal.entity.ProgramPoll;
 
 public class PollDataSourceRequestMapper {
+
+    private PollDataSourceRequestMapper() {
+        // only static methods
+    }
 
     public static PollRequestType createPollFromProgram(ProgramPoll pollProgram) {
         PollRequestType poll = new PollRequestType();

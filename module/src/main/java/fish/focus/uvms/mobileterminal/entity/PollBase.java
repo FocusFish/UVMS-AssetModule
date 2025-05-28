@@ -11,8 +11,8 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.mobileterminal.entity;
 
-import org.hibernate.annotations.GenericGenerator;
 import fish.focus.uvms.mobileterminal.entity.types.PollTypeEnum;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -40,32 +40,41 @@ public class PollBase implements Serializable {
     public static final String FIND_BY_TYPE = "Poll.findByPollType";
     public static final String FIND_BY_USER = "Poll.findByPollUserCreator";
     public static final String FIND_BY_ASSET_IN_TIMESPAN = "Poll.findByAssetInTimespan";
+
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "POLLBASE_UUID")
     @GenericGenerator(name = "POLLBASE_UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id")
     private UUID id;
+
     @Column(name = "comment")
     @NotNull
     private String comment;
+
     @Size(max = 60)
     @Column(name = "createuser")
     private String creator;
+
     @Column(name = "channel_guid")
     @NotNull
     private UUID channelId;
+
     @Column(name = "createtime")
     private Instant createTime;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "mobileterminal_id", foreignKey = @ForeignKey(name = "PollBase_MobileTerminal_FK"))
     @NotNull
     private MobileTerminal mobileterminal;
+
     @Size(max = 60)
     @Column(name = "upuser")
     private String updatedBy;
+
     @Column(name = "asset_id")
     private UUID assetId;
+
     @Column(name = "poll_type")
     @Enumerated(EnumType.STRING)
     private PollTypeEnum pollTypeEnum;
@@ -164,7 +173,6 @@ public class PollBase implements Serializable {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id, comment, creator, channelId, createTime, mobileterminal, updatedBy, assetId, pollTypeEnum);
     }
 }
