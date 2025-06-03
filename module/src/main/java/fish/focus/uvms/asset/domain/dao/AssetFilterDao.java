@@ -1,20 +1,19 @@
 package fish.focus.uvms.asset.domain.dao;
 
-import javax.ejb.Stateless;
-import javax.persistence.*;
-
 import fish.focus.uvms.asset.domain.entity.AssetFilter;
 import fish.focus.uvms.asset.domain.entity.AssetFilterQuery;
 import fish.focus.uvms.asset.domain.entity.AssetFilterValue;
 
+import javax.ejb.Stateless;
+import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
 @Stateless
 public class AssetFilterDao {
+
     @PersistenceContext
     private EntityManager em;
-
 
     public AssetFilter createAssetFilter(AssetFilter filter) {
         em.persist(filter);
@@ -26,13 +25,11 @@ public class AssetFilterDao {
     }
 
     public AssetFilter updateAssetFilter(AssetFilter filter) {
-        em.merge(filter);
-        return filter;
+        return em.merge(filter);
     }
 
-    public AssetFilter deleteAssetFilter(AssetFilter filter) {
-        em.remove(filter);
-        return filter;
+    public void deleteAssetFilter(AssetFilter filter) {
+        em.remove(em.contains(filter) ? filter : em.merge(filter));
     }
 
     public List<AssetFilter> getAssetFilterAll() {
@@ -143,5 +140,4 @@ public class AssetFilterDao {
         query.setParameter("assetFilterQuery", assetFilterquery);
         return query.getResultList();
     }
-
 }
