@@ -80,7 +80,6 @@ public class AssetRemapTest extends TransactionalTests {
         assertNull(oldAsset);
         newAsset = assetDao.getAssetById(newAsset.getId());
         assertNotNull(newAsset);
-
     }
 
     @Test
@@ -110,9 +109,7 @@ public class AssetRemapTest extends TransactionalTests {
         assertNotNull(oldAsset);
         newAsset = assetDao.getAssetById(newAsset.getId());
         assertNotNull(newAsset);
-
     }
-
 
     @Test
     @OperateOnDeployment("normal")

@@ -6,7 +6,6 @@ import fish.focus.uvms.asset.domain.entity.AssetFilterQuery;
 import fish.focus.uvms.tests.TransactionalTests;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -16,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
 public class AssetFilterTestsIT extends TransactionalTests {
@@ -28,7 +26,6 @@ public class AssetFilterTestsIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getAssetFilterAll() {
-
         List<UUID> createdList = new ArrayList<>();
         List<UUID> fetchedList = new ArrayList<>();
 
@@ -49,7 +46,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
                 break;
             }
         }
-        Assert.assertTrue(ok);
+        assertTrue(ok);
     }
 
     @Test
@@ -88,7 +85,6 @@ public class AssetFilterTestsIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getAssetFilterByGuid() {
-
         AssetFilter createdAssetFilterEntity = createAndStoreAssetFilterEntity("TEST");
         UUID guid = createdAssetFilterEntity.getId();
         assertNotNull(guid);
@@ -100,7 +96,6 @@ public class AssetFilterTestsIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getAssetFilterByGUIDS() {
-
         List<UUID> createdList = new ArrayList<>();
         List<UUID> fetchedList = new ArrayList<>();
         List<AssetFilter> fetchedEntityList;
@@ -122,7 +117,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
                 break;
             }
         }
-        Assert.assertTrue(ok);
+        assertTrue(ok);
     }
 
     @Test
@@ -133,7 +128,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
         assetFilterDao.deleteAssetFilter(assetFilterEntity);
 
         AssetFilter fetchedFilter = assetFilterDao.getAssetFilterByGuid(uuid);
-        Assert.assertNull(fetchedFilter);
+        assertNull(fetchedFilter);
     }
 
     @Test
@@ -148,7 +143,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
         em.flush();
 
         AssetFilter fetchedFilter = assetFilterDao.getAssetFilterByGuid(uuid);
-        Assert.assertTrue(fetchedFilter.getOwner().equalsIgnoreCase("NEW OWNER"));
+        assertTrue(fetchedFilter.getOwner().equalsIgnoreCase("NEW OWNER"));
     }
 
     @Test
@@ -164,7 +159,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
         em.flush();
 
         AssetFilter fetchedFilter = assetFilterDao.getAssetFilterByGuid(uuid);
-        Assert.assertTrue(fetchedFilter.getOwner().equalsIgnoreCase("NEW OWNER"));
+        assertTrue(fetchedFilter.getOwner().equalsIgnoreCase("NEW OWNER"));
     }
 
     private AssetFilter createAndStoreAssetFilterEntity(String user) {

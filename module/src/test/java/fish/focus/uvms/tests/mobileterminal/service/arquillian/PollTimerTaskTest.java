@@ -153,14 +153,18 @@ public class PollTimerTaskTest extends TransactionalTests {
         pagination.setListSize(1000);
         pagination.setPage(1);
         query.setPagination(pagination);
-        PollSearchCriteria criterias = new PollSearchCriteria();
-        criterias.setIsDynamic(true);
-        ListCriteria criteria = new ListCriteria();
-        criteria.setKey(SearchKey.CONNECT_ID);
-        criteria.setValue(connectId.toString());
-        criterias.getCriterias().add(criteria);
-        query.setPollSearchCriteria(criterias);
+
+        PollSearchCriteria criteria = new PollSearchCriteria();
+        criteria.setIsDynamic(true);
+
+        ListCriteria listCriteria = new ListCriteria();
+        listCriteria.setKey(SearchKey.CONNECT_ID);
+        listCriteria.setValue(connectId.toString());
+        criteria.getCriterias().add(listCriteria);
+
+        query.setPollSearchCriteria(criteria);
         PollListResponse pollList = pollService.getPollList(query);
+
         return pollList.getPollList();
     }
 }
