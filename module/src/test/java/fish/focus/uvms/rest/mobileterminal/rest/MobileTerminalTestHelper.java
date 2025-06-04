@@ -24,9 +24,13 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class MobileTerminalTestHelper {
+
+    private static final List<String> generatedStrings = new ArrayList<>();
 
     private static String serialNumber;
 
@@ -79,10 +83,21 @@ public class MobileTerminalTestHelper {
     public static String generateARandomStringWithMaxLength(int len) {
         Random random = new Random();
         StringBuilder ret = new StringBuilder();
-        for (int i = 0; i < len; i++) {
-            int val = random.nextInt(10);
-            ret.append(String.valueOf(val));
-        }
+
+        // don't want to end up in an infinite loop with short len and all combinations exhausted
+        int infinityBreaker = 0;
+
+        do {
+            ret.setLength(0);
+            for (int i = 0; i < len; i++) {
+                int val = random.nextInt(10);
+                ret.append(val);
+            }
+            infinityBreaker++;
+        } while (infinityBreaker < 20 && generatedStrings.contains(ret.toString()));
+
+        generatedStrings.add(ret.toString());
+
         return ret.toString();
     }
 
