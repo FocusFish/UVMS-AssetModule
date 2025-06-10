@@ -8,7 +8,7 @@ import fish.focus.uvms.mobileterminal.constants.MobileTerminalConfigType;
 import fish.focus.uvms.mobileterminal.dao.MobileTerminalPluginDaoBean;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminalPlugin;
 import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
@@ -20,7 +20,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class ConfigServiceBeanIntTest extends TransactionalTests {
+public class ConfigServiceBeanIntTest extends BuildAssetServiceDeployment {
 
     @EJB
     private ConfigServiceBeanMT configService;
@@ -71,7 +71,7 @@ public class ConfigServiceBeanIntTest extends TransactionalTests {
 
         MobileTerminalPlugin updatedPlugins = configService.upsertPlugin(pluginService);
         assertNotNull(updatedPlugins);
-        assertEquals(newLabelName, plugin.getName());
+        assertEquals(newLabelName, updatedPlugins.getName());
     }
 
     @Test

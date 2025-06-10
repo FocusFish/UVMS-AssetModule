@@ -1,28 +1,27 @@
 package fish.focus.uvms.tests.asset.service.arquillian.arquillian;
 
-import static org.junit.Assert.*;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.UUID;
-
-import javax.ejb.EJB;
-
-import org.jboss.arquillian.container.test.api.OperateOnDeployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import fish.focus.uvms.asset.bean.AssetFilterServiceBean;
 import fish.focus.uvms.asset.bean.AssetServiceBean;
 import fish.focus.uvms.asset.domain.constant.AssetFilterValueType;
 import fish.focus.uvms.asset.domain.entity.AssetFilter;
 import fish.focus.uvms.asset.domain.entity.AssetFilterQuery;
 import fish.focus.uvms.asset.domain.entity.AssetFilterValue;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
+import org.jboss.arquillian.container.test.api.OperateOnDeployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.ejb.EJB;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class AssetFilterServiceBeanTest extends TransactionalTests {
+public class AssetFilterServiceBeanTest extends BuildAssetServiceDeployment {
 
     @EJB
     private AssetServiceBean assetService;
@@ -163,7 +162,7 @@ public class AssetFilterServiceBeanTest extends TransactionalTests {
         fetchedAssetFilterValue.setValueString("CHANGEDVALUE");
         assetFilterService.updateAssetFilterValue(fetchedAssetFilterValue, "TEST");
         AssetFilterValue fetchedAssetFilterValue2 = assetFilterService.getAssetFilterValue(createdAssetFilterValue.getId());
-        assertEquals(fetchedAssetFilterValue2.getValueString(), "CHANGEDVALUE");
+        assertEquals("CHANGEDVALUE", fetchedAssetFilterValue2.getValueString());
     }
 
     @Test

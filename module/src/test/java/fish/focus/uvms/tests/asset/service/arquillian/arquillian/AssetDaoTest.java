@@ -18,14 +18,14 @@ import fish.focus.uvms.asset.remote.dto.search.SearchBranch;
 import fish.focus.uvms.asset.remote.dto.search.SearchFields;
 import fish.focus.uvms.asset.remote.dto.search.SearchLeaf;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.ejb.EJBTransactionRolledbackException;
+import javax.ejb.EJBException;
 import javax.inject.Inject;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -37,7 +37,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class AssetDaoTest extends TransactionalTests {
+public class AssetDaoTest extends BuildAssetServiceDeployment {
 
     private static final Random rnd = new Random();
 
@@ -61,7 +61,7 @@ public class AssetDaoTest extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void createAssetTest() throws Exception {
+    public void createAssetTest() {
         Asset asset = AssetTestsHelper.createBiggerAsset();
         asset = assetDao.createAsset(asset);
 
@@ -73,7 +73,6 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(fetchedAsset.getCfr(), is(asset.getCfr()));
         assertThat(fetchedAsset.getActive(), is(asset.getActive()));
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
@@ -90,10 +89,10 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(asset2.getId(), is(notNullValue()));
     }
 
-    @Test(expected = EJBTransactionRolledbackException.class)
+    @Test
     @OperateOnDeployment("normal")
     public void createAssetNullInputShouldThrowExceptionTest() {
-        assetDao.createAsset(null);
+        assertThrows(EJBException.class, () -> assetDao.createAsset(null));
     }
 
     @Test
@@ -271,15 +270,13 @@ public class AssetDaoTest extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void updateAssetTest() throws Exception {
+    public void updateAssetTest() {
         Asset asset = AssetTestsHelper.createBiggerAsset();
         asset = assetDao.createAsset(asset);
-        commit();
 
         String newName = "UpdatedName";
         asset.setName(newName);
         asset = assetDao.updateAsset(asset);
-        commit();
         assertThat(asset.getName(), is(newName));
 
         Asset updatedAsset = assetDao.getAssetById(asset.getId());
@@ -287,87 +284,73 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(updatedAsset.getName(), is(newName));
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListAllTest() throws Exception {
+    public void getAssetListAllTest() {
         List<Asset> assetListBefore = assetDao.getAssetListAll();
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
         List<Asset> assetListAfter = assetDao.getAssetListAll();
         assertThat(assetListAfter.size(), is(assetListBefore.size() + 1));
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getRevisionsForAssetSingleRevisionTest() throws Exception {
+    public void getRevisionsForAssetSingleRevisionTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         asset = assetDao.createAsset(asset);
-        commit();
         List<Asset> assetRevisions = assetDao.getRevisionsForAsset(asset.getId());
         assertEquals(1, assetRevisions.size());
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getRevisionsForAssetTwoVersionsCheckSizeTest() throws Exception {
+    public void getRevisionsForAssetTwoVersionsCheckSizeTest() {
         // TODO: Audited with UUID problem should be fixed first.
         Asset asset = AssetTestsHelper.createBasicAsset();
         asset = assetDao.createAsset(asset);
-        commit();
 
         Asset fetchedAsset = assetDao.getAssetById(asset.getId());
         String newName1 = "NewName1";
         fetchedAsset.setName(newName1);
         assetDao.updateAsset(fetchedAsset);
-        commit();
 
         List<Asset> assetRevisions = assetDao.getRevisionsForAsset(fetchedAsset.getId());
 
         assertEquals(2, assetRevisions.size());
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getRevisionsForAssetCompareRevisionsTest() throws Exception {
+    public void getRevisionsForAssetCompareRevisionsTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         Asset assetVersion1 = assetDao.createAsset(asset);
-        commit();
 
         String newName1 = "NewName1";
         assetVersion1.setName(newName1);
         Asset assetVersion2 = assetDao.updateAsset(assetVersion1);
-        commit();
 
         String newName2 = "NewName2";
         assetVersion2.setName(newName2);
         Asset assetVersion3 = assetDao.updateAsset(assetVersion2);
-        commit();
 
         assertThat(assetVersion3.getId(), is(notNullValue()));
         List<Asset> assetRevisions = assetDao.getRevisionsForAsset(assetVersion3.getId());
 
         assertEquals(3, assetRevisions.size());
         assetDao.deleteAsset(asset);
-
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetsAtDateSingleAssetTest() throws Exception {
+    public void getAssetsAtDateSingleAssetTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         asset = assetDao.createAsset(asset);
-        commit();
 
         List<Asset> assetsAtDate = assetDao.getAssetsAtDate(List.of(asset.getId()), Instant.now());
         Asset assetAtDate = assetsAtDate.get(0);
@@ -378,17 +361,15 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(assetAtDate.getCfr(), is(asset.getCfr()));
         assertThat(assetAtDate.getActive(), is(asset.getActive()));
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetsAtDateTwoAssetTest() throws Exception {
+    public void getAssetsAtDateTwoAssetTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         asset = assetDao.createAsset(asset);
         Asset asset2 = AssetTestsHelper.createBasicAsset();
         asset2 = assetDao.createAsset(asset2);
-        commit();
 
         List<Asset> assetsAtDate = assetDao.getAssetsAtDate(Arrays.asList(asset.getId(), asset2.getId()), Instant.now());
 
@@ -396,15 +377,13 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(asset);
         assetDao.deleteAsset(asset2);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetAtDateSingleAssetTest() throws Exception {
+    public void getAssetAtDateSingleAssetTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         asset = assetDao.createAsset(asset);
-        commit();
 
         Asset assetAtDate = assetDao.getAssetAtDate(asset.getId(), Instant.now());
 
@@ -414,19 +393,16 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(assetAtDate.getCfr(), is(asset.getCfr()));
         assertThat(assetAtDate.getActive(), is(asset.getActive()));
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetAtFirstRevisionTest() throws Exception {
+    public void getAssetAtFirstRevisionTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         asset = assetDao.createAsset(asset);
-        commit();
         String oldName = asset.getName();
         asset.setName(oldName + " updated");
         assetDao.updateAsset(asset);
-        commit();
 
         Asset assetAtDate = assetDao.getAssetAtDate(asset.getId(), Instant.now().minus(1, ChronoUnit.DAYS));
 
@@ -436,12 +412,11 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(assetAtDate.getCfr(), is(asset.getCfr()));
         assertThat(assetAtDate.getActive(), is(asset.getActive()));
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetAtDateMultipleAssetsTest() throws Exception {
+    public void getAssetAtDateMultipleAssetsTest() {
         Asset asset1 = AssetTestsHelper.createBasicAsset();
         asset1.setCfr(null);
         asset1.setIrcs(null);
@@ -452,13 +427,11 @@ public class AssetDaoTest extends TransactionalTests {
         asset1.setIccat(null);
         asset1 = assetDao.createAsset(asset1);
         String firstName = asset1.getName();
-        commit();
         Instant firstDate = Instant.now();
 
         String newName = "NewName";
         asset1.setName(newName);
         Asset asset2 = assetDao.updateAsset(asset1);
-        commit();
         Instant secondDate = Instant.now();
 
         Asset assetAtFirstDate = assetDao.getAssetAtDate(asset2.getId(), firstDate);
@@ -469,16 +442,13 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(asset1);
         assetDao.deleteAsset(asset2);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void verifyAssetHistoryUpdatesCorrectlyTest() throws Exception {
-
+    public void verifyAssetHistoryUpdatesCorrectlyTest() {
         Asset asset = AssetTestsHelper.createBiggerAsset();
         asset = assetDao.createAsset(asset);
-        commit();
         assertThat(asset.getHistoryId(), is(notNullValue()));
 
         String newName = "UpdatedName";
@@ -499,7 +469,6 @@ public class AssetDaoTest extends TransactionalTests {
         // in the middle. Reason for this is to stop it from first creating and then updating on create.
         UUID prevHistoryID = asset.getHistoryId();
         Asset updatedAsset = assetDao.updateAsset(asset);
-        commit();
 
         assertThat(updatedAsset.getHistoryId(), is(notNullValue()));
         assertThat(prevHistoryID, is(not(updatedAsset.getHistoryId())));
@@ -507,15 +476,13 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(newOrgName, is(updatedAsset.getProdOrgName()));
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetCountTest() throws Exception {
+    public void getAssetCountTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         trunk.getFields().add(new SearchLeaf(SearchFields.CFR, asset.getCfr()));
@@ -524,15 +491,13 @@ public class AssetDaoTest extends TransactionalTests {
         assertEquals(Long.valueOf(1), count);
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetCountTestCB() throws Exception {
+    public void getAssetCountTestCB() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         trunk.getFields().add(new SearchLeaf(SearchFields.CFR, asset.getCfr()));
@@ -541,19 +506,16 @@ public class AssetDaoTest extends TransactionalTests {
         assertEquals(Long.valueOf(1), count);
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetCountTwoRevisionsTest() throws Exception {
+    public void getAssetCountTwoRevisionsTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         asset.setName("NewName");
         assetDao.updateAsset(asset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.CFR, asset.getCfr()));
@@ -562,23 +524,19 @@ public class AssetDaoTest extends TransactionalTests {
         assertEquals(Long.valueOf(1), count);
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetCountTwoRevisionsAndTwoAssetsTest() throws Exception {
+    public void getAssetCountTwoRevisionsAndTwoAssetsTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         asset.setName("NewName");
         assetDao.updateAsset(asset);
-        commit();
 
         Asset asset2 = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset2);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.CFR, asset.getCfr()));
@@ -588,15 +546,13 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(asset);
         assetDao.deleteAsset(asset2);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetCountShouldNotFindAssetTest() throws Exception {
+    public void getAssetCountShouldNotFindAssetTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.CFR, "TESTCFR"));
@@ -606,15 +562,13 @@ public class AssetDaoTest extends TransactionalTests {
         assertEquals(Long.valueOf(0), count);
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTest() throws Exception {
+    public void getAssetListSearchPaginatedTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         trunk.getFields().add(new SearchLeaf(SearchFields.CFR, asset.getCfr()));
@@ -625,19 +579,16 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(assets.get(0).getId(), is(asset.getId()));
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTestTwoAssets() throws Exception {
+    public void getAssetListSearchPaginatedTestTwoAssets() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         Asset asset2 = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset2);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.CFR, asset.getCfr()));
@@ -653,19 +604,16 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(asset);
         assetDao.deleteAsset(asset2);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTestTwoAssetsLogicalOr() throws Exception {
+    public void getAssetListSearchPaginatedTestTwoAssetsLogicalOr() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         Asset asset2 = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset2);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.CFR, asset.getCfr()));
@@ -678,19 +626,16 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(asset);
         assetDao.deleteAsset(asset2);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTestTwoAssestPageSizeOne() throws Exception {
+    public void getAssetListSearchPaginatedTestTwoAssestPageSizeOne() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         Asset asset2 = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset2);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.CFR, asset.getCfr()));
@@ -713,16 +658,14 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(asset);
         assetDao.deleteAsset(asset2);
-        commit();
     }
 
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTestFlagStateAndExtMarking() throws Exception {
+    public void getAssetListSearchPaginatedTestFlagStateAndExtMarking() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         trunk.getFields().add(new SearchLeaf(SearchFields.FLAG_STATE, asset.getFlagStateCode()));
@@ -735,15 +678,13 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(assets.get(0).getId(), is(asset.getId()));
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTestGuid() throws Exception {
+    public void getAssetListSearchPaginatedTestGuid() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         asset = assetDao.createAsset(asset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         trunk.getFields().add(new SearchLeaf(SearchFields.GUID, asset.getId().toString()));
@@ -755,21 +696,18 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(assets.get(0).getId(), is(asset.getId()));
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTestHistoryGuid() throws Exception {
+    public void getAssetListSearchPaginatedTestHistoryGuid() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         asset = assetDao.createAsset(asset);
-        commit();
 
         Asset fetchedAsset = assetDao.getAssetById(asset.getId());
         String newName = "newName";
         fetchedAsset.setName(newName);
         Asset updatedAsset = assetDao.updateAsset(fetchedAsset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         trunk.getFields().add(new SearchLeaf(SearchFields.HIST_GUID, asset.getHistoryId().toString()));
@@ -790,16 +728,14 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(assets.get(0).getName(), is(updatedAsset.getName()));
 
         assetDao.deleteAsset(fetchedAsset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTestMinLength() throws Exception {
+    public void getAssetListSearchPaginatedTestMinLength() {
         Asset asset = AssetTestsHelper.createBiggerAsset();
         asset.setLengthOverAll(1d);
         assetDao.createAsset(asset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         SearchLeaf sLeaf = new SearchLeaf(SearchFields.LENGTH_OVER_ALL, asset.getLengthOverAll().toString());
@@ -810,15 +746,13 @@ public class AssetDaoTest extends TransactionalTests {
         assertEquals(1, assets.size());
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTestNumber() throws Exception {
+    public void getAssetListSearchPaginatedTestNumber() {
         Asset asset = AssetTestsHelper.createBiggerAsset();
         assetDao.createAsset(asset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         trunk.getFields().add(new SearchLeaf(SearchFields.GEAR_TYPE, asset.getGearFishingType()));
@@ -829,18 +763,16 @@ public class AssetDaoTest extends TransactionalTests {
         assertEquals(1, assets.size());
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTestWildcardSearch() throws Exception {
+    public void getAssetListSearchPaginatedTestWildcardSearch() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         String randomNumbers = AssetTestsHelper.getRandomIntegers(10);
         String searchName = "TestLikeSearchName" + randomNumbers;
         asset.setName(searchName);
         assetDao.createAsset(asset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         trunk.getFields().add(new SearchLeaf(SearchFields.NAME, "*LikeSearch*"));
@@ -850,18 +782,16 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(assets.get(0).getName(), is(searchName));
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTestWildcardSearchCaseInsensitive() throws Exception {
+    public void getAssetListSearchPaginatedTestWildcardSearchCaseInsensitive() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         String randomNumbers = AssetTestsHelper.getRandomIntegers(10);
         String searchName = "TestLikeSearchName" + randomNumbers;
         asset.setName(searchName);
         assetDao.createAsset(asset);
-        commit();
 
         List<SearchKeyValue> searchKeyValues = new ArrayList<>();
         SearchKeyValue searchKey = new SearchKeyValue();
@@ -878,18 +808,16 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(assets.get(0).getName(), is(searchName));
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTestWildcardSearchCaseInsensitiveCB() throws Exception {
+    public void getAssetListSearchPaginatedTestWildcardSearchCaseInsensitiveCB() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         String randomNumbers = AssetTestsHelper.getRandomIntegers(10);
         String searchName = "TestLikeSearchName" + randomNumbers;
         asset.setName(searchName);
         assetDao.createAsset(asset);
-        commit();
 
         List<SearchKeyValue> searchKeyValues = new ArrayList<>();
         SearchKeyValue searchKey = new SearchKeyValue();
@@ -906,20 +834,17 @@ public class AssetDaoTest extends TransactionalTests {
         assertThat(assets.get(0).getName(), is(searchName));
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchDeeperQueryTest() throws Exception {
+    public void getAssetListSearchDeeperQueryTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         Asset asset2 = AssetTestsHelper.createBasicAsset();
         asset2.setFlagStateCode("DNK");
         assetDao.createAsset(asset2);
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         SearchLeaf leaf = new SearchLeaf(SearchFields.CFR, asset.getCfr());
@@ -942,20 +867,17 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(asset);
         assetDao.deleteAsset(asset2);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchQueryTestCB() throws Exception {
+    public void getAssetListSearchQueryTestCB() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         Asset asset2 = AssetTestsHelper.createBasicAsset();
         asset2.setFlagStateCode("DNK");
         assetDao.createAsset(asset2);
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         SearchLeaf leaf = new SearchLeaf(SearchFields.CFR, asset.getCfr());
@@ -978,20 +900,17 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(asset);
         assetDao.deleteAsset(asset2);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchEmptyDepthQuery() throws Exception {
+    public void getAssetListSearchEmptyDepthQuery() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         Asset asset2 = AssetTestsHelper.createBasicAsset();
         asset2.setFlagStateCode("DNK");
         assetDao.createAsset(asset2);
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         SearchLeaf leaf = new SearchLeaf(SearchFields.CFR, asset.getCfr());
@@ -1009,20 +928,17 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(asset);
         assetDao.deleteAsset(asset2);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListSearchPaginatedTestNoInactivatedAssets() throws Exception {
+    public void getAssetListSearchPaginatedTestNoInactivatedAssets() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset);
-        commit();
 
         Asset assetInactivated = AssetTestsHelper.createBasicAsset();
         assetInactivated.setActive(false);
         assetDao.createAsset(assetInactivated);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.CFR, asset.getCfr()));
@@ -1041,24 +957,20 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(asset);
         assetDao.deleteAsset(assetInactivated);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListFuzzySearch() throws Exception {
-
+    public void getAssetListFuzzySearch() {
         String randomIntegersGen = AssetTestsHelper.getRandomIntegers(5);
 
         Asset asset = AssetTestsHelper.createBasicAsset();
         asset.setIrcs("I " + randomIntegersGen);
         assetDao.createAsset(asset);
-        commit();
 
         Asset asset2 = AssetTestsHelper.createBasicAsset();
         asset2.setIrcs("I-" + randomIntegersGen);
         assetDao.createAsset(asset2);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.IRCS, asset2.getIrcs()));
@@ -1068,30 +980,25 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(asset);
         assetDao.deleteAsset(asset2);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListFuzzySearchAndInActive() throws Exception {
-
+    public void getAssetListFuzzySearchAndInActive() {
         String randomIntegersGen = AssetTestsHelper.getRandomIntegers(5);
 
         Asset asset = AssetTestsHelper.createBasicAsset();
         asset.setIrcs("Q " + randomIntegersGen);
         asset = assetDao.createAsset(asset);
-        commit();
 
         Asset asset2 = AssetTestsHelper.createBasicAsset();
         asset2.setIrcs("Q-" + randomIntegersGen);
         asset2 = assetDao.createAsset(asset2);
-        commit();
 
         Asset asset3 = AssetTestsHelper.createBasicAsset();
         asset3.setIrcs("Q" + randomIntegersGen);
         asset3.setActive(false);
         asset3 = assetDao.createAsset(asset3);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.IRCS, "Q" + randomIntegersGen));
@@ -1108,20 +1015,17 @@ public class AssetDaoTest extends TransactionalTests {
         assetDao.deleteAsset(asset);
         assetDao.deleteAsset(asset2);
         assetDao.deleteAsset(asset3);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListFuzzySearchExternalMarking() throws Exception {
-
+    public void getAssetListFuzzySearchExternalMarking() {
         String randomIntegersGen = AssetTestsHelper.getRandomIntegers(5);
 
         String eMarking = "E Marking" + randomIntegersGen;
         Asset asset = AssetTestsHelper.createBasicAsset();
         asset.setExternalMarking(eMarking);
         asset = assetDao.createAsset(asset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.EXTERNAL_MARKING, "E-MaR-king-" + randomIntegersGen));
@@ -1131,13 +1035,11 @@ public class AssetDaoTest extends TransactionalTests {
         assertEquals(asset.getExternalMarking(), eMarking);
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListFuzzySearchExternalMarkingWithInactivated() throws Exception {
-
+    public void getAssetListFuzzySearchExternalMarkingWithInactivated() {
         String randomIntegersGen = AssetTestsHelper.getRandomIntegers(5);
 
         String eMarking = "E Marking" + randomIntegersGen;
@@ -1145,7 +1047,6 @@ public class AssetDaoTest extends TransactionalTests {
         asset.setExternalMarking(eMarking);
         asset.setActive(false);
         asset = assetDao.createAsset(asset);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.EXTERNAL_MARKING, "E-MaR-king-" + randomIntegersGen));
@@ -1155,13 +1056,11 @@ public class AssetDaoTest extends TransactionalTests {
         assertEquals(asset.getExternalMarking(), eMarking);
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListFuzzySearchExternalMarkingOrIrcs() throws Exception {
-
+    public void getAssetListFuzzySearchExternalMarkingOrIrcs() {
         String randomIntegersGen = AssetTestsHelper.getRandomIntegers(5);
 
         String eMarkingString = "E Marking" + randomIntegersGen;
@@ -1170,12 +1069,10 @@ public class AssetDaoTest extends TransactionalTests {
         Asset assetEM = AssetTestsHelper.createBasicAsset();
         assetEM.setExternalMarking(eMarkingString);
         assetDao.createAsset(assetEM);
-        commit();
 
         Asset assetIrcs = AssetTestsHelper.createBasicAsset();
         assetIrcs.setIrcs(ircsString);
         assetDao.createAsset(assetIrcs);
-        commit();
 
 
         SearchBranch trunk = new SearchBranch(false);
@@ -1195,13 +1092,11 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(assetEM);
         assetDao.deleteAsset(assetIrcs);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListFuzzySearchExternalMarkingOrIrcsNoInactiveated() throws Exception {
-
+    public void getAssetListFuzzySearchExternalMarkingOrIrcsNoInactiveated() {
         String randomIntegersGen = AssetTestsHelper.getRandomIntegers(5);
 
         String eMarkingString = "E Marking" + randomIntegersGen;
@@ -1210,14 +1105,11 @@ public class AssetDaoTest extends TransactionalTests {
         Asset assetEM = AssetTestsHelper.createBasicAsset();
         assetEM.setExternalMarking(eMarkingString);
         assetDao.createAsset(assetEM);
-        commit();
 
         Asset assetIrcs = AssetTestsHelper.createBasicAsset();
         assetIrcs.setIrcs(ircsString);
         assetIrcs.setActive(false);
         assetDao.createAsset(assetIrcs);
-        commit();
-
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.EXTERNAL_MARKING, "E-MaR-king-" + randomIntegersGen));
@@ -1233,13 +1125,11 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(assetEM);
         assetDao.deleteAsset(assetIrcs);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListFuzzySearchExternalMarkingAndIrcsNested() throws Exception {
-
+    public void getAssetListFuzzySearchExternalMarkingAndIrcsNested() {
         String randomIntegersGen = AssetTestsHelper.getRandomIntegers(5);
 
         String eMarkingString = "E Marking" + randomIntegersGen;
@@ -1248,13 +1138,10 @@ public class AssetDaoTest extends TransactionalTests {
         Asset assetEM = AssetTestsHelper.createBasicAsset();
         assetEM.setExternalMarking(eMarkingString);
         assetDao.createAsset(assetEM);
-        commit();
 
         Asset assetIrcs = AssetTestsHelper.createBasicAsset();
         assetIrcs.setIrcs(ircsString);
         assetDao.createAsset(assetIrcs);
-        commit();
-
 
         SearchBranch trunk = new SearchBranch(true);
         SearchBranch trunk2 = new SearchBranch(false);
@@ -1276,13 +1163,11 @@ public class AssetDaoTest extends TransactionalTests {
 
         assetDao.deleteAsset(assetEM);
         assetDao.deleteAsset(assetIrcs);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListFuzzySearchExternalMarkingAndIrcs() throws Exception {
-
+    public void getAssetListFuzzySearchExternalMarkingAndIrcs() {
         String randomIntegersGen = AssetTestsHelper.getRandomIntegers(5);
 
         String eMarkingString = "E Marking" + randomIntegersGen;
@@ -1292,8 +1177,6 @@ public class AssetDaoTest extends TransactionalTests {
         asset.setExternalMarking(eMarkingString);
         asset.setIrcs(ircsString);
         assetDao.createAsset(asset);
-        commit();
-
 
         SearchBranch trunk = new SearchBranch(true);
         trunk.getFields().add(new SearchLeaf(SearchFields.EXTERNAL_MARKING, "E-MaR-king-" + randomIntegersGen));
@@ -1309,13 +1192,11 @@ public class AssetDaoTest extends TransactionalTests {
         assertEquals(asset.getIrcs(), ircsString);
 
         assetDao.deleteAsset(asset);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListFuzzySearchEmpty() throws Exception {
-
+    public void getAssetListFuzzySearchEmpty() {
         Asset asset1 = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset1);
         Asset asset2 = AssetTestsHelper.createBasicAsset();
@@ -1326,7 +1207,6 @@ public class AssetDaoTest extends TransactionalTests {
         assetDao.createAsset(asset4);
         Asset asset5 = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset5);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
 
@@ -1338,13 +1218,11 @@ public class AssetDaoTest extends TransactionalTests {
         assetDao.deleteAsset(asset3);
         assetDao.deleteAsset(asset4);
         assetDao.deleteAsset(asset5);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListFuzzySearchEmptyNoInactivated() throws Exception {
-
+    public void getAssetListFuzzySearchEmptyNoInactivated() {
         Asset asset1 = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset1);
         Asset asset2 = AssetTestsHelper.createBasicAsset();
@@ -1352,7 +1230,6 @@ public class AssetDaoTest extends TransactionalTests {
         Asset asset3 = AssetTestsHelper.createBasicAsset();
         asset3.setActive(false);
         assetDao.createAsset(asset3);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
 
@@ -1363,13 +1240,11 @@ public class AssetDaoTest extends TransactionalTests {
         assetDao.deleteAsset(asset1);
         assetDao.deleteAsset(asset2);
         assetDao.deleteAsset(asset3);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListFuzzySearchEmptyWithInactivated() throws Exception {
-
+    public void getAssetListFuzzySearchEmptyWithInactivated() {
         Asset asset1 = AssetTestsHelper.createBasicAsset();
         assetDao.createAsset(asset1);
         Asset asset2 = AssetTestsHelper.createBasicAsset();
@@ -1377,7 +1252,6 @@ public class AssetDaoTest extends TransactionalTests {
         Asset asset3 = AssetTestsHelper.createBasicAsset();
         asset3.setActive(false);
         assetDao.createAsset(asset3);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
 
@@ -1389,22 +1263,17 @@ public class AssetDaoTest extends TransactionalTests {
         assetDao.deleteAsset(asset1);
         assetDao.deleteAsset(asset2);
         assetDao.deleteAsset(asset3);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void orderByDescTestEmptySearch() throws Exception {
-
+    public void orderByDescTestEmptySearch() {
         Asset asset1 = AssetTestsHelper.createBiggerAsset();
         assetDao.createAsset(asset1);
-        commit();
         Asset asset2 = AssetTestsHelper.createBiggerAsset();
         assetDao.createAsset(asset2);
-        commit();
         Asset asset3 = AssetTestsHelper.createBiggerAsset();
         assetDao.createAsset(asset3);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
 
@@ -1421,22 +1290,17 @@ public class AssetDaoTest extends TransactionalTests {
         assetDao.deleteAsset(asset1);
         assetDao.deleteAsset(asset2);
         assetDao.deleteAsset(asset3);
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void orderByDescTestWithIrcs() throws Exception {
-
+    public void orderByDescTestWithIrcs() {
         Asset asset1 = AssetTestsHelper.createBiggerAsset();
         assetDao.createAsset(asset1);
-        commit();
         Asset asset2 = AssetTestsHelper.createBiggerAsset();
         assetDao.createAsset(asset2);
-        commit();
         Asset asset3 = AssetTestsHelper.createBiggerAsset();
         assetDao.createAsset(asset3);
-        commit();
 
         SearchBranch trunk = new SearchBranch(false);
         trunk.getFields().add(new SearchLeaf(SearchFields.IRCS, "F*"));
@@ -1454,11 +1318,5 @@ public class AssetDaoTest extends TransactionalTests {
         assetDao.deleteAsset(asset1);
         assetDao.deleteAsset(asset2);
         assetDao.deleteAsset(asset3);
-        commit();
-    }
-
-    private void commit() throws Exception {
-        userTransaction.commit();
-        userTransaction.begin();
     }
 }

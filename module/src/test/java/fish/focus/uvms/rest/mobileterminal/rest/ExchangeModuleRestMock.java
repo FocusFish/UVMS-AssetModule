@@ -11,6 +11,12 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.rest.mobileterminal.rest;
 
+import fish.focus.schema.exchange.module.v1.GetServiceListRequest;
+import fish.focus.schema.exchange.module.v1.GetServiceListResponse;
+import fish.focus.schema.exchange.module.v1.SetCommandRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -19,17 +25,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import fish.focus.schema.exchange.module.v1.GetServiceListRequest;
-import fish.focus.schema.exchange.module.v1.GetServiceListResponse;
-import fish.focus.schema.exchange.module.v1.SetCommandRequest;
-
 @Path("exchange/rest/unsecured/api")
 @Stateless
 public class ExchangeModuleRestMock {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExchangeModuleRestMock.class);
+
+    private static final String MESSAGE_PRODUCER_METHODS_FAIL = "MESSAGE_PRODUCER_METHODS_FAIL";
 
     @POST
     @Path("serviceList")
@@ -49,6 +51,10 @@ public class ExchangeModuleRestMock {
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Path("/pluginCommand")
     public Response sendCommandToPlugin(SetCommandRequest request) {
+        boolean shouldFail = Boolean.parseBoolean(System.getProperty(MESSAGE_PRODUCER_METHODS_FAIL, "false"));
+        if (shouldFail) {
+            return Response.serverError().build();
+        }
         return Response.ok().build();
     }
 

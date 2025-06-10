@@ -5,12 +5,13 @@ import fish.focus.uvms.asset.domain.dao.AssetDao;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.mobileterminal.bean.MobileTerminalServiceBean;
 import fish.focus.uvms.mobileterminal.dao.MobileTerminalPluginDaoBean;
+import fish.focus.uvms.mobileterminal.dao.TerminalDaoBean;
 import fish.focus.uvms.mobileterminal.entity.Channel;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminalPlugin;
 import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
 import fish.focus.uvms.mobileterminal.model.constants.TerminalSourceEnum;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import fish.focus.uvms.tests.asset.service.arquillian.arquillian.AssetTestsHelper;
 import fish.focus.uvms.tests.mobileterminal.service.arquillian.helper.TestPollHelper;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -19,9 +20,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.ejb.EJB;
+import javax.ejb.EJBException;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,10 +36,8 @@ import static org.junit.Assert.*;
  * Created by thofan on 2017-05-29.
  */
 @RunWith(Arquillian.class)
-public class MobileTerminalServiceIntTest extends TransactionalTests {
+public class MobileTerminalServiceIntTest extends BuildAssetServiceDeployment {
 
-    // TODO we do test on those transactions that are wrong in construction
-    private static final String MESSAGE_PRODUCER_METHODS_FAIL = "MESSAGE_PRODUCER_METHODS_FAIL";
     private static final String USERNAME = "TEST_USERNAME";
     private static final String NEW_MOBILE_TERMINAL_TYPE = "IRIDIUM";
     private static final String TEST_COMMENT = "TEST_COMMENT";
@@ -48,6 +47,9 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
 
     @EJB
     private MobileTerminalServiceBean mobileTerminalService;
+
+    @Inject
+    private TerminalDaoBean mobileTerminalDaoBean;
 
     @Inject
     private MobileTerminalPluginDaoBean pluginDao;
@@ -64,7 +66,6 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
         UUID createdMobileTerminalId;
         UUID fetchedMobileTerminalGuid;
 
-        System.setProperty(MESSAGE_PRODUCER_METHODS_FAIL, "false");
         MobileTerminal createdMobileTerminal = testPollHelper.createAndPersistMobileTerminal(null);
         createdMobileTerminalId = createdMobileTerminal.getId();
 
@@ -208,9 +209,13 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
         MobileTerminal archived = updateMobileTerminal(created);
         assertTrue(archived.getArchived());
 
-        archived.setArchived(false);
-        MobileTerminal unarchived = updateMobileTerminal(created);
-        assertFalse(unarchived.getArchived());
+        MobileTerminal mobileTerminalById = mobileTerminalDaoBean.getMobileTerminalById(created.getId());
+
+        mobileTerminalById.setArchived(false);
+        updateMobileTerminal(mobileTerminalById);
+
+        MobileTerminal unarchivedMobileTerminal = mobileTerminalDaoBean.getMobileTerminalById(created.getId());
+        assertFalse(unarchivedMobileTerminal.getArchived());
     }
 
     @Test
@@ -218,12 +223,11 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
     public void createMobileTerminal_WillFail_Null_Plugin() {
         MobileTerminal mobileTerminal = testPollHelper.createBasicMobileTerminal();
         mobileTerminal.setPlugin(null);
-        assertThrows(EJBTransactionRolledbackException.class, () -> createMobileTerminalAndFlush(mobileTerminal));
+        assertThrows(EJBException.class, () -> createMobileTerminal(mobileTerminal));
     }
 
-    private void createMobileTerminalAndFlush(MobileTerminal mobileTerminal) {
+    private void createMobileTerminal(MobileTerminal mobileTerminal) {
         mobileTerminalService.createMobileTerminal(mobileTerminal, USERNAME);
-        em.flush();
     }
 
     @Test
@@ -232,7 +236,7 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
         MobileTerminal mobileTerminal = testPollHelper.createBasicMobileTerminal();
         Channel emptyChannel = new Channel();
         mobileTerminal.getChannels().add(emptyChannel);
-        assertThrows(EJBTransactionRolledbackException.class, () -> createMobileTerminalAndFlush(mobileTerminal));
+        assertThrows(EJBException.class, () -> createMobileTerminal(mobileTerminal));
     }
 
     @Test
@@ -240,7 +244,7 @@ public class MobileTerminalServiceIntTest extends TransactionalTests {
     public void createMobileTerminal_WillFail_Null_SerialNumber() {
         MobileTerminal mobileTerminal = testPollHelper.createBasicMobileTerminal();
         mobileTerminal.setSerialNo(null);
-        assertThrows(ConstraintViolationException.class, () -> createMobileTerminalAndFlush(mobileTerminal));
+        assertThrows(EJBTransactionRolledbackException.class, () -> createMobileTerminal(mobileTerminal));
     }
 
     @Test
