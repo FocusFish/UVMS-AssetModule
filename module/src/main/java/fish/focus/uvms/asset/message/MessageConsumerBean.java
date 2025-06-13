@@ -15,7 +15,6 @@ import fish.focus.uvms.asset.message.event.AssetMessageErrorEvent;
 import fish.focus.uvms.asset.message.event.AssetMessageEvent;
 import fish.focus.uvms.asset.message.event.AssetMessageEventBean;
 import fish.focus.uvms.asset.message.event.AssetMessageJSONBean;
-import fish.focus.uvms.asset.model.constants.FaultCode;
 import fish.focus.uvms.asset.model.exception.AssetException;
 import fish.focus.uvms.asset.model.mapper.AssetModuleResponseMapper;
 import fish.focus.uvms.asset.model.mapper.JAXBMarshaller;
@@ -36,6 +35,8 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import static fish.focus.uvms.asset.model.constants.FaultCode.ASSET_MESSAGE;
 
 @MessageDriven(mappedName = MessageConstants.QUEUE_ASSET_EVENT, activationConfig = {
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = MessageConstants.DESTINATION_TYPE_QUEUE),
@@ -76,7 +77,7 @@ public class MessageConsumerBean implements MessageListener {
             handleXmlFormattedMessage(textMessage);
         } catch (Exception e) {
             LOG.error("[ Error when receiving message in AssetModule. ] {}", findLineInStackTrace(e, "duplicate key value violates unique constraint"));
-            assetErrorEvent.fire(new AssetMessageEvent(textMessage, AssetModuleResponseMapper.createFaultMessage(FaultCode.ASSET_MESSAGE, "Method not implemented")));
+            assetErrorEvent.fire(new AssetMessageEvent(textMessage, AssetModuleResponseMapper.createFaultMessage(ASSET_MESSAGE, "Error processing message in Asset Module: " + e.getMessage())));
         }
     }
 
@@ -100,7 +101,7 @@ public class MessageConsumerBean implements MessageListener {
                 break;
             default:
                 LOG.error("[ Not implemented method consumed: {} ]", method);
-                assetErrorEvent.fire(new AssetMessageEvent(textMessage, AssetModuleResponseMapper.createFaultMessage(FaultCode.ASSET_MESSAGE, "Method not implemented")));
+                assetErrorEvent.fire(new AssetMessageEvent(textMessage, AssetModuleResponseMapper.createFaultMessage(ASSET_MESSAGE, "Method not implemented")));
         }
     }
 
