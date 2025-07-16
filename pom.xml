@@ -26,7 +26,7 @@
         <uvms.common.version>4.1.15</uvms.common.version>
         <uvms.config.version>4.2.0</uvms.config.version>
         <audit.model.version>4.4.0</audit.model.version>
-        <exchange.model.version>5.3.32</exchange.model.version>
+        <exchange.model.version>5.4.0</exchange.model.version>
         <project.scm.id>github</project.scm.id>
         <installAtEnd>false</installAtEnd>
     </properties>
