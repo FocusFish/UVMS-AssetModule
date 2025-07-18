@@ -12,15 +12,14 @@ import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.persistence.*;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
-
-import static fish.focus.uvms.asset.domain.entity.Asset.*;
-
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import static fish.focus.uvms.asset.domain.entity.Asset.*;
 
 @Audited
 @Entity
@@ -49,10 +48,18 @@ import java.util.UUID;
         @NamedQuery(name = ASSET_FIND_BY_IDS, query = "SELECT new fish.focus.uvms.asset.dto.AssetProjection(a.id, a.historyId, a.ircsIndicator, a.ersIndicator, a.aisIndicator, a.vmsIndicator, a.hullMaterial, a.commissionDate, a.constructionYear, a.constructionPlace, a.updateTime, a.source, a.vesselType, a.vesselDateOfEntry, a.cfr, a.imo, a.ircs, a.mmsi, a.iccat, a.uvi, a.gfcm, a.active, a.flagStateCode, a.eventCode, a.name, a.externalMarking, a.agentIsAlsoOwner, a.lengthOverAll, a.lengthBetweenPerpendiculars, a.safteyGrossTonnage, a.otherTonnage, a.grossTonnage, a.grossTonnageUnit, a.portOfRegistration, a.powerOfAuxEngine, a.powerOfMainEngine, a.hasLicence, a.licenceType, a.mainFishingGearCode, a.subFishingGearCode, a.gearFishingType, a.ownerName, a.hasVms, a.ownerAddress, a.assetAgentAddress, a.countryOfImportOrExport, a.typeOfExport, a.administrativeDecisionDate, a.segment, a.segmentOfAdministrativeDecision, a.publicAid, a.registrationNumber, a.updatedBy, a.prodOrgCode, a.prodOrgName, m.id, a.comment, a.nationalId, a.parked) FROM Asset a LEFT JOIN a.mobileTerminals m WHERE a.id in :idList"),
         @NamedQuery(name = ASSET_FIND_BY_ALL_IDENTIFIERS, query = "SELECT v FROM Asset v WHERE v.cfr = :cfr OR v.ircs = :ircs OR v.imo = :imo OR v.mmsi = :mmsi OR v.iccat = :iccat OR v.uvi = :uvi OR v.gfcm = :gfcm"),
         @NamedQuery(name = ASSET_FIND_BY_MMSI_OR_IRCS, query = "SELECT a FROM Asset a WHERE (replace(a.ircs, '-', '') = :ircs OR a.mmsi = :mmsi) AND a.active = true"),
+        @NamedQuery(name = ASSET_FIND_ACTIVE_BY_ANY_ID, query = "SELECT a FROM Asset a " +
+                "WHERE (a.imo = :imo OR a.cfr = :cfr OR (a.nationalId = :nationalId and a.flagStateCode = :flagStateCode)) OR " +
+                "((a.imo is null AND a.cfr is null AND a.nationalId is null) AND (replace(a.ircs, '-', '') = :ircs OR a.mmsi = :mmsi)) AND " +
+                "a.active = true " +
+                "order by imo, cfr, national_id, ircs, mmsi nulls last"),
+        @NamedQuery(name = ASSET_FIND_BY_ANY_ID, query = "SELECT a FROM Asset a " +
+                "WHERE (a.imo = :imo OR a.cfr = :cfr OR replace(a.ircs, '-', '') = :ircs OR a.mmsi = :mmsi) AND " +
+                "a.active = true " +
+                "order by imo, cfr, national_id, ircs, mmsi nulls last"),
         @NamedQuery(name = ASSET_ALL_AVAILABLE_VESSEL_TYPES, query = "SELECT DISTINCT a.vesselType FROM Asset a"),
 })
 public class Asset implements Serializable {
-
     public static final String ASSET_FIND_BY_CFR = "Asset.findByCfr";
     public static final String ASSET_FIND_BY_IRCS = "Asset.findByIrcs";
     public static final String ASSET_FIND_BY_IMO = "Asset.findByImo";
@@ -65,6 +72,8 @@ public class Asset implements Serializable {
     public static final String ASSET_FIND_BY_IDS = "Asset.findByIds";
     public static final String ASSET_FIND_BY_ALL_IDENTIFIERS = "Asset.findByAllIds";
     public static final String ASSET_FIND_BY_MMSI_OR_IRCS = "Asset.findByMmsiOrIrcs";
+    public static final String ASSET_FIND_ACTIVE_BY_ANY_ID = "Asset.findActiveByAnyId";
+    public static final String ASSET_FIND_BY_ANY_ID = "Asset.findByAnyId";
     public static final String ASSET_ALL_AVAILABLE_VESSEL_TYPES = "Asset.allAvailableVesselTypes";
 
     private static final long serialVersionUID = -320627625723663100L;
