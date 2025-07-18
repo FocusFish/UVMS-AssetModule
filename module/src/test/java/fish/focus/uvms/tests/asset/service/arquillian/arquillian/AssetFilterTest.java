@@ -3,10 +3,9 @@ package fish.focus.uvms.tests.asset.service.arquillian.arquillian;
 import fish.focus.uvms.asset.domain.dao.AssetFilterDao;
 import fish.focus.uvms.asset.domain.entity.AssetFilter;
 import fish.focus.uvms.asset.domain.entity.AssetFilterQuery;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -16,11 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class AssetFilterTestsIT extends TransactionalTests {
+public class AssetFilterTest extends BuildAssetServiceDeployment {
 
     @Inject
     private AssetFilterDao assetFilterDao;
@@ -28,7 +29,6 @@ public class AssetFilterTestsIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getAssetFilterAll() {
-
         List<UUID> createdList = new ArrayList<>();
         List<UUID> fetchedList = new ArrayList<>();
 
@@ -49,7 +49,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
                 break;
             }
         }
-        Assert.assertTrue(ok);
+        assertTrue(ok);
     }
 
     @Test
@@ -88,7 +88,6 @@ public class AssetFilterTestsIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getAssetFilterByGuid() {
-
         AssetFilter createdAssetFilterEntity = createAndStoreAssetFilterEntity("TEST");
         UUID guid = createdAssetFilterEntity.getId();
         assertNotNull(guid);
@@ -100,7 +99,6 @@ public class AssetFilterTestsIT extends TransactionalTests {
     @Test
     @OperateOnDeployment("normal")
     public void getAssetFilterByGUIDS() {
-
         List<UUID> createdList = new ArrayList<>();
         List<UUID> fetchedList = new ArrayList<>();
         List<AssetFilter> fetchedEntityList;
@@ -122,7 +120,7 @@ public class AssetFilterTestsIT extends TransactionalTests {
                 break;
             }
         }
-        Assert.assertTrue(ok);
+        assertTrue(ok);
     }
 
     @Test
@@ -130,25 +128,26 @@ public class AssetFilterTestsIT extends TransactionalTests {
     public void deleteAssetFilter() {
         AssetFilter assetFilterEntity = createAndStoreAssetFilterEntity("TEST");
         UUID uuid = assetFilterEntity.getId();
+
+        assertThat(uuid, is(notNullValue()));
+
         assetFilterDao.deleteAssetFilter(assetFilterEntity);
 
         AssetFilter fetchedFilter = assetFilterDao.getAssetFilterByGuid(uuid);
-        Assert.assertNull(fetchedFilter);
+        assertNull(fetchedFilter);
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void updateAssetGroup() throws Exception {
+    public void updateAssetGroup() {
         AssetFilter assetFilterEntity = createAndStoreAssetFilterEntity("TEST");
         UUID uuid = assetFilterEntity.getId();
 
         assetFilterEntity.setOwner("NEW OWNER");
         assetFilterDao.updateAssetFilter(assetFilterEntity);
-        commit();
-        em.flush();
 
         AssetFilter fetchedFilter = assetFilterDao.getAssetFilterByGuid(uuid);
-        Assert.assertTrue(fetchedFilter.getOwner().equalsIgnoreCase("NEW OWNER"));
+        assertTrue(fetchedFilter.getOwner().equalsIgnoreCase("NEW OWNER"));
     }
 
     @Test
@@ -161,10 +160,9 @@ public class AssetFilterTestsIT extends TransactionalTests {
         createAssetFilterQuery(assetFilter, 17);
 
         assetFilterDao.updateAssetFilter(assetFilter);
-        em.flush();
 
         AssetFilter fetchedFilter = assetFilterDao.getAssetFilterByGuid(uuid);
-        Assert.assertTrue(fetchedFilter.getOwner().equalsIgnoreCase("NEW OWNER"));
+        assertTrue(fetchedFilter.getOwner().equalsIgnoreCase("NEW OWNER"));
     }
 
     private AssetFilter createAndStoreAssetFilterEntity(String user) {
@@ -191,10 +189,5 @@ public class AssetFilterTestsIT extends TransactionalTests {
             assetFilterQueryList.add(field);
         }
         return assetFilterQueryList;
-    }
-
-    private void commit() throws Exception {
-        userTransaction.commit();
-        userTransaction.begin();
     }
 }

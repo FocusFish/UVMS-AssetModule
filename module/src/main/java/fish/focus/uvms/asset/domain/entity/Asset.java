@@ -776,4 +776,21 @@ public class Asset implements Serializable {
     public void setParked(Boolean parked) {
         this.parked = parked;
     }
+
+    @Override
+    public String toString() {
+        return "Asset{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", cfr='" + cfr + '\'' +
+                ", imo='" + imo + '\'' +
+                ", nationalId=" + nationalId +
+                ", ircs='" + ircs + '\'' +
+                ", mmsi='" + mmsi + '\'' +
+                ", flagStateCode='" + flagStateCode + '\'' +
+                ", source='" + source + '\'' +
+                ", eventCode='" + eventCode + '\'' +
+                ", active=" + active +
+                '}';
+    }
 }

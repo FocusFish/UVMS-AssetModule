@@ -213,9 +213,10 @@ public class TestPollHelper {
         mtp.setName("Thrane&Thrane&Thrane");
         mtp.setPluginSatelliteType("INMARSAT_C");
         mtp.setPluginInactive(false);
+        mobileTerminalPluginDao.createMobileTerminalPlugin(mtp);
         mobileTerminal.setPlugin(mtp);
         mobileTerminal.setTransceiverType("TRANSPONDERTYP_100");
-        mobileTerminal.setSerialNo("SN1234567890");
+        mobileTerminal.setSerialNo("SN" + generateARandomStringWithMaxLength(10));
 
         Channel channel = createChannel("VMS", false, false, false);
         channel.setMobileTerminal(mobileTerminal);

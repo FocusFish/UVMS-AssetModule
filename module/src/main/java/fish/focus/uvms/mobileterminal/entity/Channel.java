@@ -25,7 +25,6 @@ package fish.focus.uvms.mobileterminal.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.envers.Audited;
-import fish.focus.uvms.mobileterminal.constants.MobileTerminalConstants;
 
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
@@ -59,6 +58,7 @@ import java.util.UUID;
 public class Channel implements Serializable {
     public static final String LOWEST_UNUSED_MEMBER_NUMBER_FOR_DNID_NATIV_SQL = "Channel.LowestUnusedMemberNumberForDnidNativeSql";
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "CHANNEL_UUID")
     @GenericGenerator(name = "CHANNEL_UUID", strategy = "org.hibernate.id.UUIDGenerator")

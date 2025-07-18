@@ -11,7 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
  */
 package fish.focus.uvms.mobileterminal.dao;
 
-import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.mobileterminal.entity.PollBase;
 import fish.focus.uvms.mobileterminal.entity.types.PollTypeEnum;
 import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
@@ -20,7 +19,6 @@ import fish.focus.uvms.mobileterminal.search.PollSearchKeyValue;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.time.Instant;

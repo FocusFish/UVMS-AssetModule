@@ -9,7 +9,6 @@ import fish.focus.uvms.asset.domain.entity.*;
 import fish.focus.uvms.asset.dto.AssetBO;
 import fish.focus.uvms.asset.dto.AssetMTEnrichmentRequest;
 import fish.focus.uvms.asset.dto.AssetMTEnrichmentResponse;
-import fish.focus.uvms.asset.exception.AssetServiceException;
 import fish.focus.uvms.asset.remote.dto.search.SearchBranch;
 import fish.focus.uvms.asset.remote.dto.search.SearchFields;
 import fish.focus.uvms.asset.remote.dto.search.SearchLeaf;
@@ -18,7 +17,7 @@ import fish.focus.uvms.mobileterminal.entity.Channel;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminal;
 import fish.focus.uvms.mobileterminal.entity.MobileTerminalPlugin;
 import fish.focus.uvms.mobileterminal.model.constants.MobileTerminalTypeEnum;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import fish.focus.uvms.tests.mobileterminal.service.arquillian.helper.TestPollHelper;
 import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
@@ -27,9 +26,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.*;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.*;
@@ -42,7 +38,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class AssetServiceBeanIntTest extends TransactionalTests {
+public class AssetServiceBeanIntTest extends BuildAssetServiceDeployment {
 
     @Inject
     private AssetServiceBean assetService;
@@ -56,20 +52,15 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
     @Inject
     private MobileTerminalServiceBean mobileTerminalService;
 
-    @PersistenceContext
-    private EntityManager em;
-
     @Test
     @OperateOnDeployment("normal")
-    public void createAssert() throws AssetServiceException {
+    public void createAssert() {
         // this test is to ensure that create actually works
         // create an Asset
         Asset asset = AssetTestsHelper.createBiggerAsset();
         Asset createdAsset = assetService.createAsset(asset, "test");
-        commit();
         assertNotNull(createdAsset);
         assetService.deleteAsset(AssetIdentifier.GUID, createdAsset.getId().toString());
-        commit();
     }
 
     @Test
@@ -211,38 +202,32 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void updateAsset() throws AssetServiceException {
+    public void updateAsset() {
         // create an asset
         Asset asset = AssetTestsHelper.createBiggerAsset();
         Asset createdAsset = assetService.createAsset(asset, "test");
-        commit();
         // change it and store it
         createdAsset.setName("ÄNDRAD");
         assetService.updateAsset(createdAsset, "CHG_USER", "En changekommentar");
-        commit();
 
         // fetch it and check name
         Asset fetchedAsset = assetService.getAssetById(createdAsset.getId());
         assertEquals(createdAsset.getName(), fetchedAsset.getName());
         assetService.deleteAsset(AssetIdentifier.GUID, createdAsset.getId().toString());
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void deleteAsset() throws AssetServiceException {
+    public void deleteAsset() {
         // create an asset
         Asset asset = AssetTestsHelper.createBiggerAsset();
         Asset createdAsset = assetService.createAsset(asset, "test");
-        commit();
 
         // change it to get an audit
         createdAsset.setName("ÄNDRAD_1");
         assetService.updateAsset(createdAsset, "CHG_USER_1", "En changekommentar");
-        commit();
 
         assetService.deleteAsset(AssetIdentifier.GUID, createdAsset.getId().toString());
-        commit();
 
         // fetch it and it should be null
         Asset fetchedAsset = assetService.getAssetById(createdAsset.getId());
@@ -251,36 +236,30 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void updateAssetThreeTimesAndCheckRevisionsAndValues() throws AssetServiceException {
+    public void updateAssetThreeTimesAndCheckRevisionsAndValues() {
         // create an asset
         Asset asset = AssetTestsHelper.createBiggerAsset();
         Asset createdAsset = assetService.createAsset(asset, "test");
-        commit();
         // change it and store it
         createdAsset.setName("ÄNDRAD_1");
         assetService.updateAsset(createdAsset, "CHG_USER_1", "En changekommentar");
-        commit();
 
         // change it and store it
         createdAsset.setName("ÄNDRAD_2");
         Asset changedAsset2 = assetService.updateAsset(createdAsset, "CHG_USER_2", "En changekommentar");
-        commit();
         UUID historyId2 = changedAsset2.getHistoryId();
 
         // change it and store it
         createdAsset.setName("ÄNDRAD_3");
         assetService.updateAsset(createdAsset, "CHG_USER_3", "En changekommentar");
-        commit();
 
         List<Asset> assetVersions = assetService.getRevisionsForAsset(asset.getId());
         assertEquals(4, assetVersions.size());
-        commit();
 
         Asset fetchedAssetAtRevision = assetService.getAssetRevisionForRevisionId(historyId2);
         assertEquals(historyId2, fetchedAssetAtRevision.getHistoryId());
 
         assetService.deleteAsset(AssetIdentifier.GUID, createdAsset.getId().toString());
-        commit();
     }
 
     @Test
@@ -355,14 +334,12 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getRevisionsForAssetLimitedTest() throws Exception {
+    public void getRevisionsForAssetLimitedTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         Asset createdAsset = assetService.createAsset(asset, "test");
-        commit();
 
         createdAsset.setName("NewName");
         assetService.updateAsset(asset, "test", "comment");
-        commit();
 
         List<Asset> revisions = assetService.getRevisionsForAsset(createdAsset.getId());
         assertEquals(2, revisions.size());
@@ -371,19 +348,16 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         assertEquals(2, revisions2.size());
 
         assetService.deleteAsset(AssetIdentifier.GUID, createdAsset.getId().toString());
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getRevisionsForAssetLimitedMaxNumberTest() throws Exception {
+    public void getRevisionsForAssetLimitedMaxNumberTest() {
         Asset asset = AssetTestsHelper.createBasicAsset();
         Asset createdAsset = assetService.createAsset(asset, "test");
-        commit();
 
         createdAsset.setName("NewName");
         assetService.updateAsset(asset, "test", "comment");
-        commit();
 
         List<Asset> revisions = assetService.getRevisionsForAsset(createdAsset.getId());
         assertEquals(2, revisions.size());
@@ -392,7 +366,6 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         assertEquals(1, revisions2.size());
 
         assetService.deleteAsset(AssetIdentifier.GUID, createdAsset.getId().toString());
-        commit();
     }
 
     @Test
@@ -426,10 +399,9 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListTestIdQuery() throws Exception {
+    public void getAssetListTestIdQuery() {
         Asset asset = AssetTestsHelper.createBiggerAsset();
         asset = assetService.createAsset(asset, "test");
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         trunk.getFields().add(new SearchLeaf(SearchFields.GUID, asset.getId().toString()));
@@ -439,16 +411,14 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         assertEquals(1, assets.size());
         assertEquals(asset.getCfr(), assets.get(0).getCfr());
         assetService.deleteAsset(AssetIdentifier.GUID, asset.getId().toString());
-        commit();
     }
 
     @Test
     @OperateOnDeployment("normal")
-    public void getAssetListTestNameQuery() throws Exception {
+    public void getAssetListTestNameQuery() {
         Asset asset = AssetTestsHelper.createBiggerAsset();
         asset.setName("getAssetListTestNameQueryTest");
         asset = assetService.createAsset(asset, "test");
-        commit();
 
         SearchBranch trunk = new SearchBranch(true);
         trunk.getFields().add(new SearchLeaf(SearchFields.NAME, asset.getName()));
@@ -458,7 +428,6 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         assertFalse(assets.isEmpty());
         assertEquals(asset.getCfr(), assets.get(0).getCfr());
         assetService.deleteAsset(AssetIdentifier.GUID, asset.getId().toString());
-        commit();
     }
 
     @Test
@@ -589,16 +558,6 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         assertEquals(1, contacts.size());
     }
 
-    private void commit() throws AssetServiceException {
-        try {
-            userTransaction.commit();
-            userTransaction.begin();
-        } catch (RollbackException | HeuristicMixedException | HeuristicRollbackException | SystemException |
-                 NotSupportedException e) {
-            throw new AssetServiceException(e);
-        }
-    }
-
     @Test
     @OperateOnDeployment("normal")
     public void testGetRequiredEnrichment() {
@@ -610,7 +569,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
         mobileTerminalService.createMobileTerminal(mobileTerminal, "TEST");
 
-        AssetMTEnrichmentRequest request = createRequest(asset);
+        AssetMTEnrichmentRequest request = createRequest(asset, mobileTerminal);
         AssetMTEnrichmentResponse response = assetService.collectAssetMT(request);
         assertNotNull(response.getMobileTerminalType());
         String assetUUID = response.getAssetUUID();
@@ -668,9 +627,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         AssetFilter createdAssetFilter = createAssetGroup(asset);
         UUID createdAssetGroupId = createdAssetFilter.getId();
 
-        em.flush();
-
-        AssetMTEnrichmentRequest request = createRequest(asset);
+        AssetMTEnrichmentRequest request = createRequest(asset, null);
         AssetMTEnrichmentResponse response = assetService.collectAssetMT(request);
         String assetUUID = response.getAssetUUID();
         assertEquals(asset.getId(), UUID.fromString(assetUUID));
@@ -726,7 +683,7 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
         Asset nonExisting = AssetTestsHelper.createBasicAsset();
         nonExisting.setName(null);
 
-        AssetMTEnrichmentRequest request = createRequest(nonExisting);
+        AssetMTEnrichmentRequest request = createRequest(nonExisting, null);
         request.setDnidValue(null);
         request.setMemberNumberValue(null);
         request.setSerialNumberValue(null);
@@ -780,20 +737,21 @@ public class AssetServiceBeanIntTest extends TransactionalTests {
 
         // for mobileTerminal
         request.setMemberNumberValue(String.valueOf(channel.getMemberNumber()));
+        request.setSerialNumberValue(mobileTerminal.getSerialNo());
         request.setDnidValue(String.valueOf(channel.getDnid()));
+        request.setLesValue(channel.getLesDescription());
         request.setTranspondertypeValue(mobileTerminal.getMobileTerminalType().toString());
 
         return request;
     }
 
-    private AssetMTEnrichmentRequest createRequest(Asset asset) {
-        AssetMTEnrichmentRequest request = new AssetMTEnrichmentRequest();
-
-        // for mobileTerminal
-        request.setMemberNumberValue("1234567890");
-        request.setSerialNumberValue("SN1234567890");
-        request.setDnidValue("1234567890");
-        request.setLesValue("LES1234567890");
+    private AssetMTEnrichmentRequest createRequest(Asset asset, MobileTerminal mobileTerminal) {
+        AssetMTEnrichmentRequest request;
+        if (mobileTerminal == null) {
+            request = new AssetMTEnrichmentRequest();
+        } else {
+            request = createRequest(mobileTerminal);
+        }
 
         // for asset
         if (asset != null) {

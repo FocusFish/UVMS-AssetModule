@@ -4,7 +4,7 @@ import fish.focus.uvms.asset.domain.dao.AssetDao;
 import fish.focus.uvms.asset.domain.entity.Asset;
 import fish.focus.uvms.asset.domain.entity.AssetRemapMapping;
 import fish.focus.uvms.mobileterminal.timer.AssetRemapTask;
-import fish.focus.uvms.tests.TransactionalTests;
+import fish.focus.uvms.tests.BuildAssetServiceDeployment;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
-public class AssetRemapTest extends TransactionalTests {
+public class AssetRemapTest extends BuildAssetServiceDeployment {
 
     @Inject
     AssetRemapTask assetRemapTask;
@@ -80,7 +80,6 @@ public class AssetRemapTest extends TransactionalTests {
         assertNull(oldAsset);
         newAsset = assetDao.getAssetById(newAsset.getId());
         assertNotNull(newAsset);
-
     }
 
     @Test
@@ -110,9 +109,7 @@ public class AssetRemapTest extends TransactionalTests {
         assertNotNull(oldAsset);
         newAsset = assetDao.getAssetById(newAsset.getId());
         assertNotNull(newAsset);
-
     }
-
 
     @Test
     @OperateOnDeployment("normal")
