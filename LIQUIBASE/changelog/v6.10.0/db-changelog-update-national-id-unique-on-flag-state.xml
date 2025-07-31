@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.31.xsd"
+                   logicalFilePath="changelog/v6.10.0/db-changelog-update-national-id-unique-on-flag-state.xml">
+
+    <changeSet id="change national id constraint to include flag state and active" author="johwal">
+        <dropUniqueConstraint constraintName="asset_uc_national_id" tableName="asset"/>
+
+        <sql>
+            create unique index asset_uc_national_id on asset.asset (national_id, flagstatecode) where active;
+        </sql>
+
+        <rollback>
+            <dropIndex indexName="asset_uc_national_id" tableName="asset"/>
+            <addUniqueConstraint columnNames="national_id"
+                                 constraintName="asset_uc_national_id"
+                                 tableName="asset"/>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

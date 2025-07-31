@@ -33,6 +33,7 @@ public class AssetDao {
 
     public Asset createAsset(Asset asset) {
         em.persist(asset);
+        em.flush(); // want early notification if there's a constraint violation
         return asset;
     }
 
@@ -132,6 +133,39 @@ public class AssetDao {
         query.setParameter("mmsi", mmsi);
         query.setParameter("ircs", correctedIrcs);
         return query.getResultList();
+    }
+
+    public List<Asset> getActiveAssetByAnyId(Map<AssetIdentifier, String> assetIds, String flagStateCode) {
+        String ircs = assetIds.getOrDefault(AssetIdentifier.IRCS, null);
+        String correctedIrcs = ircs != null ? ircs.replace("-", "").replace(" ", "") : null;
+
+        TypedQuery<Asset> query = em.createNamedQuery(Asset.ASSET_FIND_ACTIVE_BY_ANY_ID, Asset.class);
+        query.setParameter("imo", assetIds.getOrDefault(AssetIdentifier.IMO, null));
+        query.setParameter("cfr", assetIds.getOrDefault(AssetIdentifier.CFR, null));
+        Long nationalId = assetIds.get(AssetIdentifier.NATIONAL) != null ? Long.valueOf(assetIds.get(AssetIdentifier.NATIONAL)) : null;
+        query.setParameter("nationalId", nationalId);
+        query.setParameter("flagStateCode", flagStateCode);
+        query.setParameter("ircs", correctedIrcs);
+        query.setParameter("mmsi", assetIds.getOrDefault(AssetIdentifier.MMSI, null));
+
+        return query.getResultList();
+    }
+
+    public Asset getAssetByAnyId(Map<AssetIdentifier, String> assetIds) {
+        String ircs = assetIds.getOrDefault(AssetIdentifier.IRCS, null);
+        String correctedIrcs = ircs != null ? ircs.replace("-", "").replace(" ", "") : null;
+
+        TypedQuery<Asset> query = em.createNamedQuery(Asset.ASSET_FIND_BY_ANY_ID, Asset.class);
+        query.setParameter("imo", assetIds.getOrDefault(AssetIdentifier.IMO, null));
+        query.setParameter("cfr", assetIds.getOrDefault(AssetIdentifier.CFR, null));
+        query.setParameter("ircs", correctedIrcs);
+        query.setParameter("mmsi", assetIds.getOrDefault(AssetIdentifier.MMSI, null));
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     public Asset updateAsset(Asset asset) {
