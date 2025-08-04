@@ -94,7 +94,7 @@ public class MobileTerminalTestHelper {
                 ret.append(val);
             }
             infinityBreaker++;
-        } while (infinityBreaker < 20 && generatedStrings.contains(ret.toString()));
+        } while (infinityBreaker < 200 && generatedStrings.contains(ret.toString()));
 
         generatedStrings.add(ret.toString());
 

@@ -7,13 +7,11 @@ public class AssetMTEnrichmentRequest {
     private String transpondertypeValue = null;  // the server only looks for TRANSPONDER_TYPE
     private String pluginType = null;
     private String user = null;
-
     // for mobileTerminal
     private String dnidValue = null;
     private String memberNumberValue = null;
     private String serialNumberValue = null;
     private String lesValue = null;
-
     // for Asset
     private UUID id = null;
     private String assetName = null;
@@ -26,7 +24,6 @@ public class AssetMTEnrichmentRequest {
     private String uviValue = null;
     private String iccatValue = null;
     private String externalMarking = null;
-
     public AssetMTEnrichmentRequest() {
     }
 
@@ -172,5 +169,29 @@ public class AssetMTEnrichmentRequest {
 
     public void setExternalMarking(String externalMarking) {
         this.externalMarking = externalMarking;
+    }
+
+    @Override
+    public String toString() {
+        return "AssetMTEnrichmentRequest{" +
+                "transpondertypeValue='" + transpondertypeValue + '\'' +
+                ", pluginType='" + pluginType + '\'' +
+                ", user='" + user + '\'' +
+                ", dnidValue='" + dnidValue + '\'' +
+                ", memberNumberValue='" + memberNumberValue + '\'' +
+                ", serialNumberValue='" + serialNumberValue + '\'' +
+                ", lesValue='" + lesValue + '\'' +
+                ", id=" + id +
+                ", assetName='" + assetName + '\'' +
+                ", flagState='" + flagState + '\'' +
+                ", cfrValue='" + cfrValue + '\'' +
+                ", ircsValue='" + ircsValue + '\'' +
+                ", imoValue='" + imoValue + '\'' +
+                ", mmsiValue='" + mmsiValue + '\'' +
+                ", gfcmValue='" + gfcmValue + '\'' +
+                ", uviValue='" + uviValue + '\'' +
+                ", iccatValue='" + iccatValue + '\'' +
+                ", externalMarking='" + externalMarking + '\'' +
+                '}';
     }
 }
