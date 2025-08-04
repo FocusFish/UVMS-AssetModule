@@ -11,9 +11,6 @@ copy of the GNU General Public License along with the IFDM Suite. If not, see <h
 package fish.focus.uvms.rest.asset.service;
 
 import fish.focus.schema.mobileterminal.polltypes.v1.PollRequestType;
-import fish.focus.uvms.commons.date.DateUtils;
-import fish.focus.uvms.rest.security.RequiresFeature;
-import fish.focus.uvms.rest.security.UnionVMSFeature;
 import fish.focus.uvms.asset.bean.AssetServiceBean;
 import fish.focus.uvms.asset.bean.CustomCodesServiceBean;
 import fish.focus.uvms.asset.domain.constant.AssetIdentifier;
@@ -23,6 +20,7 @@ import fish.focus.uvms.asset.domain.entity.CustomCode;
 import fish.focus.uvms.asset.dto.*;
 import fish.focus.uvms.asset.remote.dto.search.SearchBranch;
 import fish.focus.uvms.asset.util.JsonBConfiguratorAsset;
+import fish.focus.uvms.commons.date.DateUtils;
 import fish.focus.uvms.mobileterminal.bean.MobileTerminalServiceBean;
 import fish.focus.uvms.mobileterminal.bean.PollServiceBean;
 import fish.focus.uvms.mobileterminal.dao.PollDaoBean;
@@ -37,12 +35,15 @@ import fish.focus.uvms.mobileterminal.model.dto.MobileTerminalDto;
 import fish.focus.uvms.mobileterminal.model.dto.SimpleCreatePoll;
 import fish.focus.uvms.mobileterminal.model.dto.VmsBillingDto;
 import fish.focus.uvms.rest.asset.mapper.CustomAssetAdapter;
+import fish.focus.uvms.rest.security.RequiresFeature;
+import fish.focus.uvms.rest.security.UnionVMSFeature;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.bind.Jsonb;
@@ -65,18 +66,25 @@ import java.util.stream.Collectors;
 public class InternalRestResource {
 
     private static final Logger LOG = LoggerFactory.getLogger(InternalRestResource.class);
+
     @Inject
     AssetDao assetDao;
+
     @Inject
     PollDaoBean pollDaoBean;
+
     @Inject
     TerminalDaoBean terminalDaoBean;
+
     @Inject
     private AssetServiceBean assetService;
+
     @Inject
     private CustomCodesServiceBean customCodesService;
+
     @Inject
     private PollServiceBean pollServiceBean;
+
     @Inject
     private MobileTerminalServiceBean mobileTerminalService;
     private Jsonb jsonb;
@@ -334,8 +342,11 @@ public class InternalRestResource {
         try {
             AssetMTEnrichmentResponse assetMTEnrichmentResponse = assetService.collectAssetMT(request);
             return Response.ok(assetMTEnrichmentResponse).header("MDC", MDC.get("requestId")).build();
+        } catch (EJBTransactionRolledbackException ex) {
+            LOG.error("Enrich with MT failed for {} : {}", request, ExceptionUtils.getRootCauseMessage(ex));
+            return Response.status(500).entity(ExceptionUtils.getRootCauseMessage(ex)).header("MDC", MDC.get("requestId")).build();
         } catch (Exception e) {
-            LOG.error("enrich failed", e);
+            LOG.error("Enrich with MT failed for {}", request, e);
             return Response.status(500).entity(ExceptionUtils.getRootCauseMessage(e)).header("MDC", MDC.get("requestId")).build();
         }
     }
