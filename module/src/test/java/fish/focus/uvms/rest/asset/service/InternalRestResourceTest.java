@@ -16,7 +16,6 @@ import fish.focus.uvms.rest.asset.AbstractAssetRestTest;
 import fish.focus.uvms.rest.asset.AssetHelper;
 import fish.focus.uvms.rest.asset.AssetMatcher;
 import fish.focus.uvms.rest.mobileterminal.rest.MobileTerminalTestHelper;
-import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.OperateOnDeployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.junit.Test;
@@ -38,8 +37,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static junit.framework.TestCase.assertNotNull;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
@@ -223,7 +221,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .post(Entity.json(assetBo), Asset.class);
 
-        assertThat(upsertedAsset, is(CoreMatchers.notNullValue()));
+        assertThat(upsertedAsset, is(notNullValue()));
     }
 
     @Test
@@ -240,7 +238,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .post(Entity.json(assetBo), AssetBO.class);
 
-        assertThat(createdAsset, is(CoreMatchers.notNullValue()));
+        assertThat(createdAsset, is(notNullValue()));
 
         createdAsset.getAsset().setMmsi(null);
         createdAsset.getAsset().setComment(null);
@@ -253,9 +251,9 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .post(Entity.json(assetBo), AssetBO.class);
 
-        assertThat(updatedAsset, is(CoreMatchers.notNullValue()));
-        assertEquals(asset.getComment(), updatedAsset.getAsset().getComment());
-        assertEquals(asset.getMmsi(), updatedAsset.getAsset().getMmsi());
+        assertThat(updatedAsset, is(notNullValue()));
+        assertThat(updatedAsset.getAsset().getComment(), is(asset.getComment()));
+        assertThat(updatedAsset.getAsset().getMmsi(), is(asset.getMmsi()));
     }
 
     @Test
@@ -272,7 +270,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .post(Entity.json(assetBo), AssetBO.class);
 
-        assertThat(createdAsset, is(CoreMatchers.notNullValue()));
+        assertThat(createdAsset, is(notNullValue()));
 
         createdAsset.getAsset().setMmsi("MMSI" + AssetHelper.getRandomIntegers(5));
         createdAsset.getAsset().setComment("It Should Be This Comment");
@@ -285,7 +283,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
                 .header(HttpHeaders.AUTHORIZATION, getTokenInternalRest())
                 .post(Entity.json(assetBo), AssetBO.class);
 
-        assertThat(updatedAsset, is(CoreMatchers.notNullValue()));
+        assertThat(updatedAsset, is(notNullValue()));
         assertEquals(createdAsset.getAsset().getComment(), updatedAsset.getAsset().getComment());
         assertEquals(createdAsset.getAsset().getMmsi(), updatedAsset.getAsset().getMmsi());
     }
