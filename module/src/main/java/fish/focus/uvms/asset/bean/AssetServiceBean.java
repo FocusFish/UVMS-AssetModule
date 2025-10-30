@@ -245,7 +245,6 @@ public class AssetServiceBean {
             asset.setId(existingAsset.getId());
 
             // to save values we already have and don't get from the external source
-            asset.setMmsi(asset.getMmsi() == null ? existingAsset.getMmsi() : asset.getMmsi());
             asset.setComment(asset.getComment() == null ? existingAsset.getComment() : asset.getComment());
             asset.setParked(asset.getParked() == null ? existingAsset.getParked() : asset.getParked());
         }
