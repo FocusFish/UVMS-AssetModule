@@ -226,7 +226,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
 
     @Test
     @OperateOnDeployment("normal")
-    public void updateAssetRetainMMSIAndCommentTest() {
+    public void updateAssetRetainCommentTest() {
         Asset asset = AssetHelper.createBasicAsset();
         asset.setComment("Update Asset Retain Comment");
         AssetBO assetBo = new AssetBO();
@@ -253,7 +253,7 @@ public class InternalRestResourceTest extends AbstractAssetRestTest {
 
         assertThat(updatedAsset, is(notNullValue()));
         assertThat(updatedAsset.getAsset().getComment(), is(asset.getComment()));
-        assertThat(updatedAsset.getAsset().getMmsi(), is(asset.getMmsi()));
+        assertThat(updatedAsset.getAsset().getMmsi(), is(nullValue()));
     }
 
     @Test
